@@ -48,11 +48,12 @@ export const CatalogPage: FC = () => {
 
   const navigate = useNavigate();
 
-  // const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
-  // const [allGoods, setAllGoods] = useState([]);
+  const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
+  const [allGoods, setAllGoods] = useState([]);
   const [arrayGoodsForRender, setArrayGoodsForRender] = useState([]);
   // const [cart, setCart] = useState([]);
   const [openSnakbar, setOpenSnakbar] = useState(false);
+  const [activeTypeId, setActiveTypeId] = useState<number | null>(1);
 
   const domen = import.meta.env.VITE_DOMEN;
 
@@ -82,7 +83,7 @@ export const CatalogPage: FC = () => {
           ...arrayTemp,
         ];
         //@ts-ignore
-        // setArrayTypesForRender(arrayTypesForRender);
+        setArrayTypesForRender(arrayTypesForRender);
 
         //@ts-ignore
         const arrayGoodsForRender = goods.data.map((item) => ({
@@ -95,7 +96,7 @@ export const CatalogPage: FC = () => {
           price: item.price_eu,
         }));
 
-        // setAllGoods(arrayGoodsForRender);
+        setAllGoods(arrayGoodsForRender);
         setArrayGoodsForRender(arrayGoodsForRender);
 
         console.log('formattedTypes', arrayTypesForRender);
@@ -129,30 +130,33 @@ export const CatalogPage: FC = () => {
   // }
 
   //FIXME: приходит 2 раза - один раз норм, другой undefined
-  // function typePressedHandler(typeId: string) {
-  //   console.log('you choose type=', typeId);
+  function typePressedHandler(typeId: string) {
+    console.log('you choose type=', typeId);
 
-  //   //@ts-ignore
-  //   if (typeId == '1') {
-  //     setArrayGoodsForRender(allGoods);
-  //     return;
-  //   }
+    //@ts-ignore
+    if (typeId == '1') {
+      setArrayGoodsForRender(allGoods);
+      setActiveTypeId(1);
+      return;
+    }
 
-  //   //@ts-ignore
-  //   let newArray = [];
+    //@ts-ignore
+    let newArray = [];
 
-  //   allGoods.map((item) => {
-  //     //@ts-ignore
-  //     if (item.type === typeId) {
-  //       console.log('внутри');
+    allGoods.map((item) => {
+      //@ts-ignore
+      if (item.type === typeId) {
+        console.log('внутри');
 
-  //       //@ts-ignore
-  //       newArray = [item, ...newArray];
-  //     }
-  //   });
-  //   //@ts-ignore
-  //   setArrayGoodsForRender(newArray);
-  // }
+        //@ts-ignore
+        newArray = [item, ...newArray];
+      }
+    });
+    //@ts-ignore
+    setArrayGoodsForRender(newArray);
+    //@ts-ignore
+    setActiveTypeId(typeId);
+  }
 
   // function addToCartHandler(goodId){
   //   console.log('added',goodId)
@@ -201,50 +205,23 @@ export const CatalogPage: FC = () => {
   return (
     <Page back={false}>
       <List>
-        
-        {/* <Section>
-          <List
-            style={{
-              // background: 'var(--tgui--secondary_bg_color)',
-              padding: 20,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                gap: 8,
-              }}
-            >
-              {arrayTypesForRender.map((type: any) => (
-                <>
-                  <Chip
-                    key={type.id}
-                    // onClick={(e) => typePressedHandler(e)}
-                    onClick={() => typePressedHandler(type.id)}
-                    mode="elevated"
-                    Component="label"
-                    before={<Radio name="radio" value={type.id} />}
-                    // defaultChecked
-                  >
-                    {type.name}
-                  </Chip>
-                </>
-              ))}
-            </div>
-          </List>
-          </Section> */}
+       
 
-
+        <Section>
           <div className={styles.filterContainer}>
-  <div className={styles.filterItem}>Все товары</div>
-  <div className={styles.filterItem}>Новинки</div>
-  <div className={styles.filterItem}>Акции</div>
-  <div className={styles.filterItem}>Премиум</div>
-  <div className={styles.filterItem}>Премиум 2</div>
-  <div className={styles.filterItem}>Премиум 3</div>
-  
-</div>
-
+            {arrayTypesForRender.map((type: any) => (
+              <div
+                key={type.id} // Добавляем key для React
+                className={`${styles.filterItem} ${
+                  activeTypeId === type.id ? styles.active : ''
+                }`}
+                onClick={() => typePressedHandler(type.id)}
+              >
+                {type.name}
+              </div>
+            ))}
+          </div>
+        </Section>
 
         <Section style={{ marginBottom: 100 }}>
           {arrayGoodsForRender.map((item: any) => (

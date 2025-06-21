@@ -240,7 +240,7 @@ export const Cart: FC = () => {
           </>
         ))}
 
-        <Section>
+        <Section style={{ marginBottom: 100 }}>
            <Cell
             //@ts-ignore
                 subtitle={`${totalInfo.totalQty} шт.`}

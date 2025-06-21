@@ -7,6 +7,7 @@
   display: flex;
   justify-content: center; 
 margin-top: 20px;  
+padding: 20px 0 ;
 /* gap: 20px */
 }
 
@@ -14,28 +15,39 @@ margin-top: 20px;
 
 
 
+
+
+
+
+
 .filterContainer {
   display: flex;
-  overflow-x: auto; /* Включаем горизонтальный скролл */
-  gap: 12px;        /* Отступ между элементами */
-  padding: 8px 0;   /* Внутренние отступы */
-  max-width: 100%;  /* Ограничение по ширине */
-  
-  /* Скрываем стандартный скроллбар (опционально) */
-  scrollbar-width: none; /* Для Firefox */
-  -ms-overflow-style: none; /* Для IE/Edge */
+  overflow-x: auto;
+  gap: 12px;
+  padding: 8px 10px;
+  max-width: 100%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 .filterContainer::-webkit-scrollbar {
-  display: none; /* Для Chrome/Safari */
+  display: none; /* Chrome/Safari */
 }
 
 .filterItem {
-  flex: 0 0 auto; /* Запрещаем сжатие/растяжение */
-  white-space: nowrap; /* Запрещаем перенос текста */
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 8px 16px;
-  background: #f5f5f5;
-  border-radius: 20px;
+  background: #f4f4f7; 
+  color: black;
+  border-radius: 10px;
   cursor: pointer;
   user-select: none;
+  transition: all 0.2s ease;
+  font-family: var(--tgui--font-family);
+}
+
+.filterItem.active {
+  background: #40a7e3; 
+  color: white;
 }

@@ -3,6 +3,7 @@ import {
   List,
   Button,
   Snackbar,
+  Section
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -142,6 +143,8 @@ export const OneGood: FC = () => {
   return (
     <Page back={true}>
       <List>
+
+        <Section style={{ marginBottom: 100 }}>
         
         <img src={goodInfo?.img || ''} className={styles.img} />
 
@@ -178,6 +181,8 @@ export const OneGood: FC = () => {
         
     
         <Cell multiline>{goodInfo?.description_long}</Cell>
+      
+      </Section>
       </List>
 
       {openSnakbar && (
