@@ -12,8 +12,27 @@ padding: 20px 0 ;
 }
 
 
+.divAddBtn {
+  display: flex;
+  /* justify-content: center; 
+  align-items: center;
+  text-align: center; */
+  margin: auto;
+/* margin-top: 20px;   */
+padding: 0 0 20px 0 ;
+width: 85%;
+}
 
-
+.divAddBtn2 {
+  display: flex;
+  /* justify-content: center; 
+  align-items: center;
+  text-align: center; */
+  margin: auto;
+/* margin-top: 20px;   */
+padding: 0 0 20px 0 ;
+width: 93%;
+}
 
 
 

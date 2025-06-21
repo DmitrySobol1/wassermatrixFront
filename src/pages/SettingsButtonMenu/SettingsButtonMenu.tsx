@@ -3,13 +3,10 @@ import {
   Cell,
   List,
   Select,
-  ButtonCell,
   Spinner,
-  Tappable,
-  Tooltip,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useContext, useState, useEffect, useRef } from 'react';
+import { useContext, useState } from 'react';
 
 import { useTlgid } from '../../components/Tlgid';
 
@@ -26,15 +23,13 @@ import { TEXTS } from './texts.ts';
 
 import { Icon32ProfileColoredSquare } from '@telegram-apps/telegram-ui/dist/icons/32/profile_colored_square';
 import { Icon16Chevron } from '@telegram-apps/telegram-ui/dist/icons/16/chevron';
-import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 
 export const SettingsButtonMenu: FC = () => {
   const [isShowLanguageSelect, setShowLanguageSelect] = useState(false);
   const [isShowValuteSelect, setShowValuteSelect] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userNPid, setUserNPid] = useState('');
-  const [idNPexist, setIdNPexist] = useState(false);
-  const [showTextCopied, setShowTextCopied] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
+  // const [userNPid, setUserNPid] = useState('');
 
   const tlgid = useTlgid();
 
@@ -49,35 +44,35 @@ export const SettingsButtonMenu: FC = () => {
   const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, yourid, purposeid,copiedtext,noid,createid } = TEXTS[language];
 
   // получить id юзера
-  useEffect(() => {
-    // TODO: можно пост на гет испправить, т.к. получаем инфо
+  // useEffect(() => {
+  //   // TODO: можно пост на гет испправить, т.к. получаем инфо
 
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.post('/get_user_id', {
-          tlgid: tlgid,
-        });
+  //   const fetchUserInfo = async () => {
+  //     try {
+  //       const response = await axios.post('/get_user_id', {
+  //         tlgid: tlgid,
+  //       });
 
-        console.log(response.data);
-        const nowpaymentid = response.data.nowpaymentid;
+  //       console.log(response.data);
+  //       const nowpaymentid = response.data.nowpaymentid;
 
-        if (nowpaymentid != 0) {
-          setIdNPexist(true);
-          setUserNPid(nowpaymentid);
+  //       if (nowpaymentid != 0) {
+  //         setIdNPexist(true);
+  //         setUserNPid(nowpaymentid);
           
-        } else {
-          setIdNPexist(false);
-          setUserNPid(noid);
-        }
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       } else {
+  //         setIdNPexist(false);
+  //         setUserNPid(noid);
+  //       }
+  //     } catch (error) {
+  //       console.error('Ошибка при выполнении запроса:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchUserInfo();
-  }, []);
+  //   fetchUserInfo();
+  // }, []);
 
   function showLanguageSelect() {
     setShowValuteSelect(false);
@@ -111,38 +106,38 @@ export const SettingsButtonMenu: FC = () => {
     });
   }
 
-  const copyAdress = async () => {
-    try {
-      await navigator.clipboard.writeText(userNPid);
-      console.log('copied=', userNPid);
-      setShowTextCopied(true);
+  // const copyAdress = async () => {
+  //   try {
+  //     await navigator.clipboard.writeText(userNPid);
+  //     console.log('copied=', userNPid);
+  //     setShowTextCopied(true);
 
-      setTimeout(() => setShowTextCopied(false), 2000);
-    } catch (err) {
-      console.error('Ошибка: ', err);
-    }
-  };
+  //     setTimeout(() => setShowTextCopied(false), 2000);
+  //   } catch (err) {
+  //     console.error('Ошибка: ', err);
+  //   }
+  // };
 
-  async function create() {
-    try {
-      setIsLoading(true);
-      console.log('start creatin...');
+  // async function create() {
+  //   try {
+  //     setIsLoading(true);
+  //     console.log('start creatin...');
 
-      const response = await axios.post('/create_user_NpId', {
-        tlgid: tlgid,
-      });
+  //     const response = await axios.post('/create_user_NpId', {
+  //       tlgid: tlgid,
+  //     });
 
-      console.log('created = ', response);
-      setUserNPid(response.data.nowpaymentid);
-      setIdNPexist(true);
-    } catch (error) {
-      console.error('Ошибка при выполнении запроса:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  //     console.log('created = ', response);
+  //     setUserNPid(response.data.nowpaymentid);
+  //     setIdNPexist(true);
+  //   } catch (error) {
+  //     console.error('Ошибка при выполнении запроса:', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }
 
-  const buttonRef = useRef(null);
+  // const buttonRef = useRef(null);
 
   return (
     <Page back={false}>
@@ -161,7 +156,8 @@ export const SettingsButtonMenu: FC = () => {
       {!isLoading && (
         <>
           <List>
-            <Section>
+            {/* <Section>
+              
               <Section>
                 <Cell
                   before={<Icon32ProfileColoredSquare />}
@@ -214,7 +210,7 @@ export const SettingsButtonMenu: FC = () => {
                   </ButtonCell>
                 )}
               </Section>
-            </Section>
+            </Section> */}
 
             <Section header={title}>
               <div onClick={showLanguageSelect}>
@@ -253,9 +249,9 @@ export const SettingsButtonMenu: FC = () => {
                   onChange={selectValuteHandler}
                   value={selectedValute}
                 >
-                  <option value="rub">Рубль</option>
-                  <option value="eur">Euro</option>
-                  <option value="usd">US Dollar</option>
+                  <option value="₽">Рубль</option>
+                  <option value="€">Euro</option>
+                  <option value="$">US Dollar</option>
                 </Select>
               )}
             </Section>

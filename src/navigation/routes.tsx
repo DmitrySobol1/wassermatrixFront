@@ -31,11 +31,15 @@ export const routes: Route[] = [
   { path: '/onegood-page', Component: OneGood},
   
   { path: '/cart-page', Component: Cart},
+  
+  { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },
 
+  
+  
+  
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
   { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
-  { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },
 
   {
     path: '/ton-connect',

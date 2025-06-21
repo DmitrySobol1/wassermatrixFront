@@ -4,8 +4,7 @@ import {
   List,
   Card,
   Button,
-  // Chip,
-  // Radio,
+  Spinner,
   Snackbar,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
@@ -22,7 +21,7 @@ import { LanguageContext } from '../../components/App.tsx';
 
 // import { useLocation } from 'react-router-dom';
 
-// import { settingsButton } from '@telegram-apps/sdk-react';
+import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -33,7 +32,7 @@ import { Page } from '@/components/Page.tsx';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 
 import styles from './catalog.module.css';
-// import { TEXTS } from './texts.ts';
+import { TEXTS } from './texts.ts';
 
 // import payin from '../../img/payin.png';
 // import payout from '../../img/payout.png';
@@ -54,8 +53,28 @@ export const CatalogPage: FC = () => {
   // const [cart, setCart] = useState([]);
   const [openSnakbar, setOpenSnakbar] = useState(false);
   const [activeTypeId, setActiveTypeId] = useState<number | null>(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [spinBtn,setSpinBtn] = useState(false)
 
   const domen = import.meta.env.VITE_DOMEN;
+
+  //@ts-ignore
+  const {addToCartT} = TEXTS[language];
+
+
+  if (settingsButton.mount.isAvailable()) {
+    settingsButton.mount();
+    settingsButton.isMounted(); // true
+    settingsButton.show();
+  }
+
+  if (settingsButton.onClick.isAvailable()) {
+    function listener() {
+      console.log('Clicked!');
+      navigate('/setting-button-menu');
+    }
+    settingsButton.onClick(listener);
+  }
 
   // получить список типов товаров + товары
   useEffect(() => {
@@ -98,6 +117,7 @@ export const CatalogPage: FC = () => {
 
         setAllGoods(arrayGoodsForRender);
         setArrayGoodsForRender(arrayGoodsForRender);
+        setIsLoading(false)
 
         console.log('formattedTypes', arrayTypesForRender);
         console.log('formattedGoods', arrayGoodsForRender);
@@ -121,13 +141,7 @@ export const CatalogPage: FC = () => {
     });
   }
 
-  // function addBtnHandler(e: any) {
-  //   console.log('add btn Pressed', e.target);
-  // }
-
-  //   function typePressedHandler(typeId: string) {
-  //   console.log('You choose type:', typeId);
-  // }
+ 
 
   //FIXME: приходит 2 раза - один раз норм, другой undefined
   function typePressedHandler(typeId: string) {
@@ -158,28 +172,11 @@ export const CatalogPage: FC = () => {
     setActiveTypeId(typeId);
   }
 
-  // function addToCartHandler(goodId){
-  //   console.log('added',goodId)
-  //   //cart
-  //   // id , qty, name, price
-  //   const goodToAdd = {
-  //     id: goodId,
-  //     qty: 1,
-  //     name: 'testName',
-  //     price : 100
-  //   }
-
-  //   console.log('goodToAdd',goodToAdd)
-
-  //   const newArray = [...cart,{goodToAdd}]
-
-  //   setCart(newArray);
-  //   console.log('newArray',newArray)
-
-  // }
+ 
 
   //@ts-ignore
   async function addToCartHandler(goodId) {
+    setSpinBtn(true)
     try {
       const response = await axios.post('/user_add_good_tocart', {
         userid: tlgid,
@@ -194,6 +191,7 @@ export const CatalogPage: FC = () => {
 
       console.log(response.data);
       setOpenSnakbar(true);
+      // setSpinBtn(false)
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
     } finally {
@@ -202,28 +200,34 @@ export const CatalogPage: FC = () => {
     }
   }
 
+  function snakHandler(){
+    setOpenSnakbar(false)
+    setSpinBtn(false)
+
+  }
+
   return (
     <Page back={false}>
+
+    {isLoading && (
+            <div
+              style={{
+                textAlign: 'center',
+                justifyContent: 'center',
+                padding: '100px',
+              }}
+            >
+              <Spinner size="m" />
+            </div>
+          )}
+
+
+          {!isLoading && (<>
+
+
       <List>
        
-       {/* background: 'var(--tgui--primary_bg_color)'}} */}
-
-        {/* <Section style={{paddingTop:15, background: 'var(--tgui--primary_bg_color)'}}>
-          <div className={styles.filterContainer}>
-            {arrayTypesForRender.map((type: any) => (
-              <div
-                key={type.id} // Добавляем key для React
-                className={`${styles.filterItem} ${
-                  activeTypeId === type.id ? styles.active : ''
-                }`}
-                onClick={() => typePressedHandler(type.id)}
-              >
-                {type.name}
-              </div>
-            ))}
-          </div>
-        </Section> */}
-
+       
         <Section style={{ marginBottom: 100 }}>
 
              <div className={styles.filterContainer}>
@@ -264,8 +268,9 @@ export const CatalogPage: FC = () => {
                     </Cell>
                     <Cell>{item.price} euro</Cell>
 
-                    <Cell>
+                    <div className={styles.divAddBtn}>
                       <Button
+                        loading={spinBtn}
                         before={<Icon28AddCircle />}
                         stretched
                         mode="filled"
@@ -273,9 +278,9 @@ export const CatalogPage: FC = () => {
                         onClick={() => addToCartHandler(item.id)}
                         style={{ paddingLeft: 30, paddingRight: 30 }}
                       >
-                        Добавить в корзину
+                        {addToCartT}
                       </Button>
-                    </Cell>
+                    </div>
 
                     {/* <div style={{display:'flex',width:'80%' ,justifyContent:'center', marginLeft:10}}>
                     <Button
@@ -302,10 +307,11 @@ export const CatalogPage: FC = () => {
       <TabbarMenu />
 
       {openSnakbar && (
-        <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
+        <Snackbar duration={1200} onClose={snakHandler}>
           Товар добавлен
         </Snackbar>
       )}
+      </>)}
     </Page>
   );
 };

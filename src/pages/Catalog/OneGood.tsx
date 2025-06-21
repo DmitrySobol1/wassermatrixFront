@@ -3,7 +3,8 @@ import {
   List,
   Button,
   Snackbar,
-  Section
+  Section,
+  Spinner
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -34,7 +35,7 @@ import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_ci
 // import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
 
 import styles from './catalog.module.css';
-// import { TEXTS } from './texts.ts';
+import { TEXTS } from './texts.ts';
 
 // import payin from '../../img/payin.png';
 // import payout from '../../img/payout.png';
@@ -54,9 +55,13 @@ export const OneGood: FC = () => {
   // const [goodInfo, setGoodInfo] = useState({});
   const [goodInfo, setGoodInfo] = useState<GoodInfo | null>(null);
   const [openSnakbar, setOpenSnakbar] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
+const [spinBtn,setSpinBtn] = useState(false)
 
   const domen = import.meta.env.VITE_DOMEN;
 
+  //@ts-ignore
+    const {addToCartT} = TEXTS[language];
 
 
     interface GoodInfo {
@@ -97,6 +102,7 @@ export const OneGood: FC = () => {
 
         //   @ts-ignore
         setGoodInfo(goodToRender);
+        setIsLoading(false)
 
         console.log('goodToRender', goodToRender);
       } catch (error) {
@@ -112,6 +118,7 @@ export const OneGood: FC = () => {
 
   //@ts-ignore
   async function addToCartHandler(goodId) {
+    setSpinBtn(true)
     try {
       const response = await axios.post('/user_add_good_tocart', {
         userid: tlgid,
@@ -135,13 +142,31 @@ export const OneGood: FC = () => {
   }
 
 
-
+function snakHandler(){
+  setOpenSnakbar(false)
+  setSpinBtn(false)
+}
 
 
 
 
   return (
     <Page back={true}>
+
+       {isLoading && (
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      justifyContent: 'center',
+                      padding: '100px',
+                    }}
+                  >
+                    <Spinner size="m" />
+                  </div>
+                )}
+
+
+                {!isLoading && (<>
       <List>
 
         <Section style={{ marginBottom: 100 }}>
@@ -167,18 +192,20 @@ export const OneGood: FC = () => {
         </Cell> */}
 
         
+        <div className={styles.divAddBtn2}>
           <Button
             before={<Icon28AddCircle />}
             mode="filled"
             size="m"
-            
+            loading={spinBtn}
             onClick={() => addToCartHandler(goodInfo?.id)}
             stretched
-            style={{width:'90%',alignItems:'center', marginLeft:24}}
+            // style={{width:'90%',alignItems:'center', marginLeft:24}}
+            // style={{width:'90%',alignItems:'center', marginLeft:24}}
           >
-            Добавить в корзину
+            {addToCartT}
           </Button>
-        
+        </div>
     
         <Cell multiline>{goodInfo?.description_long}</Cell>
       
@@ -186,12 +213,13 @@ export const OneGood: FC = () => {
       </List>
 
       {openSnakbar && (
-        <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
+        <Snackbar duration={1200} onClose={snakHandler}>
           Товар добавлен
         </Snackbar>
       )}
 
       <TabbarMenu />
+      </>)}
     </Page>
   );
 };

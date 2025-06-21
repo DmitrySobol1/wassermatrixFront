@@ -62,9 +62,9 @@ export function App() {
   const lp = useMemo(() => retrieveLaunchParams(), []);
   const isDark = useSignal(isMiniAppDark);
 
-  const [language, setLanguage] = useState('ru');
+  const [language, setLanguage] = useState('en');
   const [balance, setBalance] = useState(0);
-  const [valute, setValute] = useState('rub');
+  const [valute, setValute] = useState('₽');
 
   return (
     <AppRoot
