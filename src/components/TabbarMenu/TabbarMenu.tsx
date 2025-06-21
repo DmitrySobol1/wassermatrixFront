@@ -10,12 +10,15 @@ import { LanguageContext } from '../App.tsx';
 // import { Link } from '@/components/Link/Link.tsx';
 // import { Page } from '@/components/Page.tsx';
 
-import { Icon28Devices } from '@telegram-apps/telegram-ui/dist/icons/28/devices';
-import { Icon28Archive } from '@telegram-apps/telegram-ui/dist/icons/28/archive';
+// import { Icon28Devices } from '@telegram-apps/telegram-ui/dist/icons/28/devices';
+// import { Icon28Archive } from '@telegram-apps/telegram-ui/dist/icons/28/archive';
 // import { Icon28Heart } from '@telegram-apps/telegram-ui/dist/icons/28/heart';
-import { Icon28Stats } from '@telegram-apps/telegram-ui/dist/icons/28/stats';
+// import { Icon28Stats } from '@telegram-apps/telegram-ui/dist/icons/28/stats';
 
-
+// import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import PersonIcon from '@mui/icons-material/Person';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 import { TEXTS } from './texts.ts'
 
@@ -35,20 +38,21 @@ export const TabbarMenu: FC = () => {
     {
       id: 1,
       text: firstTab,
-      Icon: Icon28Devices,
+      // Icon: Icon28Devices,
+      Icon: FormatListBulletedIcon,
       path: '/catalog-page'
       
     },
     {
       id: 2,
       text: secondTab,
-      Icon: Icon28Stats,
+      Icon: ShoppingCartIcon,
       path: '/cart-page'
     },
     {
       id: 3,
       text: thirdTab,
-      Icon: Icon28Archive,
+      Icon: PersonIcon,
       path: '/onboarding'
     },
   ];

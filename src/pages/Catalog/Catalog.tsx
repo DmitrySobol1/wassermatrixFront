@@ -4,8 +4,8 @@ import {
   List,
   Card,
   Button,
-  Chip,
-  Radio,
+  // Chip,
+  // Radio,
   Snackbar,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
@@ -32,7 +32,7 @@ import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 
-// import styles from './catalog.module.css';
+import styles from './catalog.module.css';
 // import { TEXTS } from './texts.ts';
 
 // import payin from '../../img/payin.png';
@@ -48,8 +48,8 @@ export const CatalogPage: FC = () => {
 
   const navigate = useNavigate();
 
-  const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
-  const [allGoods, setAllGoods] = useState([]);
+  // const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
+  // const [allGoods, setAllGoods] = useState([]);
   const [arrayGoodsForRender, setArrayGoodsForRender] = useState([]);
   // const [cart, setCart] = useState([]);
   const [openSnakbar, setOpenSnakbar] = useState(false);
@@ -82,7 +82,7 @@ export const CatalogPage: FC = () => {
           ...arrayTemp,
         ];
         //@ts-ignore
-        setArrayTypesForRender(arrayTypesForRender);
+        // setArrayTypesForRender(arrayTypesForRender);
 
         //@ts-ignore
         const arrayGoodsForRender = goods.data.map((item) => ({
@@ -95,7 +95,7 @@ export const CatalogPage: FC = () => {
           price: item.price_eu,
         }));
 
-        setAllGoods(arrayGoodsForRender);
+        // setAllGoods(arrayGoodsForRender);
         setArrayGoodsForRender(arrayGoodsForRender);
 
         console.log('formattedTypes', arrayTypesForRender);
@@ -120,7 +120,6 @@ export const CatalogPage: FC = () => {
     });
   }
 
-
   // function addBtnHandler(e: any) {
   //   console.log('add btn Pressed', e.target);
   // }
@@ -130,30 +129,30 @@ export const CatalogPage: FC = () => {
   // }
 
   //FIXME: приходит 2 раза - один раз норм, другой undefined
-  function typePressedHandler(typeId: string) {
-    console.log('you choose type=', typeId);
+  // function typePressedHandler(typeId: string) {
+  //   console.log('you choose type=', typeId);
 
-    //@ts-ignore
-    if (typeId == '1') {
-      setArrayGoodsForRender(allGoods);
-      return;
-    }
+  //   //@ts-ignore
+  //   if (typeId == '1') {
+  //     setArrayGoodsForRender(allGoods);
+  //     return;
+  //   }
 
-    //@ts-ignore
-    let newArray = [];
+  //   //@ts-ignore
+  //   let newArray = [];
 
-    allGoods.map((item) => {
-      //@ts-ignore
-      if (item.type === typeId) {
-        console.log('внутри');
+  //   allGoods.map((item) => {
+  //     //@ts-ignore
+  //     if (item.type === typeId) {
+  //       console.log('внутри');
 
-        //@ts-ignore
-        newArray = [item, ...newArray];
-      }
-    });
-    //@ts-ignore
-    setArrayGoodsForRender(newArray);
-  }
+  //       //@ts-ignore
+  //       newArray = [item, ...newArray];
+  //     }
+  //   });
+  //   //@ts-ignore
+  //   setArrayGoodsForRender(newArray);
+  // }
 
   // function addToCartHandler(goodId){
   //   console.log('added',goodId)
@@ -202,8 +201,8 @@ export const CatalogPage: FC = () => {
   return (
     <Page back={false}>
       <List>
-        <Section>
-          
+        
+        {/* <Section>
           <List
             style={{
               // background: 'var(--tgui--secondary_bg_color)',
@@ -233,21 +232,24 @@ export const CatalogPage: FC = () => {
               ))}
             </div>
           </List>
+          </Section> */}
 
-              {/* <div className={styles.filterContainer}>
-  <button className={styles.filterbtn}>Фильтр 1</button>
-  <button className={styles.filterbtn}>Фильтр 2</button>
-  <button className={styles.filterbtn}>Фильтр 3</button>
-  <button className={styles.filterbtn}>Фильтр 4</button>
-  <button className={styles.filterbtn}>Фильтр 5</button>
+
+          <div className={styles.filterContainer}>
+  <div className={styles.filterItem}>Все товары</div>
+  <div className={styles.filterItem}>Новинки</div>
+  <div className={styles.filterItem}>Акции</div>
+  <div className={styles.filterItem}>Премиум</div>
+  <div className={styles.filterItem}>Премиум 2</div>
+  <div className={styles.filterItem}>Премиум 3</div>
   
-</div> */}
+</div>
 
 
-
+        <Section style={{ marginBottom: 100 }}>
           {arrayGoodsForRender.map((item: any) => (
             <>
-              <Cell>
+              <div className={styles.divCard}>
                 <Card type="plain">
                   <React.Fragment key=".0">
                     <img
@@ -275,12 +277,12 @@ export const CatalogPage: FC = () => {
                         mode="filled"
                         size="m"
                         onClick={() => addToCartHandler(item.id)}
-                        style={{paddingLeft:30,paddingRight:30}}
+                        style={{ paddingLeft: 30, paddingRight: 30 }}
                       >
                         Добавить в корзину
                       </Button>
                     </Cell>
-                    
+
                     {/* <div style={{display:'flex',width:'80%' ,justifyContent:'center', marginLeft:10}}>
                     <Button
                       before={<Icon28AddCircle />}
@@ -295,21 +297,21 @@ export const CatalogPage: FC = () => {
                     </div> */}
                   </React.Fragment>
                 </Card>
-              </Cell>
+              </div>
             </>
           ))}
         </Section>
 
-        <Cell></Cell>
+        {/* <Cell></Cell> */}
       </List>
+
+      <TabbarMenu />
 
       {openSnakbar && (
         <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
           Товар добавлен
         </Snackbar>
       )}
-
-      <TabbarMenu />
     </Page>
   );
 };

@@ -3,39 +3,39 @@
 }
 
 
+.divCard {
+  display: flex;
+  justify-content: center; 
+margin-top: 20px;  
+/* gap: 20px */
+}
+
+
+
 
 
 .filterContainer {
   display: flex;
-  max-width: 400px; /* Максимальная ширина */
-  overflow-x: auto; /* Горизонтальный скролл при необходимости */
-  gap: 8px; /* Отступ между кнопками */
-  padding: 8px 0; /* Небольшой отступ сверху и снизу */
+  overflow-x: auto; /* Включаем горизонтальный скролл */
+  gap: 12px;        /* Отступ между элементами */
+  padding: 8px 0;   /* Внутренние отступы */
+  max-width: 100%;  /* Ограничение по ширине */
   
-  /* Скрываем стандартный скроллбар для красоты (опционально) */
+  /* Скрываем стандартный скроллбар (опционально) */
   scrollbar-width: none; /* Для Firefox */
-  -ms-overflow-style: none; /* Для IE и Edge */
+  -ms-overflow-style: none; /* Для IE/Edge */
 }
 
 .filterContainer::-webkit-scrollbar {
-  display: none; /* Для Chrome, Safari и Opera */
+  display: none; /* Для Chrome/Safari */
 }
 
-.filterbtn {
-  flex: 0 0 auto; /* Запрещаем кнопкам сжиматься/растягиваться */
+.filterItem {
+  flex: 0 0 auto; /* Запрещаем сжатие/растяжение */
+  white-space: nowrap; /* Запрещаем перенос текста */
   padding: 8px 16px;
-  background-color: #f0f0f0;
-  border: none;
+  background: #f5f5f5;
   border-radius: 20px;
   cursor: pointer;
-  white-space: nowrap; /* Текст не переносится */
-}
-
-/* Стили для hover и active состояний */
-.filterbtn:hover {
-  background-color: #e0e0e0;
-}
-
-.filterbtn:active {
-  background-color: #d0d0d0;
+  user-select: none;
 }
