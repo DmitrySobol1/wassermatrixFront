@@ -1,9 +1,12 @@
 import { Section, List } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useEffect } from 'react';
+import { useEffect,useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import axios from '../../axios';
+
+import { LanguageContext } from '../../components/App.tsx';
+import { ValuteContext } from '../../components/App.tsx';
 
 // import { useTlgid } from '../../components/Tlgid';
 
@@ -12,8 +15,13 @@ import { Page } from '@/components/Page.tsx';
 
 export const EnterPage: FC = () => {
   const navigate = useNavigate();
+  
+   
 
-  //FIXME:
+    const { setLanguage } = useContext(LanguageContext);
+      const { setValute } = useContext(ValuteContext);
+  
+   //FIXME:
   // const tlgid = useTlgid();
   const tlgid = 412697670;
 
@@ -39,18 +47,10 @@ export const EnterPage: FC = () => {
         );
           // navigate('/onboarding');
         } else if (response.data.userData.result === 'showCatalogPage') {
-          // console.log('showWalletPage');
-          // const nowpaymentid = response.data.userData.nowpaymentid;
-          // // console.log('!!!!!!!nowpaymentid=',nowpaymentid)
-          navigate(
-            '/catalog-page'
-            // {
-            // state: {
-            //   nowpaymentid: nowpaymentid,
-            // },
-            // }
-          );
-          // navigate('/wallet-page');
+          console.log(response.data.userData);
+          setLanguage(response.data.userData.language)
+          setValute(response.data.userData.valute)
+          navigate('/catalog-page')  
         }
       })
       .catch((error) => {

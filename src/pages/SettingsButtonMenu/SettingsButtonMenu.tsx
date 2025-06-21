@@ -4,6 +4,7 @@ import {
   List,
   Select,
   Spinner,
+  Snackbar
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useContext, useState } from 'react';
@@ -30,6 +31,8 @@ export const SettingsButtonMenu: FC = () => {
   // const [isLoading, setIsLoading] = useState(false);
   const [isLoading] = useState(false);
   // const [userNPid, setUserNPid] = useState('');
+  const [openSnakbar, setOpenSnakbar] = useState(false);
+  const [textForSnak,setTextForSnak] = useState('')
 
   const tlgid = useTlgid();
 
@@ -41,7 +44,7 @@ export const SettingsButtonMenu: FC = () => {
 
   //FIXME:
   // @ts-ignore
-  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, yourid, purposeid,copiedtext,noid,createid } = TEXTS[language];
+  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, languageChangedT,valuteChangedT } = TEXTS[language];
 
   // получить id юзера
   // useEffect(() => {
@@ -84,26 +87,39 @@ export const SettingsButtonMenu: FC = () => {
     setShowValuteSelect(!isShowValuteSelect);
   }
 
-  function selectLanguageHandler(event: any) {
+  
+  async function selectLanguageHandler(event: any) {
     setLanguage(event.target.value);
     setSelectedLanguage(event.target.value);
     console.log('set language=', event.target.value);
 
-    axios.post('/change_language', {
+    const response = await axios.post('/change_language', {
       tlgid: tlgid,
       language: event.target.value,
     });
+
+    if (response.data.status == 'ok'){
+      //@ts-ignore
+      setTextForSnak(TEXTS[event.target.value].languageChangedT)
+      setOpenSnakbar(true)
+    } 
+    
   }
 
-  function selectValuteHandler(event: any) {
+  async function selectValuteHandler(event: any) {
     setValute(event.target.value);
     setSelectedValute(event.target.value);
     console.log('set valute=', event.target.value);
 
-    axios.post('/change_valute', {
+    const response = await axios.post('/change_valute', {
       tlgid: tlgid,
       valute: event.target.value,
     });
+
+    if (response.data.status === 'ok'){
+      setTextForSnak(valuteChangedT)
+      setOpenSnakbar(true)
+    }
   }
 
   // const copyAdress = async () => {
@@ -138,6 +154,13 @@ export const SettingsButtonMenu: FC = () => {
   // }
 
   // const buttonRef = useRef(null);
+
+
+  function snakHandler(){
+  setOpenSnakbar(false)
+  // setSpinBtn(false)
+}
+
 
   return (
     <Page back={false}>
@@ -256,6 +279,13 @@ export const SettingsButtonMenu: FC = () => {
               )}
             </Section>
           </List>
+
+           {openSnakbar && (
+                  <Snackbar duration={1200} onClose={snakHandler}>
+                    {textForSnak}
+                  </Snackbar>
+                )}    
+
 
           <TabbarMenu />
         </>

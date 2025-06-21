@@ -47,6 +47,7 @@ export const OneGood: FC = () => {
   const tlgid = 412697670;
 
   const { language } = useContext(LanguageContext);
+  // const { valute } = useContext(ValuteContext);
 
   //    const navigate = useNavigate();
   const location = useLocation();
@@ -61,7 +62,7 @@ const [spinBtn,setSpinBtn] = useState(false)
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-    const {addToCartT} = TEXTS[language];
+    const {addToCartT,itemAdded} = TEXTS[language];
 
 
     interface GoodInfo {
@@ -71,6 +72,7 @@ const [spinBtn,setSpinBtn] = useState(false)
     description_long: string;
     price: string;
     id: string;
+    valuteToShow: string;
 }
 
 
@@ -83,8 +85,11 @@ const [spinBtn,setSpinBtn] = useState(false)
           //   @ts-ignore
           params: {
             id: itemid,
+            tlgid: tlgid
           },
         });
+
+        console.log('GOOD',good)
 
         
 
@@ -95,7 +100,8 @@ const [spinBtn,setSpinBtn] = useState(false)
           img: `${domen}${good.data.file.url}`,
           id: good.data._id,
           type: good.data.type,
-          price: good.data.price_eu,
+          price: good.data.priceToShow,
+          valuteToShow: good.data.valuteToShow
         };
 
         console.log('goodToRender=', goodToRender);
@@ -174,7 +180,7 @@ function snakHandler(){
         <img src={goodInfo?.img || ''} className={styles.img} />
 
         
-        <Cell subtitle={goodInfo?.description_short} after={goodInfo?.price}>
+        <Cell subtitle={goodInfo?.description_short} after={`${goodInfo?.price} ${goodInfo?.valuteToShow}`}>
           
           {goodInfo?.name}
         </Cell>
@@ -214,7 +220,7 @@ function snakHandler(){
 
       {openSnakbar && (
         <Snackbar duration={1200} onClose={snakHandler}>
-          Товар добавлен
+          {itemAdded}
         </Snackbar>
       )}
 

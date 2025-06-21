@@ -59,7 +59,7 @@ export const CatalogPage: FC = () => {
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const {addToCartT} = TEXTS[language];
+  const {addToCartT,itemAdded} = TEXTS[language];
 
 
   if (settingsButton.mount.isAvailable()) {
@@ -81,7 +81,11 @@ export const CatalogPage: FC = () => {
     const fetchGoodsTypesInfo = async () => {
       try {
         const types = await axios.get('/user_get_goodsstype');
-        const goods = await axios.get('/user_get_goods');
+        const goods = await axios.get('/user_get_goods', {
+          params: {tlgid: tlgid}
+        });
+
+        console.log('GOODS',goods)
 
         //@ts-ignore
         const arrayTemp = types.data.map((item) => ({
@@ -112,7 +116,8 @@ export const CatalogPage: FC = () => {
           // img: item.img,
           id: item._id,
           type: item.type,
-          price: item.price_eu,
+          price: item.priceToShow,
+          valuteToShow:item.valuteToShow
         }));
 
         setAllGoods(arrayGoodsForRender);
@@ -266,7 +271,7 @@ export const CatalogPage: FC = () => {
                     <Cell readOnly subtitle={item.description_short}>
                       {item.name}
                     </Cell>
-                    <Cell>{item.price} euro</Cell>
+                    <Cell>{item.price} {item.valuteToShow}</Cell>
 
                     <div className={styles.divAddBtn}>
                       <Button
@@ -308,7 +313,7 @@ export const CatalogPage: FC = () => {
 
       {openSnakbar && (
         <Snackbar duration={1200} onClose={snakHandler}>
-          Товар добавлен
+          {itemAdded}
         </Snackbar>
       )}
       </>)}
