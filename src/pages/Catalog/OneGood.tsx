@@ -2,8 +2,6 @@ import {
   Cell,
   List,
   Button,
-  Badge,
-  ButtonCell,
   Snackbar,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
@@ -32,9 +30,7 @@ import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
-import { Icon28Close } from '@telegram-apps/telegram-ui/dist/icons/28/close';
 // import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
-import { Icon32ProfileColoredSquare } from '@telegram-apps/telegram-ui/dist/icons/32/profile_colored_square';
 
 import styles from './catalog.module.css';
 // import { TEXTS } from './texts.ts';
@@ -54,10 +50,24 @@ export const OneGood: FC = () => {
   const location = useLocation();
   const { itemid } = location.state || {};
 
-  const [goodInfo, setGoodInfo] = useState({});
+  // const [goodInfo, setGoodInfo] = useState({});
+  const [goodInfo, setGoodInfo] = useState<GoodInfo | null>(null);
   const [openSnakbar, setOpenSnakbar] = useState(false);
 
   const domen = import.meta.env.VITE_DOMEN;
+
+
+
+    interface GoodInfo {
+  img: string;
+    name: string;
+    description_short: string;
+    description_long: string;
+    price: string;
+    id: string;
+}
+
+
 
   // получить товар по id
   useEffect(() => {
@@ -70,11 +80,7 @@ export const OneGood: FC = () => {
           },
         });
 
-        // interface IGoodRender {
-        //   name: String;
-        //   description_short: String;
-        //   description_long: String;
-        // }
+        
 
         const goodToRender = {
           name: good.data[`name_${language}`],
@@ -103,6 +109,7 @@ export const OneGood: FC = () => {
     fetchGoodsTypesInfo();
   }, []);
 
+  //@ts-ignore
   async function addToCartHandler(goodId) {
     try {
       const response = await axios.post('/user_add_good_tocart', {
@@ -126,13 +133,22 @@ export const OneGood: FC = () => {
     }
   }
 
+
+
+
+
+
+
   return (
     <Page back={true}>
       <List>
-        <img src={goodInfo.img} className={styles.img} />
+        
+        <img src={goodInfo?.img || ''} className={styles.img} />
 
-        <Cell subtitle={goodInfo.description_short} after={goodInfo.price}>
-          {goodInfo.name}
+        
+        <Cell subtitle={goodInfo?.description_short} after={goodInfo?.price}>
+          
+          {goodInfo?.name}
         </Cell>
 
         {/* <Cell>
@@ -152,15 +168,16 @@ export const OneGood: FC = () => {
             before={<Icon28AddCircle />}
             mode="filled"
             size="m"
-            onClick={() => addToCartHandler(goodInfo.id)}
+            
+            onClick={() => addToCartHandler(goodInfo?.id)}
             stretched
             style={{width:'90%',alignItems:'center', marginLeft:24}}
           >
             Добавить в корзину
           </Button>
         
-
-        <Cell multiline>{goodInfo.description_long}</Cell>
+    
+        <Cell multiline>{goodInfo?.description_long}</Cell>
       </List>
 
       {openSnakbar && (

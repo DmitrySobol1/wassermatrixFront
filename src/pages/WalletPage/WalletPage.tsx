@@ -21,7 +21,7 @@ import { useLocation } from 'react-router-dom';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
-import { useTlgid } from '../../components/Tlgid';
+// import { useTlgid } from '../../components/Tlgid';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';

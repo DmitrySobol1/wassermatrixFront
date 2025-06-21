@@ -4,20 +4,18 @@ import {
   List,
   ButtonCell,
   Image,
-  IconButton,
   Text,
-  Title,
   Snackbar,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import React from 'react';
+// import React from 'react';
 import axios from '../../axios';
 
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
-import { LanguageContext } from '../../components/App.tsx';
+// import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 
@@ -25,8 +23,7 @@ import { LanguageContext } from '../../components/App.tsx';
 
 // import { settingsButton } from '@telegram-apps/sdk-react';
 
-import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
-import { Icon28Close } from '@telegram-apps/telegram-ui/dist/icons/28/close';
+
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -48,13 +45,11 @@ export const Cart: FC = () => {
   // const tlgid = useTlgid();
   const tlgid = 412697670;
 
-  const { language } = useContext(LanguageContext);
+  // const { language } = useContext(LanguageContext);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
-  const [allGoods, setAllGoods] = useState([]);
-  const [arrayGoodsForRender, setArrayGoodsForRender] = useState([]);
+  
   const [cart, setCart] = useState([]);
   const [totalInfo, setTotalInfo] = useState({});
   const [openSnakbar, setOpenSnakbar] = useState(false);
@@ -132,6 +127,7 @@ export const Cart: FC = () => {
   //   setArrayGoodsForRender(newArray);
   // }
 
+  //@ts-ignore
   async function cartButtonsHandler(goodId, action) {
     try {
       const response = await axios.post('/user_add_good_tocart', {
@@ -175,12 +171,16 @@ export const Cart: FC = () => {
           <>
             <Section>
               <Cell
+              //@ts-ignore
                 subtitle={`${item.qty} шт.`}
+                //@ts-ignore
                 before={<Image size={96} src={`${domen}${item.img}`} />}
                 style={{ paddingTop: 15 }}
+                //@ts-ignore
                 after={`${item.totalpriceItem} евро`}
               >
-                {' '}
+                
+                 //@ts-ignore
                 {item.name_ru}
               </Cell>
               {/* <ButtonCell before={<Icon28AddCircle />}> */}
@@ -242,9 +242,11 @@ export const Cart: FC = () => {
 
         <Section>
            <Cell
+            //@ts-ignore
                 subtitle={`${totalInfo.totalQty} шт.`}
                 // before={<Image size={96} src={`${domen}${item.img}`} />}
                 style={{ paddingTop: 15 }}
+                 //@ts-ignore
                 after=<Text weight='2'>{`${totalInfo.totalPriceCart} евро`}</Text>
               >
                 {' '}
