@@ -206,8 +206,9 @@ export const CatalogPage: FC = () => {
     <Page back={false}>
       <List>
        
+       {/* background: 'var(--tgui--primary_bg_color)'}} */}
 
-        <Section>
+        {/* <Section style={{paddingTop:15, background: 'var(--tgui--primary_bg_color)'}}>
           <div className={styles.filterContainer}>
             {arrayTypesForRender.map((type: any) => (
               <div
@@ -221,9 +222,25 @@ export const CatalogPage: FC = () => {
               </div>
             ))}
           </div>
-        </Section>
+        </Section> */}
 
         <Section style={{ marginBottom: 100 }}>
+
+             <div className={styles.filterContainer}>
+            {arrayTypesForRender.map((type: any) => (
+              <div
+                key={type.id} // Добавляем key для React
+                className={`${styles.filterItem} ${
+                  activeTypeId === type.id ? styles.active : ''
+                }`}
+                onClick={() => typePressedHandler(type.id)}
+              >
+                {type.name}
+              </div>
+            ))}
+          </div>
+
+
           {arrayGoodsForRender.map((item: any) => (
             <>
               <div className={styles.divCard}>

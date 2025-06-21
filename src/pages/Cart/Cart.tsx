@@ -169,7 +169,7 @@ export const Cart: FC = () => {
 
         {cart.map((item:any) => (
           <>
-            <Section>
+            <Section >
               <Cell
               //@ts-ignore
                 subtitle={`${item.qty} шт.`}
