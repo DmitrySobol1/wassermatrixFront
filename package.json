@@ -1,9 +1,9 @@
 {
-  "name": "reactjs-template",
+  "name": "wassermattixshop",
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://DmitrySobol1.github.io/wolfWalletFront",
+  "homepage": "https://DmitrySobol1.github.io/wassermattixshop",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
