@@ -23,7 +23,11 @@ import { useEffect, useState } from 'react';
 
 // import { settingsButton } from '@telegram-apps/sdk-react';
 
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+// import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -193,8 +197,9 @@ export const Cart: FC = () => {
                   //   </Title>
                   // </IconButton>
                   <Image size={24}>
-                      <Text weight="1">+</Text>
-                    </Image>
+                      {/* <Text weight="1">+</Text> */}
+                      {<AddCircleOutlineIcon/>}
+                  </Image>
                 }
                 //@ts-ignore
                 onClick={() => cartButtonsHandler(item.itemId, 'plus')}
@@ -210,7 +215,8 @@ export const Cart: FC = () => {
                   //   </Title>
                   // </IconButton>
                    <Image size={24}>
-                      <Text weight="1">-</Text>
+                      {/* <Text weight="1">-</Text> */}
+                      {<RemoveCircleOutlineIcon/>}
                     </Image>
                 }
                 //@ts-ignore
@@ -222,7 +228,7 @@ export const Cart: FC = () => {
                 before={
                   
                     <Image size={24}>
-                      x
+                      {<DeleteOutlineIcon/>}
                     </Image>
                  
                   // <IconButton mode="bezeled" size="m">
