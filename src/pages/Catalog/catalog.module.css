@@ -1,0 +1,41 @@
+.img {
+    width: 100%;
+}
+
+
+
+
+.filterContainer {
+  display: flex;
+  max-width: 400px; /* Максимальная ширина */
+  overflow-x: auto; /* Горизонтальный скролл при необходимости */
+  gap: 8px; /* Отступ между кнопками */
+  padding: 8px 0; /* Небольшой отступ сверху и снизу */
+  
+  /* Скрываем стандартный скроллбар для красоты (опционально) */
+  scrollbar-width: none; /* Для Firefox */
+  -ms-overflow-style: none; /* Для IE и Edge */
+}
+
+.filterContainer::-webkit-scrollbar {
+  display: none; /* Для Chrome, Safari и Opera */
+}
+
+.filterbtn {
+  flex: 0 0 auto; /* Запрещаем кнопкам сжиматься/растягиваться */
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap; /* Текст не переносится */
+}
+
+/* Стили для hover и active состояний */
+.filterbtn:hover {
+  background-color: #e0e0e0;
+}
+
+.filterbtn:active {
+  background-color: #d0d0d0;
+}

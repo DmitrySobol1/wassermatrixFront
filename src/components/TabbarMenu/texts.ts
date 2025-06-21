@@ -1,18 +1,18 @@
 export const TEXTS = {
   ru: {
-    firstTab: 'Кошелек',
-    secondTab: 'Обмен',
-    thirdTab: 'Что-то',
+    firstTab: 'Каталог',
+    secondTab: 'Корзина',
+    thirdTab: 'Кабинет',
     
   },
   en: {
-    firstTab: 'Wallet',
-    secondTab: 'Exchange',
-    thirdTab: 'Something',
+    firstTab: 'Catalog',
+    secondTab: 'Cart',
+    thirdTab: 'Account',
   },
   de: {
-     firstTab: 'Brieftasche',
-    secondTab: 'Austausch',
-    thirdTab: 'Etwas',
+     firstTab: 'Katalog',
+    secondTab: 'Wagen',
+    thirdTab: 'Konto',
   },
 };

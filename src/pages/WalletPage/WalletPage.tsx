@@ -81,7 +81,10 @@ export const WalletPage: FC = () => {
     settingsButton.onClick(listener);
   }
 
-  const tlgid = useTlgid();
+
+  //FIXME: 
+  // const tlgid = useTlgid();
+  const tlgid = 412697670
 
   // для вывода баланса, языка, валюты
   useEffect(() => {

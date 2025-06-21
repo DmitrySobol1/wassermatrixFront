@@ -1,6 +1,6 @@
 export const TEXTS = {
   ru: {
-    title: 'О приложении',
+    title: 'О магазине',
     textPage1: 'Здесь добавить какой-то текст 1',
     textPage2: 'Здесь добавить какой-то текст 2',
     textPage3: 'Здесь добавить какой-то текст 3',
@@ -8,14 +8,14 @@ export const TEXTS = {
     
   },
   en: {
-    title: 'About application',
+    title: 'About Shop',
     textPage1: 'Some text here 1',
     textPage2: 'Some text here 2',
     textPage3: 'Some text here 3',
     nextBtn: 'Next',
   },
   de: {
-    title: 'Über die Anwendung',
+    title: 'Über den shop',
     textPage1: 'Hier etwas Text 1',
     textPage2: 'Hier etwas Text 2',
     textPage3: 'Hier etwas Text 3',

@@ -1,21 +1,11 @@
 import type { ComponentType, JSX } from 'react';
 
-import { WalletPage } from '@/pages/WalletPage/WalletPage';
-import { PayIn } from '@/pages/PayIn/PayIn';
-import { PayInAdress } from '@/pages/PayIn/PayInAdress';
-import { Payout1_listOfAvailable } from '@/pages/PayOut/Payout1_listOfAvailable';
-import { Payout2_writeAdress } from '@/pages/PayOut/Payout2_writeAdress';
-import { Payout3_showComission } from '@/pages/PayOut/Payout3_showComission';
-import { Payout4_success } from '@/pages/PayOut/Payout4_success';
-import { Transfer1_listOfAvailable } from '@/pages/TransferPage/Transfer1_listOfAvailable';
-import { Transfer2_writeSumAndUser } from '@/pages/TransferPage/Transfer2_writeSumAndUser';
-import { Transfer3_Confirm } from '@/pages/TransferPage/Transfer3_Confirm';
-import { Transfer4_success } from '@/pages/TransferPage/Transfer4_success';
-import { Exchange1_SetSum } from '@/pages/Exchange/Exchange1_SetSum';
-import { Exchange2_ShowAvailableCoins } from '@/pages/Exchange/Exchange2_ShowAvailableCoins';
-import { Exchange3_Confirm } from '@/pages/Exchange/Exchange3_Confirm';
-import { Exchange4_Success} from '@/pages/Exchange/Exchange4_Success';
-import { EnterPage } from '@/pages/EnterPage/EnterPage.tsx';
+
+import { EnterPage } from '@/pages/EnterPage/EnterPage';
+import { CatalogPage } from '@/pages/Catalog/Catalog';
+import { OneGood } from '@/pages/Catalog/OneGood';
+import { Cart } from '@/pages/Cart/Cart';
+
 
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
 import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
@@ -33,24 +23,14 @@ interface Route {
 
 export const routes: Route[] = [
   { path: '/', Component: EnterPage },
-  // { path: '/enter-page', Component: EnterPage },
   { path: '/onboarding', Component: Onboarding, title: 'Onboarding' },
-  { path: '/wallet-page', Component: WalletPage },
-  { path: '/payin-page', Component: PayIn },
-  { path: '/payin_adress-page', Component: PayInAdress },
-  { path: '/payout_1availablelist-page', Component: Payout1_listOfAvailable },
-  { path: '/payout_2writeadress-page', Component: Payout2_writeAdress },
-  { path: '/payout_3showcomission-page', Component: Payout3_showComission },
-  { path: '/payout_4success-page', Component: Payout4_success },
-  { path: '/transfer_1availablelist-page', Component: Transfer1_listOfAvailable },
-  { path: '/transfer_2writetrtinfo-page', Component: Transfer2_writeSumAndUser},
-  { path: '/transfer_3confirm-page', Component: Transfer3_Confirm},
-  { path: '/transfer_4success-page', Component: Transfer4_success},
-  { path: '/exchange_1setsum-page', Component: Exchange1_SetSum},
-  { path: '/exchange_2showavailable-page', Component: Exchange2_ShowAvailableCoins},
-  { path: '/exchange_3confirm-page', Component: Exchange3_Confirm},
-  { path: '/exchange_4success-page', Component: Exchange4_Success},
-
+  
+  
+  //SHOP PAGES
+  { path: '/catalog-page', Component: CatalogPage},
+  { path: '/onegood-page', Component: OneGood},
+  
+  { path: '/cart-page', Component: Cart},
 
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },

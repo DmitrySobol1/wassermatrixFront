@@ -36,14 +36,14 @@ export const TabbarMenu: FC = () => {
       id: 1,
       text: firstTab,
       Icon: Icon28Devices,
-      path: '/wallet-page'
+      path: '/catalog-page'
       
     },
     {
       id: 2,
       text: secondTab,
       Icon: Icon28Stats,
-      path: '/exchange_1setsum-page'
+      path: '/cart-page'
     },
     {
       id: 3,
@@ -95,3 +95,5 @@ export const TabbarMenu: FC = () => {
     </Tabbar>
   );
 };
+
+

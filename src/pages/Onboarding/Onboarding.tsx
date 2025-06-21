@@ -61,7 +61,7 @@ const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
   function mainBtnListener() {
     setStep(step + 1);
     if (step == 3) {
-      navigate('/roadmap');
+      navigate('/catalog-page');
     }
   }
 
