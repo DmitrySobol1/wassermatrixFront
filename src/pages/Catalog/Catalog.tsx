@@ -32,7 +32,7 @@ import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 
-import styles from './catalog.module.css';
+// import styles from './catalog.module.css';
 // import { TEXTS } from './texts.ts';
 
 // import payin from '../../img/payin.png';
@@ -51,7 +51,7 @@ export const CatalogPage: FC = () => {
   const [arrayTypesForRender, setArrayTypesForRender] = useState([]);
   const [allGoods, setAllGoods] = useState([]);
   const [arrayGoodsForRender, setArrayGoodsForRender] = useState([]);
-  const [cart, setCart] = useState([]);
+  // const [cart, setCart] = useState([]);
   const [openSnakbar, setOpenSnakbar] = useState(false);
 
   const domen = import.meta.env.VITE_DOMEN;
@@ -77,6 +77,7 @@ export const CatalogPage: FC = () => {
 
         //@ts-ignore
         const arrayTypesForRender = [
+          //@ts-ignore
           { name: allElement[language], id: 1 },
           ...arrayTemp,
         ];
@@ -119,9 +120,10 @@ export const CatalogPage: FC = () => {
     });
   }
 
-  function addBtnHandler(e: any) {
-    console.log('add btn Pressed', e.target);
-  }
+
+  // function addBtnHandler(e: any) {
+  //   console.log('add btn Pressed', e.target);
+  // }
 
   //   function typePressedHandler(typeId: string) {
   //   console.log('You choose type:', typeId);
@@ -173,6 +175,7 @@ export const CatalogPage: FC = () => {
 
   // }
 
+  //@ts-ignore
   async function addToCartHandler(goodId) {
     try {
       const response = await axios.post('/user_add_good_tocart', {
