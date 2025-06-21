@@ -167,7 +167,7 @@ export const Cart: FC = () => {
       <List>
         
 
-        {cart.map((item) => (
+        {cart.map((item:any) => (
           <>
             <Section>
               <Cell
@@ -180,7 +180,7 @@ export const Cart: FC = () => {
                 after={`${item.totalpriceItem} евро`}
               >
                 
-                 //@ts-ignore
+                 
                 {item.name_ru}
               </Cell>
               {/* <ButtonCell before={<Icon28AddCircle />}> */}
