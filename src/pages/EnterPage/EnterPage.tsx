@@ -1,7 +1,7 @@
-import { Section, List, Cell} from '@telegram-apps/telegram-ui';
+import { Section, List} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useEffect,useContext, useState} from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { useEffect,useContext} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import axios from '../../axios';
 
@@ -20,14 +20,14 @@ import {useMemo } from 'react';
 
 
 export const EnterPage: FC = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   
    
 
     const { setLanguage } = useContext(LanguageContext);
     const { setValute } = useContext(ValuteContext);
 
-    const [jbid, setJbid]=useState('')
+    // const [jbid, setJbid]=useState('')
   
    //FIXME:
   // const tlgid = useTlgid();
@@ -37,6 +37,7 @@ export const EnterPage: FC = () => {
 
 
 const lp = useMemo(() => retrieveLaunchParams(), []);
+
 {/* <DisplayData>
   { title: 'tgWebAppStartParam', value: lp.tgWebAppStartParam },
 </DisplayData> */}
@@ -47,24 +48,24 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
   // для рендера
   useEffect(() => {
     //@ts-ignore
-    setJbid(lp.tgWebAppStartParam)
+    // setJbid(lp.tgWebAppStartParam)
 
     axios
       .post('/enter', {
         tlgid: tlgid,
-        jbid: jbid
+        jbid: lp.tgWebAppStartParam
       })
       .then((response) => {
         if (response.data.userData.result === 'showOnboarding') {
           
           // const nowpaymentid = response.data.userData.nowpaymentid;
-          console.log('showOnboarding');
-          // navigate('/onboarding');
+          // console.log('showOnboarding');
+          navigate('/onboarding');
         } else if (response.data.userData.result === 'showCatalogPage') {
-          console.log(response.data.userData);
+          // console.log(response.data.userData);
           setLanguage(response.data.userData.language)
           setValute(response.data.userData.valute)
-          // navigate('/catalog-page')  
+          navigate('/catalog-page')  
         }
       })
       .catch((error) => {
@@ -80,7 +81,7 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
     <Page>
       <List>
         <Section>EnterPage</Section>
-        <Cell>jbid = {jbid} </Cell>
+        {/* <Cell>jbid = {jbid} </Cell> */}
       </List>
     </Page>
   );
