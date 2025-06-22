@@ -41,11 +41,13 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
   { title: 'tgWebAppStartParam', value: lp.tgWebAppStartParam },
 </DisplayData> */}
 
-//@ts-ignore
-setJbid(lp.tgWebAppStartParam)
+
+
 
   // для рендера
   useEffect(() => {
+    //@ts-ignore
+    setJbid(lp.tgWebAppStartParam)
 
     axios
       .post('/enter', {
