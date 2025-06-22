@@ -1,7 +1,7 @@
-import { Section, List } from '@telegram-apps/telegram-ui';
+import { Section, List, Cell} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useEffect,useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect,useContext, useState} from 'react';
+// import { useNavigate } from 'react-router-dom';
 
 import axios from '../../axios';
 
@@ -20,22 +20,29 @@ import {useMemo } from 'react';
 
 
 export const EnterPage: FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   
    
 
     const { setLanguage } = useContext(LanguageContext);
-      const { setValute } = useContext(ValuteContext);
+    const { setValute } = useContext(ValuteContext);
+
+    const [jbid, setJbid]=useState('')
   
    //FIXME:
   // const tlgid = useTlgid();
   // const tlgid = 412697670;
   const tlgid = 777;
 
+
+
 const lp = useMemo(() => retrieveLaunchParams(), []);
 {/* <DisplayData>
   { title: 'tgWebAppStartParam', value: lp.tgWebAppStartParam },
 </DisplayData> */}
+
+//@ts-ignore
+setJbid(lp.tgWebAppStartParam)
 
   // для рендера
   useEffect(() => {
@@ -43,27 +50,19 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
     axios
       .post('/enter', {
         tlgid: tlgid,
-        jbid: lp.tgWebAppStartParam
+        jbid: jbid
       })
       .then((response) => {
         if (response.data.userData.result === 'showOnboarding') {
-          console.log('showOnboarding');
-
+          
           // const nowpaymentid = response.data.userData.nowpaymentid;
-
-          navigate('/onboarding', 
-          //   {
-          //   state: {
-          //     nowpaymentid: nowpaymentid,
-          //   },
-          // }
-        );
+          console.log('showOnboarding');
           // navigate('/onboarding');
         } else if (response.data.userData.result === 'showCatalogPage') {
           console.log(response.data.userData);
           setLanguage(response.data.userData.language)
           setValute(response.data.userData.valute)
-          navigate('/catalog-page')  
+          // navigate('/catalog-page')  
         }
       })
       .catch((error) => {
@@ -79,6 +78,7 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
     <Page>
       <List>
         <Section>EnterPage</Section>
+        <Cell>jbid = {jbid} </Cell>
       </List>
     </Page>
   );
