@@ -35,11 +35,11 @@ export const routes: Route[] = [
   { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },
 
   
+  { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
   
   
   { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
   { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
-  { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
 
   {
     path: '/ton-connect',

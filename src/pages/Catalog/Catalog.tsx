@@ -41,7 +41,8 @@ import { TEXTS } from './texts.ts';
 export const CatalogPage: FC = () => {
   //FIXME:
   // const tlgid = useTlgid();
-  const tlgid = 412697670;
+  // const tlgid = 412697670;
+  const tlgid = 777;
 
   const { language } = useContext(LanguageContext);
 

@@ -53,7 +53,8 @@ export const TabbarMenu: FC = () => {
       id: 3,
       text: thirdTab,
       Icon: PersonIcon,
-      path: '/onboarding'
+      // path: '/onboarding'
+      path: '/launch-params'
     },
   ];
 
