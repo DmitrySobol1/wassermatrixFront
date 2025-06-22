@@ -13,6 +13,12 @@ import { ValuteContext } from '../../components/App.tsx';
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 
+
+import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
+import {useMemo } from 'react';
+// import { DisplayData } from '@/components/DisplayData/DisplayData.tsx';
+
+
 export const EnterPage: FC = () => {
   const navigate = useNavigate();
   
@@ -26,12 +32,18 @@ export const EnterPage: FC = () => {
   // const tlgid = 412697670;
   const tlgid = 777;
 
+const lp = useMemo(() => retrieveLaunchParams(), []);
+{/* <DisplayData>
+  { title: 'tgWebAppStartParam', value: lp.tgWebAppStartParam },
+</DisplayData> */}
+
   // для рендера
   useEffect(() => {
 
     axios
       .post('/enter', {
         tlgid: tlgid,
+        jbid: lp.tgWebAppStartParam
       })
       .then((response) => {
         if (response.data.userData.result === 'showOnboarding') {
