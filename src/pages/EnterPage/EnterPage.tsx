@@ -31,8 +31,8 @@ export const EnterPage: FC = () => {
   
    //FIXME:
   // const tlgid = useTlgid();
-  // const tlgid = 412697670;
-  const tlgid = 777;
+  const tlgid = 412697670;
+  // const tlgid = 777;
 
 
 
