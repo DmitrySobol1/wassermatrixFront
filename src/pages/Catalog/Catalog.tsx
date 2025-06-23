@@ -254,7 +254,7 @@ export const CatalogPage: FC = () => {
           {arrayGoodsForRender.map((item: any) => (
             <>
               <div className={styles.divCard}>
-                <Card type="plain">
+                <Card type="plain" style={{width:'90%'}}>
                   <React.Fragment key=".0">
                     <img
                       alt="image"
@@ -262,14 +262,14 @@ export const CatalogPage: FC = () => {
                       src={item.img}
                       style={{
                         display: 'block',
-                        height: 200,
+                        height: 300,
                         objectFit: 'cover',
-                        width: 300,
+                        width: '100%',
                       }}
                       onClick={(e) => cardPressedHandler(e)}
                     />
 
-                    <Cell readOnly subtitle={item.description_short}>
+                    <Cell readOnly multiline subtitle={item.description_short}>
                       {item.name}
                     </Cell>
                     <Cell>{item.price} {item.valuteToShow}</Cell>

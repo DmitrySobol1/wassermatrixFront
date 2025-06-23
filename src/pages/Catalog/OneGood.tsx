@@ -4,7 +4,7 @@ import {
   Button,
   Snackbar,
   Section,
-  Spinner
+  Spinner,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -56,26 +56,23 @@ export const OneGood: FC = () => {
   // const [goodInfo, setGoodInfo] = useState({});
   const [goodInfo, setGoodInfo] = useState<GoodInfo | null>(null);
   const [openSnakbar, setOpenSnakbar] = useState(false);
-const [isLoading, setIsLoading] = useState(true);
-const [spinBtn,setSpinBtn] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [spinBtn, setSpinBtn] = useState(false);
 
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-    const {addToCartT,itemAdded} = TEXTS[language];
+  const { addToCartT, itemAdded } = TEXTS[language];
 
-
-    interface GoodInfo {
-  img: string;
+  interface GoodInfo {
+    img: string;
     name: string;
     description_short: string;
     description_long: string;
     price: string;
     id: string;
     valuteToShow: string;
-}
-
-
+  }
 
   // получить товар по id
   useEffect(() => {
@@ -85,13 +82,11 @@ const [spinBtn,setSpinBtn] = useState(false)
           //   @ts-ignore
           params: {
             id: itemid,
-            tlgid: tlgid
+            tlgid: tlgid,
           },
         });
 
-        console.log('GOOD',good)
-
-        
+        console.log('GOOD', good);
 
         const goodToRender = {
           name: good.data[`name_${language}`],
@@ -101,14 +96,14 @@ const [spinBtn,setSpinBtn] = useState(false)
           id: good.data._id,
           type: good.data.type,
           price: good.data.priceToShow,
-          valuteToShow: good.data.valuteToShow
+          valuteToShow: good.data.valuteToShow,
         };
 
         console.log('goodToRender=', goodToRender);
 
         //   @ts-ignore
         setGoodInfo(goodToRender);
-        setIsLoading(false)
+        setIsLoading(false);
 
         console.log('goodToRender', goodToRender);
       } catch (error) {
@@ -124,7 +119,7 @@ const [spinBtn,setSpinBtn] = useState(false)
 
   //@ts-ignore
   async function addToCartHandler(goodId) {
-    setSpinBtn(true)
+    setSpinBtn(true);
     try {
       const response = await axios.post('/user_add_good_tocart', {
         userid: tlgid,
@@ -147,45 +142,40 @@ const [spinBtn,setSpinBtn] = useState(false)
     }
   }
 
-
-function snakHandler(){
-  setOpenSnakbar(false)
-  setSpinBtn(false)
-}
-
-
-
+  function snakHandler() {
+    setOpenSnakbar(false);
+    setSpinBtn(false);
+  }
 
   return (
     <Page back={true}>
+      {isLoading && (
+        <div
+          style={{
+            textAlign: 'center',
+            justifyContent: 'center',
+            padding: '100px',
+          }}
+        >
+          <Spinner size="m" />
+        </div>
+      )}
 
-       {isLoading && (
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      justifyContent: 'center',
-                      padding: '100px',
-                    }}
-                  >
-                    <Spinner size="m" />
-                  </div>
-                )}
+      {!isLoading && (
+        <>
+          <List>
+            <Section style={{ marginBottom: 100 }}>
+              <img src={goodInfo?.img || ''} className={styles.img} />
 
+              <Cell
+                subtitle={goodInfo?.description_short}
+                after={`${goodInfo?.price}${goodInfo?.valuteToShow}`}
+                multiline
+              >
+                {goodInfo?.name}
+              </Cell>
 
-                {!isLoading && (<>
-      <List>
-
-        <Section style={{ marginBottom: 100 }}>
-        
-        <img src={goodInfo?.img || ''} className={styles.img} />
-
-        
-        <Cell subtitle={goodInfo?.description_short} after={`${goodInfo?.price} ${goodInfo?.valuteToShow}`}>
-          
-          {goodInfo?.name}
-        </Cell>
-
-        {/* <Cell>
+              {/* <Cell>
           <Button
             before={<Icon28AddCircle />}
             mode="filled"
@@ -197,35 +187,34 @@ function snakHandler(){
           </Button>
         </Cell> */}
 
-        
-        <div className={styles.divAddBtn2}>
-          <Button
-            before={<Icon28AddCircle />}
-            mode="filled"
-            size="m"
-            loading={spinBtn}
-            onClick={() => addToCartHandler(goodInfo?.id)}
-            stretched
-            // style={{width:'90%',alignItems:'center', marginLeft:24}}
-            // style={{width:'90%',alignItems:'center', marginLeft:24}}
-          >
-            {addToCartT}
-          </Button>
-        </div>
-    
-        <Cell multiline>{goodInfo?.description_long}</Cell>
-      
-      </Section>
-      </List>
+              <div className={styles.divAddBtn2}>
+                <Button
+                  before={<Icon28AddCircle />}
+                  mode="filled"
+                  size="m"
+                  loading={spinBtn}
+                  onClick={() => addToCartHandler(goodInfo?.id)}
+                  stretched
+                  // style={{width:'90%',alignItems:'center', marginLeft:24}}
+                  // style={{width:'90%',alignItems:'center', marginLeft:24}}
+                >
+                  {addToCartT}
+                </Button>
+              </div>
 
-      {openSnakbar && (
-        <Snackbar duration={1200} onClose={snakHandler}>
-          {itemAdded}
-        </Snackbar>
+              <Cell multiline>{goodInfo?.description_long}</Cell>
+            </Section>
+          </List>
+
+          {openSnakbar && (
+            <Snackbar duration={1200} onClose={snakHandler}>
+              {itemAdded}
+            </Snackbar>
+          )}
+
+          <TabbarMenu />
+        </>
       )}
-
-      <TabbarMenu />
-      </>)}
     </Page>
   );
 };

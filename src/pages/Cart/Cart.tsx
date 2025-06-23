@@ -223,8 +223,9 @@ export const Cart: FC = () => {
                 before={<Image size={96} src={`${domen}${item.img}`} />}
                 style={{ paddingTop: 15 }}
                 //@ts-ignore
-                after={`${item.totalpriceItem} ${item.valuteToShow}`}
+                after={`${item.totalpriceItem}${item.valuteToShow}`}
                 description={`1 ${pcsT} x ${item.priceToShow} ${item.valuteToShow}`}
+                multiline
               >
                 
                  
