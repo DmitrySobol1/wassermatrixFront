@@ -8,7 +8,7 @@ import axios from '../../axios';
 import { LanguageContext } from '../../components/App.tsx';
 import { ValuteContext } from '../../components/App.tsx';
 
-// import { useTlgid } from '../../components/Tlgid';
+import { useTlgid } from '../../components/Tlgid';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
@@ -30,8 +30,8 @@ export const EnterPage: FC = () => {
     // const [jbid, setJbid]=useState('')
   
    //FIXME:
-  // const tlgid = useTlgid();
-  const tlgid = 412697670;
+  const tlgid = useTlgid();
+  // const tlgid = 412697670;
   // const tlgid = 777;
 
 

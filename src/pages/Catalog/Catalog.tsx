@@ -25,7 +25,7 @@ import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
-// import { useTlgid } from '../../components/Tlgid';
+import { useTlgid } from '../../components/Tlgid';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
@@ -40,8 +40,8 @@ import { TEXTS } from './texts.ts';
 
 export const CatalogPage: FC = () => {
   //FIXME:
-  // const tlgid = useTlgid();
-  const tlgid = 412697670;
+  const tlgid = useTlgid();
+  // const tlgid = 412697670;
   // const tlgid = 777;
 
   const { language } = useContext(LanguageContext);
