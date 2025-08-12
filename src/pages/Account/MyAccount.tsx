@@ -1,20 +1,17 @@
 import {
   Section,
   Cell,
-  List,
-  Select,
   Spinner,
-  Snackbar,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTlgid } from '../../components/Tlgid';
+// import { useTlgid } from '../../components/Tlgid';
 
 // import axios from '../../axios';
 
-import { LanguageContext } from '../../components/App';
-import { ValuteContext } from '../../components/App';
+// import { LanguageContext } from '../../components/App';
+// import { ValuteContext } from '../../components/App';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -37,7 +34,7 @@ export const MyAccount: FC = () => {
   //   const [openSnakbar, setOpenSnakbar] = useState(false);
   //   const [textForSnak,setTextForSnak] = useState('')
 
-  const tlgid = useTlgid();
+  // const tlgid = useTlgid();
 
 //   const { language, setLanguage } = useContext(LanguageContext);
   //   const { valute, setValute } = useContext(ValuteContext);

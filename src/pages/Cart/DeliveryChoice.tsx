@@ -6,7 +6,6 @@ import {
   Select,  
   Tappable,
   Input,
-  List,
   Cell,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
@@ -14,26 +13,26 @@ import axios from '../../axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
-import { ValuteContext } from '../../components/App.tsx';
+// import { ValuteContext } from '../../components/App.tsx';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
-import { useTlgid } from '../../components/Tlgid';
+// import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import { Icon24Close } from '@telegram-apps/telegram-ui/dist/icons/24/close';
 // import { count } from 'console';
 
 export const DeliveryChoice: FC = () => {
-  const tlgid = useTlgid();
+  // const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
-  const { valute } = useContext(ValuteContext);
+  // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
 
   const location = useLocation();
   const { cart } = location.state || {}; 
   
-  const [deliveryTypes, setDeliveryTypes] = useState([]);
-  const [selectedDelivery, setSelectedDelivery] = useState(null);
+  // const [deliveryTypes, setDeliveryTypes] = useState([]);
+  // const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -190,7 +189,7 @@ async function countrySelectHandler(e:any){
 
       {!isLoading && (
         <>
-          {console.log('Rendering deliveryTypes:', deliveryTypes, 'Length:', deliveryTypes.length)}
+          {/* {console.log('Rendering deliveryTypes:', deliveryTypes, 'Length:', deliveryTypes.length)} */}
             
               <Section header="Информация по доставке">
                 <Select 

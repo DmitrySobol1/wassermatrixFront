@@ -1,14 +1,14 @@
 import { Section, Button, Text, Cell } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { LanguageContext } from '../../components/App.tsx';
+// import { useContext } from 'react';
+// import { LanguageContext } from '../../components/App.tsx';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 
 export const SuccessPage: FC = () => {
-  const { language } = useContext(LanguageContext);
+  // const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
 
   if (settingsButton.mount.isAvailable()) {
