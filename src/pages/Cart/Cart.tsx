@@ -7,6 +7,8 @@ import {
   Text,
   Snackbar,
   Spinner,
+  Button
+  
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -68,7 +70,7 @@ export const Cart: FC = () => {
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const {plusT,minusT,deleteT,totalT,pcsT,addedT} = TEXTS[language];
+  const {plusT,minusT,deleteT,totalT,pcsT,addedT,nextBtn,itemAdded} = TEXTS[language];
    
  
   if (settingsButton.mount.isAvailable()) {
@@ -216,6 +218,7 @@ export const Cart: FC = () => {
         {cart.map((item:any) => (
           <>
             <Section >
+              
               <Cell
               //@ts-ignore
                 subtitle={`${addedT} ${item.qty} ${pcsT}`}
@@ -293,7 +296,7 @@ export const Cart: FC = () => {
           </>
         ))}
 
-        <Section style={{ marginBottom: 100 }}>
+        <Section >
            <Cell
             //@ts-ignore
                 subtitle={`${totalInfo.totalQty} ${pcsT}`}
@@ -306,11 +309,29 @@ export const Cart: FC = () => {
                 <Text weight='2'>{totalT}</Text>
               </Cell>
         </Section>
+
+        
+      <Section style={{ marginBottom: 100, padding: 10 }}
+      // onClick={()=>navigate('/delivery-choice-page', 
+      //   state: {
+      //       cart: cart
+      //   } )}
+
+        onClick={() => navigate('/delivery-choice-page', {
+            state: {
+                cart: cart
+            }
+        })}
+
+      >
+          <Button stretched>{nextBtn}</Button>
+        </Section>
       </List>
+
 
       {openSnakbar && (
         <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
-          Товар добавлен
+          {itemAdded}
         </Snackbar>
       )}
 

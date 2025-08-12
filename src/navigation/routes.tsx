@@ -5,6 +5,13 @@ import { EnterPage } from '@/pages/EnterPage/EnterPage';
 import { CatalogPage } from '@/pages/Catalog/Catalog';
 import { OneGood } from '@/pages/Catalog/OneGood';
 import { Cart } from '@/pages/Cart/Cart';
+import { DeliveryChoice } from '@/pages/Cart/DeliveryChoice';
+import { PaymentChoice } from '@/pages/Cart/PaymentChoice';
+import { SuccessPage } from '@/pages/Cart/SuccessPage';
+
+import { MyAccount } from '@/pages/Account/MyAccount'
+import { Orders } from '@/pages/Account/Orders';
+
 
 
 import { InitDataPage } from '@/pages/InitDataPage.tsx';
@@ -31,6 +38,13 @@ export const routes: Route[] = [
   { path: '/onegood-page', Component: OneGood},
   
   { path: '/cart-page', Component: Cart},
+  { path: '/delivery-choice-page', Component: DeliveryChoice},
+  { path: '/payment-choice-page', Component: PaymentChoice},
+  { path: '/success-page', Component: SuccessPage},
+  
+  { path: '/myaccount-page', Component: MyAccount},
+  { path: '/myorders-page', Component: Orders},
+  
   
   { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },
 

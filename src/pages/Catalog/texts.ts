@@ -12,6 +12,7 @@ export const TEXTS = {
   },
   de: {
     addToCartT: 'Artikel hinzugefügt',
+    itemAdded: 'Artikel hinzugefügt'
     
   },
 };
