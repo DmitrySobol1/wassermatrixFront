@@ -42,6 +42,8 @@ export const routes: Route[] = [
   { path: '/payment-choice-page', Component: PaymentChoice},
   { path: '/success-page', Component: SuccessPage},
   
+
+
   { path: '/myaccount-page', Component: MyAccount},
   { path: '/myorders-page', Component: Orders},
   

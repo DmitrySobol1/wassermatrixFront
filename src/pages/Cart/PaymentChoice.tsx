@@ -131,7 +131,8 @@ export const PaymentChoice: FC = () => {
         cart: cart,
         deliveryInfo: deliveryInfo,
         totalSum: totalOrderSum,
-        region: deliveryRegion
+        region: deliveryRegion,
+        tlgid: tlgid
       };
 
       console.log('Создаем Stripe Checkout Session:', paymentData);
