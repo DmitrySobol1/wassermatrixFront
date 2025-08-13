@@ -115,6 +115,45 @@ export const PaymentChoice: FC = () => {
     }
   };
 
+  // Обработчик для кнопки "Оплата" - перенаправление на Stripe
+  const handlePayment = async () => {
+    if (!cart || !deliveryInfo) {
+      setSnackbarMessage('Ошибка: отсутствуют данные заказа');
+      setOpenSnackbar(true);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Подготавливаем данные для Stripe Checkout
+      const paymentData = {
+        cart: cart,
+        deliveryInfo: deliveryInfo,
+        totalSum: totalOrderSum,
+        region: deliveryRegion
+      };
+
+      console.log('Создаем Stripe Checkout Session:', paymentData);
+
+      // Отправляем запрос на создание Stripe Checkout Session
+      const response = await axios.post('/create_payment_session', paymentData);
+      
+      if (response.data.status === 'ok') {
+        // Перенаправляем пользователя на Stripe Checkout
+        window.location.href = response.data.url;
+      } else {
+        throw new Error(response.data.message || 'Ошибка при создании сессии оплаты');
+      }
+    } catch (error) {
+      console.error('Ошибка при создании сессии оплаты:', error);
+      setSnackbarMessage('Ошибка при переходе к оплате. Попробуйте еще раз.');
+      setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!cart) {
     return (
       <Page back={true}>
@@ -194,6 +233,14 @@ export const PaymentChoice: FC = () => {
                 disabled={!cart || cart.length === 0}
               >
                 Оформить заказ
+              </Button>
+              
+              <Button 
+                stretched 
+                onClick={handlePayment}
+                disabled={!cart || cart.length === 0}
+              >
+                Оплата
               </Button>
             </Section>
           </List>
