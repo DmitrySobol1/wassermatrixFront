@@ -75,7 +75,7 @@ export const MyAccount: FC = () => {
               after={<Icon16Chevron />}
               onClick={()=> navigate('/setting-button-menu')}
             >
-              Настройки
+              Настройки 
             </Cell>
           </Section>
 

@@ -20,7 +20,7 @@ import { useEffect, useState,useContext } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
-import { ValuteContext } from '../../components/App.tsx';
+// import { ValuteContext } from '../../components/App.tsx';
 
 // import { useLocation } from 'react-router-dom';
 
@@ -54,7 +54,7 @@ export const Cart: FC = () => {
   // const tlgid = 777;
 
   const { language } = useContext(LanguageContext);
-  const { valute } = useContext(ValuteContext);
+  // const { valute } = useContext(ValuteContext);
 
   const navigate = useNavigate();
 
@@ -64,6 +64,8 @@ export const Cart: FC = () => {
   const [openSnakbar, setOpenSnakbar] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showSpin,setShowSpin] = useState(false)
+  const [noCart, setNoCart] = useState(false)
+  const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
 
   // const [cart,setCart] = useState([])
 
@@ -100,9 +102,13 @@ export const Cart: FC = () => {
         });
         console.log('cart', cart);
 
-        // console.log('item=',domen,cart.data.goods[0].img)
+        if (cart.data.goods.length == 0) {
+            setNoCart(true)
+            
+        } 
 
         setCart(cart.data.goods);
+        setValuteToShowOnFront(cart.data.valuteToShow)
         setTotalInfo(cart.data)
         setIsLoading(false)
       } catch (error) {
@@ -210,7 +216,26 @@ export const Cart: FC = () => {
         </div>
       )}
 
-      {!isLoading && <>
+      
+          { noCart && 
+       <>
+       <Section>
+       <Cell>Корзина пустая</Cell>
+       <Section style={{ marginBottom: 100, padding: 10 }}
+        onClick={() => navigate('/catalog-page')}
+
+      >
+          <Button stretched>В каталог</Button>
+        </Section> 
+        </Section>
+        <TabbarMenu />
+       </>
+      }
+
+      {!isLoading && !noCart &&  <>
+
+
+
 
       <List>
         
@@ -303,7 +328,7 @@ export const Cart: FC = () => {
                 // before={<Image size={96} src={`${domen}${item.img}`} />}
                 style={{ paddingTop: 15 }}
                  //@ts-ignore
-                after=<Text weight='2'>{`${totalInfo.totalPriceCart} ${valute}`}</Text>
+                after=<Text weight='2'>{`${totalInfo.totalPriceCart} ${valuteToShowOnFront}`}</Text>
               >
                 {' '}
                 <Text weight='2'>{totalT}</Text>

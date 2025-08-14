@@ -7,6 +7,7 @@ import {
   Tappable,
   Input,
   Cell,
+  Text
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import axios from '../../axios';
@@ -258,13 +259,16 @@ async function countrySelectHandler(e:any){
 
 
            
-<Cell subhead={ 'Стоимость доставки:' }>
-{/* <List> */}
+<Cell>
+  <>
+<Text weight="2" >Стоимость доставки:</Text>
             {cart.map((item: any) => (
-
-                <div key={item.id}>{item[`name_${language}`]} - {Number(item[`deliveryPriceToShow_${region}`]) * Number(item.qty)} {item.valuteToShow} </div>
+                <div key={item.id}>{item[`name_${language}`]} - {(Number(item[`deliveryPriceToShow_${region}`]) * Number(item.qty)).toFixed(2)} {item.valuteToShow} </div>
               ))}
-              {/* </List> */}
+              </>
+              
+              
+              
               </Cell>
 
             

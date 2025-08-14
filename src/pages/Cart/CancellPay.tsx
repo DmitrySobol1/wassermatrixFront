@@ -7,7 +7,7 @@ import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 
-export const SuccessPage: FC = () => {
+export const CancellPay: FC = () => {
   // const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
 
@@ -33,10 +33,10 @@ export const SuccessPage: FC = () => {
     <Page back={false}>
       <Section>
         <Cell>
-          <Text weight="2">Заказ успешно оформлен!</Text>
+          <Text weight="2">Что-то пошло не так!</Text>
         </Cell>
         <Cell multiline>
-          Вы можете следить за информацией по заказу в разделе: аккаунт - заказы
+          Перейдите в раздел "аккаунт &gt; заказы" и оплатите заказ
         </Cell>
 
 
@@ -45,7 +45,7 @@ export const SuccessPage: FC = () => {
          <Section style={{ marginBottom: 100, padding: 10 }}>
 
             <Button stretched onClick={goToCatalog} style={{ marginTop: '20px' }}>
-              Мои заказы
+              В аккаунт &gt; заказы
             </Button>
         </Section>
 

@@ -11,7 +11,7 @@ import type { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
-import { ValuteContext } from '../../components/App.tsx';
+// import { ValuteContext } from '../../components/App.tsx';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
@@ -22,7 +22,7 @@ import axios from '../../axios';
 export const PaymentChoice: FC = () => {
   const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
-  const { valute } = useContext(ValuteContext);
+  // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -32,6 +32,7 @@ export const PaymentChoice: FC = () => {
   const [totalOrderSum, setTotalOrderSum] = useState(0);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
 
   //@ts-ignore
   const { payBtn } = TEXTS[language];
@@ -53,7 +54,11 @@ export const PaymentChoice: FC = () => {
 
   // Вычисляем общую сумму заказа
   useEffect(() => {
+
+    console.log('Cart', cart)
+
     if (cart && cart.length > 0) {
+      setValuteToShowOnFront(cart[0].valuteToShow)
       const total = cart.reduce((sum: number, item: any) => {
         const itemPrice = Number(item.priceToShow) || 0;
         const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
@@ -67,53 +72,53 @@ export const PaymentChoice: FC = () => {
   }, []);
 
 
-  const handleOrder = async () => {
-    if (!cart || !deliveryInfo) {
-      setSnackbarMessage('Ошибка: отсутствуют данные заказа');
-      setOpenSnackbar(true);
-      return;
-    }
+  // const handleOrder = async () => {
+  //   if (!cart || !deliveryInfo) {
+  //     setSnackbarMessage('Ошибка: отсутствуют данные заказа');
+  //     setOpenSnackbar(true);
+  //     return;
+  //   }
 
-    setIsLoading(true);
+  //   setIsLoading(true);
 
-    console.log("HERE", deliveryInfo )
-    // return
+  //   console.log("HERE", deliveryInfo )
+  //   // return
 
-    try {
-      // Подготавливаем данные для заказа
-      const orderData = {
-        tlgid: tlgid,
-        jbid: null,
-        goods: cart.map((item: any) => ({
-          itemId: item.itemId,
-          qty: item.qty
-        })),
-        country: deliveryInfo.selectedCountry.name_en,
-        regionDelivery: deliveryRegion,
-        address: deliveryInfo.address,
-        phone: deliveryInfo.phone,
-        name: deliveryInfo.userName
-      };
+  //   try {
+  //     // Подготавливаем данные для заказа
+  //     const orderData = {
+  //       tlgid: tlgid,
+  //       jbid: null,
+  //       goods: cart.map((item: any) => ({
+  //         itemId: item.itemId,
+  //         qty: item.qty
+  //       })),
+  //       country: deliveryInfo.selectedCountry.name_en,
+  //       regionDelivery: deliveryRegion,
+  //       address: deliveryInfo.address,
+  //       phone: deliveryInfo.phone,
+  //       name: deliveryInfo.userName
+  //     };
 
-      console.log('Отправляем заказ:', orderData);
+  //     console.log('Отправляем заказ:', orderData);
 
-      // Отправляем запрос на создание заказа
-      const response = await axios.post('/create_order', orderData);
+  //     // Отправляем запрос на создание заказа
+  //     const response = await axios.post('/create_order', orderData);
       
-      if (response.data.status === 'ok') {
-        // Переходим на страницу успешного оформления заказа
-        navigate('/success-page');
-      } else {
-        throw new Error(response.data.message || 'Ошибка при создании заказа');
-      }
-    } catch (error) {
-      console.error('Ошибка при создании заказа:', error);
-      setSnackbarMessage('Ошибка при оформлении заказа. Попробуйте еще раз.');
-      setOpenSnackbar(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (response.data.status === 'ok') {
+  //       // Переходим на страницу успешного оформления заказа
+  //       navigate('/success-page');
+  //     } else {
+  //       throw new Error(response.data.message || 'Ошибка при создании заказа');
+  //     }
+  //   } catch (error) {
+  //     console.error('Ошибка при создании заказа:', error);
+  //     setSnackbarMessage('Ошибка при оформлении заказа. Попробуйте еще раз.');
+  //     setOpenSnackbar(true);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // Обработчик для кнопки "Оплата" - перенаправление на Stripe
   const handlePayment = async () => {
@@ -201,40 +206,41 @@ export const PaymentChoice: FC = () => {
                     <div>Стоимость доставки: {deliveryPrice*quantity} {item.valuteToShow}</div>
                     </>
                     }
-                    after={`${totalItemCost} ${item.valuteToShow}`}
+                    // after={`${totalItemCost} ${item.valuteToShow}`}
+                    after={ <Text weight="3">{totalItemCost} {item.valuteToShow}</Text>}
                   >
-                    <Text weight="2">
+                    {/* <Text weight="2"> */}
                       {item[`name_${language}`] || item.name_en}
-                    </Text>
+                    {/* </Text> */}
                   </Cell>
                 );
               })}
             </Section>
 
 
-            <Section header="Итого к оплате">
+            <Section>
               <Cell
               multiline
                 after={
-                  <Text weight="3" style={{ fontSize: '18px', color: '#007AFF' }}>
-                    {totalOrderSum.toFixed(2)} {valute}
+                  <Text weight="2" >
+                    {totalOrderSum.toFixed(2)} {valuteToShowOnFront}
                   </Text>
                 }
               >
-                <Text weight="3" style={{ fontSize: '16px' }}>
-                  Общая стоимость заказа
+                <Text weight="2" >
+                  Итого к оплате
                 </Text>
               </Cell>
             </Section>
 
             <Section style={{ marginBottom: 100, padding: 10 }}>
-              <Button 
+              {/* <Button 
                 stretched 
                 onClick={handleOrder}
                 disabled={!cart || cart.length === 0}
               >
                 Оформить заказ
-              </Button>
+              </Button> */}
               
               <Button 
                 stretched 

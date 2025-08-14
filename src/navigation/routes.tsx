@@ -8,6 +8,7 @@ import { Cart } from '@/pages/Cart/Cart';
 import { DeliveryChoice } from '@/pages/Cart/DeliveryChoice';
 import { PaymentChoice } from '@/pages/Cart/PaymentChoice';
 import { SuccessPage } from '@/pages/Cart/SuccessPage';
+import { CancellPay } from '@/pages/Cart/CancellPay';
 
 import { MyAccount } from '@/pages/Account/MyAccount'
 import { Orders } from '@/pages/Account/Orders';
@@ -41,6 +42,7 @@ export const routes: Route[] = [
   { path: '/delivery-choice-page', Component: DeliveryChoice},
   { path: '/payment-choice-page', Component: PaymentChoice},
   { path: '/success-page', Component: SuccessPage},
+  { path: '/cancellpay-page', Component: CancellPay},
   
 
 
