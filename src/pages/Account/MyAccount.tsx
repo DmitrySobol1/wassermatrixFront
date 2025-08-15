@@ -13,10 +13,12 @@ import { useNavigate } from 'react-router-dom';
 // import { LanguageContext } from '../../components/App';
 // import { ValuteContext } from '../../components/App';
 
+import SettingsIcon from '@mui/icons-material/Settings';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
 import { Page } from '@/components/Page.tsx';
-import { Icon32ProfileColoredSquare } from '@telegram-apps/telegram-ui/dist/icons/32/profile_colored_square';
 import { Icon16Chevron } from '@telegram-apps/telegram-ui/dist/icons/16/chevron';
 
 // import { TEXTS } from './texts.ts';
@@ -63,7 +65,8 @@ export const MyAccount: FC = () => {
         <>
           <Section header="Мой аккаунт">
             <Cell
-              before={<Icon32ProfileColoredSquare />}
+              before={<LocalShippingIcon style={{ color: '#168acd' }} />}
+              // before={<Icon32ProfileColoredSquare />}
               after={<Icon16Chevron />}
               onClick={()=> navigate('/myorders-page')}
             >
@@ -71,7 +74,8 @@ export const MyAccount: FC = () => {
             </Cell>
 
             <Cell
-              before={<Icon32ProfileColoredSquare />}
+              // before={<Icon32ProfileColoredSquare />}
+              before={<SettingsIcon style={{ color: '#168acd' }} />}
               after={<Icon16Chevron />}
               onClick={()=> navigate('/setting-button-menu')}
             >

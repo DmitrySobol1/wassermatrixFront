@@ -21,6 +21,8 @@ import axios from '../../axios';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
+
+
 export const Orders: FC = () => {
   const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
@@ -188,17 +190,15 @@ export const Orders: FC = () => {
                         onChange={() => handleAccordionChange(order._id)}
                       >
                         <AccordionSummary>
-                          <Text weight="2">
-                            Заказ от{' '}
-                            {new Date(order.createdAt).toLocaleDateString(
-                              'ru-RU'
-                            )}{' '}
-                            {order.payStatus === false ? (
-                              <span style={{ color: 'red' }}>(не оплачен)</span>
-                            ) : (
-                              ''
-                            )}
-                          </Text>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                            <Text weight="2">
+                              Заказ от{' '}
+                              {new Date(order.createdAt).toLocaleDateString(
+                                'ru-RU'
+                              )}
+                            </Text>
+                           
+                          </div>
                         </AccordionSummary>
                         <AccordionContent>
                           <Cell subhead="Текущий статус заказа">
@@ -207,7 +207,14 @@ export const Orders: FC = () => {
                                 не оплачен
                               </span>
                             ) : (
-                              order.orderStatus?.[`name_${language}`]
+                              <div>
+                                {order.orderStatus?.[`name_${language}`]}
+                                {order.eta && (
+                                  <div style={{ fontSize: '0.875rem', color: '#000000ff', marginTop: 5 }}>
+                                    ожидаемая дата доставки: {new Date(order.eta).toLocaleDateString('ru-RU')}
+                                  </div>
+                                )}
+                              </div>
                             )}
                           </Cell>
 

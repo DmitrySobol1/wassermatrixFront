@@ -17,14 +17,17 @@ import axios from '../../axios';
 import { LanguageContext } from '../../components/App';
 import { ValuteContext } from '../../components/App';
 
+import LanguageIcon from '@mui/icons-material/Language';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
 import { Page } from '@/components/Page.tsx';
 
 import { TEXTS } from './texts.ts';
 
-import { Icon32ProfileColoredSquare } from '@telegram-apps/telegram-ui/dist/icons/32/profile_colored_square';
-import { Icon16Chevron } from '@telegram-apps/telegram-ui/dist/icons/16/chevron';
 
 export const SettingsButtonMenu: FC = () => {
   const [isShowLanguageSelect, setShowLanguageSelect] = useState(false);
@@ -198,8 +201,8 @@ export const SettingsButtonMenu: FC = () => {
             <Section header={title} style={{marginBottom:100}}>
               <div onClick={showLanguageSelect}>
                 <Cell
-                  before={<Icon32ProfileColoredSquare />}
-                  after={<Icon16Chevron />}
+                  before={<LanguageIcon />}
+                  after={<ExpandMoreIcon />}
                 >
                   {languageT}
                 </Cell>
@@ -219,21 +222,13 @@ export const SettingsButtonMenu: FC = () => {
 
               <div onClick={showValuteSelect}>
                 <Cell
-                  before={<Icon32ProfileColoredSquare />}
-                  after={<Icon16Chevron />}
+                  before={<AccountBalanceIcon />}
+                  after={<ExpandMoreIcon />}
                 >
                   {valuteT}
                 </Cell>
               </div>
 
-              <div onClick={showPersonalSelect}>
-                <Cell
-                  before={<Icon32ProfileColoredSquare />}
-                  after={<Icon16Chevron />}
-                >
-                  {personalT}
-                </Cell>
-              </div>
 
               {isShowValuteSelect && (
                 <Select
@@ -246,6 +241,15 @@ export const SettingsButtonMenu: FC = () => {
                   <option value="$">US Dollar</option>
                 </Select>
               )}
+              
+              <div onClick={showPersonalSelect}>
+                <Cell
+                  before={<PermContactCalendarIcon />}
+                  after={<ExpandMoreIcon />}
+                >
+                  {personalT}
+                </Cell>
+              </div>
               
               {isShowPersonalSelect && (
                 <>
