@@ -4,10 +4,11 @@ import {
   List,
   Select,
   Spinner,
-  Snackbar
+  Snackbar,
+  Input
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import { useTlgid } from '../../components/Tlgid';
 
@@ -28,6 +29,7 @@ import { Icon16Chevron } from '@telegram-apps/telegram-ui/dist/icons/16/chevron'
 export const SettingsButtonMenu: FC = () => {
   const [isShowLanguageSelect, setShowLanguageSelect] = useState(false);
   const [isShowValuteSelect, setShowValuteSelect] = useState(false);
+  const [isShowPersonalSelect, setShowPersonalSelect] = useState(false);
   // const [isLoading, setIsLoading] = useState(false);
   const [isLoading] = useState(false);
   // const [userNPid, setUserNPid] = useState('');
@@ -42,51 +44,94 @@ export const SettingsButtonMenu: FC = () => {
   const [selectedValute, setSelectedValute] = useState(valute);
   const [selectedLanguage, setSelectedLanguage] = useState(language);
 
+  // Состояния для данных пользователя
+  const [userData, setUserData] = useState({
+    name: '',
+    phone: '',
+    adress: ''
+  });
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+
   //FIXME:
   // @ts-ignore
-  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, languageChangedT,valuteChangedT } = TEXTS[language];
+  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, languageChangedT,valuteChangedT, personalT, nameT, phoneT, addressT, setNameT, setPhoneT, setAddressT } = TEXTS[language];
 
-  // получить id юзера
-  // useEffect(() => {
-  //   // TODO: можно пост на гет испправить, т.к. получаем инфо
-
-  //   const fetchUserInfo = async () => {
-  //     try {
-  //       const response = await axios.post('/get_user_id', {
-  //         tlgid: tlgid,
-  //       });
-
-  //       console.log(response.data);
-  //       const nowpaymentid = response.data.nowpaymentid;
-
-  //       if (nowpaymentid != 0) {
-  //         setIdNPexist(true);
-  //         setUserNPid(nowpaymentid);
-          
-  //       } else {
-  //         setIdNPexist(false);
-  //         setUserNPid(noid);
-  //       }
-  //     } catch (error) {
-  //       console.error('Ошибка при выполнении запроса:', error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchUserInfo();
-  // }, []);
 
   function showLanguageSelect() {
     setShowValuteSelect(false);
+    setShowPersonalSelect(false);
     setShowLanguageSelect(!isShowLanguageSelect);
   }
 
   function showValuteSelect() {
     setShowLanguageSelect(false);
+    setShowPersonalSelect(false);
     setShowValuteSelect(!isShowValuteSelect);
   }
+  
+  function showPersonalSelect() {
+    setShowLanguageSelect(false);
+    setShowValuteSelect(false);
+    setShowPersonalSelect(!isShowPersonalSelect);
+  }
 
+  // Загрузка данных пользователя
+  const fetchUserProfile = async () => {
+    if (!tlgid) return;
+    
+    try {
+      setIsLoadingProfile(true);
+      const response = await axios.get(`/user_get_profile?tlgid=${tlgid}`);
+      
+      if (response.data.status === 'ok') {
+        setUserData(response.data.user);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке профиля:', error);
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
+  // Обновление данных пользователя
+  const updateUserProfile = async (field: string, value: string) => {
+    if (!tlgid) return;
+    
+    try {
+      const updateData = {
+        tlgid: tlgid,
+        [field]: value
+      };
+
+      const response = await axios.post('/user_update_profile', updateData);
+      
+      if (response.data.status === 'ok') {
+        setTextForSnak('Данные сохранены');
+        setOpenSnakbar(true);
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении профиля:', error);
+      setTextForSnak('Ошибка при сохранении');
+      setOpenSnakbar(true);
+    }
+  };
+
+  // Обработчики изменения полей
+  const handleInputChange = (field: string, value: string) => {
+    setUserData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleInputBlur = (field: string, value: string) => {
+    updateUserProfile(field, value);
+  };
+
+  // Загружаем данные пользователя при монтировании компонента
+  useEffect(() => {
+    fetchUserProfile();
+  }, [tlgid]);
   
   async function selectLanguageHandler(event: any) {
     setLanguage(event.target.value);
@@ -122,38 +167,7 @@ export const SettingsButtonMenu: FC = () => {
     }
   }
 
-  // const copyAdress = async () => {
-  //   try {
-  //     await navigator.clipboard.writeText(userNPid);
-  //     console.log('copied=', userNPid);
-  //     setShowTextCopied(true);
-
-  //     setTimeout(() => setShowTextCopied(false), 2000);
-  //   } catch (err) {
-  //     console.error('Ошибка: ', err);
-  //   }
-  // };
-
-  // async function create() {
-  //   try {
-  //     setIsLoading(true);
-  //     console.log('start creatin...');
-
-  //     const response = await axios.post('/create_user_NpId', {
-  //       tlgid: tlgid,
-  //     });
-
-  //     console.log('created = ', response);
-  //     setUserNPid(response.data.nowpaymentid);
-  //     setIdNPexist(true);
-  //   } catch (error) {
-  //     console.error('Ошибка при выполнении запроса:', error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
-
-  // const buttonRef = useRef(null);
+ 
 
 
   function snakHandler(){
@@ -179,63 +193,9 @@ export const SettingsButtonMenu: FC = () => {
       {!isLoading && (
         <>
           <List>
-            {/* <Section>
-              
-              <Section>
-                <Cell
-                  before={<Icon32ProfileColoredSquare />}
-                  interactiveAnimation="opacity"
-                  subtitle={purposeid}
-                  multiline
-                >
-                  {yourid}
+            
 
-                  {!idNPexist && (
-                    <span
-                      style={{
-                        color: '#168acd',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {' '}
-                      {userNPid}
-                    </span>
-                  )}
-                  {idNPexist && (
-                    <Tappable
-                      Component="span"
-                      style={{
-                        color: '#168acd',
-                        fontWeight: '600',
-                      }}
-                      onClick={copyAdress}
-                      ref={buttonRef}
-                    >
-                      {' '}
-                      {userNPid}
-                    </Tappable>
-                  )}
-                </Cell>
-
-                {showTextCopied && (
-                  <Tooltip mode="light" targetRef={buttonRef} withArrow={false}>
-                    {copiedtext}
-                  </Tooltip>
-                )}
-
-                {!idNPexist && (
-                  <ButtonCell
-                    before={<Icon28AddCircle />}
-                    interactiveAnimation="background"
-                    onClick={() => create()}
-                  >
-                    {createid}
-                  </ButtonCell>
-                )}
-              </Section>
-            </Section> */}
-
-            <Section header={title}>
+            <Section header={title} style={{marginBottom:100}}>
               <div onClick={showLanguageSelect}>
                 <Cell
                   before={<Icon32ProfileColoredSquare />}
@@ -266,6 +226,15 @@ export const SettingsButtonMenu: FC = () => {
                 </Cell>
               </div>
 
+              <div onClick={showPersonalSelect}>
+                <Cell
+                  before={<Icon32ProfileColoredSquare />}
+                  after={<Icon16Chevron />}
+                >
+                  {personalT}
+                </Cell>
+              </div>
+
               {isShowValuteSelect && (
                 <Select
                   header={valuteTsubtitle}
@@ -277,6 +246,41 @@ export const SettingsButtonMenu: FC = () => {
                   <option value="$">US Dollar</option>
                 </Select>
               )}
+              
+              {isShowPersonalSelect && (
+                <>
+                  {isLoadingProfile ? (
+                    <Cell>
+                      <Spinner size="s" /> Загрузка данных профиля...
+                    </Cell>
+                  ) : (
+                    <>
+                      <Input 
+                        header={nameT}
+                        value={userData.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        onBlur={(e) => handleInputBlur('name', e.target.value)}
+                        placeholder={setNameT}
+                      />
+                      <Input 
+                        header={phoneT}
+                        value={userData.phone}
+                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        onBlur={(e) => handleInputBlur('phone', e.target.value)}
+                        placeholder={setPhoneT}
+                      />
+                      <Input 
+                        header={addressT}
+                        value={userData.adress}
+                        onChange={(e) => handleInputChange('adress', e.target.value)}
+                        onBlur={(e) => handleInputBlur('adress', e.target.value)}
+                        placeholder={setAddressT}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+
             </Section>
           </List>
 

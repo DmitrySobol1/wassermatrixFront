@@ -193,7 +193,7 @@ export const PaymentChoice: FC = () => {
                 const itemPrice = Number(item.priceToShow) || 0;
                 const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
                 const quantity = Number(item.qty) || 0;
-                const totalItemCost = (itemPrice + deliveryPrice) * quantity;
+                const totalItemCost = ((itemPrice + deliveryPrice) * quantity).toFixed(2);
 
                 return (
                   <Cell

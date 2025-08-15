@@ -17,14 +17,14 @@ import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
-// import { useTlgid } from '../../components/Tlgid';
+import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import { Icon24Close } from '@telegram-apps/telegram-ui/dist/icons/24/close';
 // import { count } from 'console';
 
 export const DeliveryChoice: FC = () => {
-  // const tlgid = useTlgid();
+  const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
@@ -42,6 +42,7 @@ export const DeliveryChoice: FC = () => {
   const [userName, setUserName] = useState('')
   const [phone, setPhone] = useState('')
   const [region, setRegion] = useState('de')
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
   //@ts-ignore
   const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn } = TEXTS[language];
@@ -59,6 +60,65 @@ export const DeliveryChoice: FC = () => {
     }
     settingsButton.onClick(listener);
   }
+
+  // Загрузка данных пользователя
+  const fetchUserProfile = async () => {
+    if (!tlgid) return;
+    
+    try {
+      setIsLoadingProfile(true);
+      const response = await axios.get(`/user_get_profile?tlgid=${tlgid}`);
+      
+      if (response.data.status === 'ok') {
+        const user = response.data.user;
+        setUserName(user.name || '');
+        setPhone(user.phone || '');
+        setAdress(user.adress || '');
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке профиля:', error);
+    } finally {
+      setIsLoadingProfile(false);
+    }
+  };
+
+  // Обновление данных пользователя
+  const updateUserProfile = async (field: string, value: string) => {
+    if (!tlgid) return;
+    
+    try {
+      const updateData = {
+        tlgid: tlgid,
+        [field]: value
+      };
+
+      const response = await axios.post('/user_update_profile', updateData);
+      
+      if (response.data.status === 'ok') {
+        console.log('Данные пользователя обновлены');
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении профиля:', error);
+    }
+  };
+
+  // Обработчики для автосохранения
+  const handleNameBlur = (value: string) => {
+    updateUserProfile('name', value);
+  };
+
+  const handlePhoneBlur = (value: string) => {
+    updateUserProfile('phone', value);
+  };
+
+  const handleAddressBlur = (value: string) => {
+    updateUserProfile('adress', value);
+  };
+
+  // Загружаем профиль пользователя при монтировании
+  useEffect(() => {
+    fetchUserProfile();
+  }, [tlgid]);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -176,7 +236,7 @@ async function countrySelectHandler(e:any){
 
   return (
     <Page back={true}>
-      {isLoading && (
+      {isLoading && isLoadingProfile && (
         <div
           style={{
             textAlign: 'center',
@@ -211,10 +271,11 @@ async function countrySelectHandler(e:any){
 
             <Input 
               // status="focused" 
-              header="Adress" 
+              header="Address" 
               placeholder="Write and clean me" 
               value={adress} 
-              onChange={e => setAdress(e.target.value)} 
+              onChange={e => setAdress(e.target.value)}
+              onBlur={e => handleAddressBlur(e.target.value)}
               after={
             <Tappable 
               Component="div" 
@@ -230,7 +291,8 @@ async function countrySelectHandler(e:any){
               header="Name" 
               placeholder="Write and clean me" 
               value={userName} 
-              onChange={e => setUserName(e.target.value)} 
+              onChange={e => setUserName(e.target.value)}
+              onBlur={e => handleNameBlur(e.target.value)}
               after={
             <Tappable 
               Component="div" 
@@ -246,7 +308,8 @@ async function countrySelectHandler(e:any){
               header="Phone" 
               placeholder="Write and clean me" 
               value={phone} 
-              onChange={e => setPhone(e.target.value)} 
+              onChange={e => setPhone(e.target.value)}
+              onBlur={e => handlePhoneBlur(e.target.value)}
               after={
             <Tappable 
               Component="div" 
