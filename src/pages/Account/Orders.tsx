@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
-import { settingsButton } from '@telegram-apps/sdk-react';
+import { settingsButton, openLink } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
@@ -32,9 +32,13 @@ export const Orders: FC = () => {
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [valuteToShowOnFront, setValuteToShowOnFront] = useState('');
+  const [isButtonLoading, setIsButtonLoading] = useState(false)
+  const [isShowReceipt, setIsShowReceipt] = useState(false)
+  const [receiptUrl, setReceiptUrl] = useState('')
 
   // Функция для управления открытием/закрытием аккордеонов
   const handleAccordionChange = (orderId: string) => {
+    setIsShowReceipt(false)
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
 
@@ -101,6 +105,42 @@ export const Orders: FC = () => {
       fetchMyOrders();
     }
   }, [tlgid]);
+
+
+  // Обработчик для кнопки "Чек"
+  const handleReceipt = async (paymentIntent: string) => {
+    setIsButtonLoading(true);
+    
+
+    try {
+      // Отправляем запрос на получение URL чека
+      const response = await axios.get('/get_receipt', {
+        params: { payment_intent: paymentIntent }
+      });
+
+      if (response.data.status === 'ok' && response.data.url) {
+        // Открываем URL чека внутри Telegram Mini App
+        setReceiptUrl(response.data.url)
+        setIsShowReceipt(true)
+        setIsButtonLoading(false);
+        
+        // Используем Telegram API для открытия ссылки
+        if (openLink.isAvailable()) {
+          openLink(response.data.url);
+        } else {
+          // Fallback для разработки вне Telegram
+          window.open(response.data.url);
+        }
+      } else {
+        alert('Чек не найден');
+      }
+    } catch (error) {
+      console.error('Ошибка при получении чека:', error);
+      alert('Ошибка при получении чека');
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
 
   return (
     <Page back={true}>
@@ -171,6 +211,22 @@ export const Orders: FC = () => {
                               order.orderStatus?.[`name_${language}`]
                             )}
                           </Cell>
+
+                          {order.payStatus === true && order.payment_intent && (
+                            <Button 
+                              onClick={() => handleReceipt(order.payment_intent)}
+                              disabled={isButtonLoading}
+                              style={{ marginBottom: 10 }}
+                              loading = {isButtonLoading}
+                            >
+                              Чек
+                            </Button>
+                          )}
+
+                          {isShowReceipt &&
+                            <Cell>ссылка на чек: {receiptUrl} </Cell>
+
+                          }
 
                           {order.payStatus === false && (
                             <Button
