@@ -34,7 +34,6 @@ export const Orders: FC = () => {
   const [valuteToShowOnFront, setValuteToShowOnFront] = useState('');
   const [isButtonLoading, setIsButtonLoading] = useState(false)
   const [isShowReceipt, setIsShowReceipt] = useState(false)
-  const [receiptUrl, setReceiptUrl] = useState('')
 
   // Функция для управления открытием/закрытием аккордеонов
   const handleAccordionChange = (orderId: string) => {
@@ -110,7 +109,6 @@ export const Orders: FC = () => {
   // Обработчик для кнопки "Чек"
   const handleReceipt = async (paymentIntent: string) => {
     setIsButtonLoading(true);
-    
 
     try {
       // Отправляем запрос на получение URL чека
@@ -120,9 +118,9 @@ export const Orders: FC = () => {
 
       if (response.data.status === 'ok' && response.data.url) {
         // Открываем URL чека внутри Telegram Mini App
-        setReceiptUrl(response.data.url)
-        setIsShowReceipt(true)
-        setIsButtonLoading(false);
+        // setReceiptUrl(response.data.url)
+        // setIsShowReceipt(true)
+        // setIsButtonLoading(false);
         
         // Используем Telegram API для открытия ссылки
         if (openLink.isAvailable()) {
@@ -132,11 +130,12 @@ export const Orders: FC = () => {
           window.open(response.data.url);
         }
       } else {
-        alert('Чек не найден');
+        setIsShowReceipt(true)
+        setIsButtonLoading(false);
       }
     } catch (error) {
       console.error('Ошибка при получении чека:', error);
-      alert('Ошибка при получении чека');
+      setIsShowReceipt(true)
     } finally {
       setIsButtonLoading(false);
     }
@@ -212,20 +211,19 @@ export const Orders: FC = () => {
                             )}
                           </Cell>
 
-                          {order.payStatus === true && order.payment_intent && (
-                            <Button 
-                              onClick={() => handleReceipt(order.payment_intent)}
-                              disabled={isButtonLoading}
-                              style={{ marginBottom: 10 }}
-                              loading = {isButtonLoading}
-                            >
-                              Чек
-                            </Button>
+                          {order.payStatus === true && (
+                            <Cell>
+                              <Button 
+                                onClick={() => handleReceipt(order.payment_intent)}
+                                loading = {isButtonLoading}
+                              >
+                                Открыть чек
+                              </Button>
+                            </Cell>
                           )}
 
                           {isShowReceipt &&
-                            <Cell>ссылка на чек: {receiptUrl} </Cell>
-
+                            <Cell multiline>чек не доступен</Cell>
                           }
 
                           {order.payStatus === false && (
