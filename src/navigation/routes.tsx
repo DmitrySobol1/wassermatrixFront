@@ -12,7 +12,7 @@ import { CancellPay } from '@/pages/Cart/CancellPay';
 
 import { MyAccount } from '@/pages/Account/MyAccount'
 import { Orders } from '@/pages/Account/Orders';
-import { ShowReceipt } from '@/pages/Account/ShowReceipt';
+// import { ShowReceipt } from '@/pages/Account/ShowReceipt';
 
 
 
@@ -49,7 +49,7 @@ export const routes: Route[] = [
 
   { path: '/myaccount-page', Component: MyAccount},
   { path: '/myorders-page', Component: Orders},
-  { path: '/showreceipt-page', Component: ShowReceipt},
+  // { path: '/showreceipt-page', Component: ShowReceipt},
   
   
   { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },
