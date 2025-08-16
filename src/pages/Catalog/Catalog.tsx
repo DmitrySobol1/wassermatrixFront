@@ -6,6 +6,7 @@ import {
   Button,
   Spinner,
   Snackbar,
+  Banner,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import React from 'react';
@@ -55,13 +56,14 @@ export const CatalogPage: FC = () => {
   const [openSnakbar, setOpenSnakbar] = useState(false);
   const [activeTypeId, setActiveTypeId] = useState<number | null>(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [spinBtn,setSpinBtn] = useState(false)
+  const [spinBtn, setSpinBtn] = useState(false);
+  const [saleInfo, setSaleInfo] = useState<any>(null);
+  const [isShowBanner, setIsShowBanner] = useState(false)
 
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const {addToCartT,itemAdded} = TEXTS[language];
-
+  const { addToCartT, itemAdded } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -83,10 +85,10 @@ export const CatalogPage: FC = () => {
       try {
         const types = await axios.get('/user_get_goodsstype');
         const goods = await axios.get('/user_get_goods', {
-          params: {tlgid: tlgid}
+          params: { tlgid: tlgid },
         });
 
-        console.log('GOODS',goods)
+        console.log('GOODS', goods);
 
         //@ts-ignore
         const arrayTemp = types.data.map((item) => ({
@@ -118,12 +120,12 @@ export const CatalogPage: FC = () => {
           id: item._id,
           type: item.type,
           price: item.priceToShow,
-          valuteToShow:item.valuteToShow
+          valuteToShow: item.valuteToShow,
         }));
 
         setAllGoods(arrayGoodsForRender);
         setArrayGoodsForRender(arrayGoodsForRender);
-        setIsLoading(false)
+        setIsLoading(false);
 
         console.log('formattedTypes', arrayTypesForRender);
         console.log('formattedGoods', arrayGoodsForRender);
@@ -138,6 +140,26 @@ export const CatalogPage: FC = () => {
     fetchGoodsTypesInfo();
   }, []);
 
+  // получить данные об акции
+  useEffect(() => {
+    const fetchSaleInfo = async () => {
+      try {
+        const response = await axios.get('/get_sale_info');
+
+        console.log('SALE INFO', response.data);
+
+        if (response.data.status === 'ok') {
+          setSaleInfo(response.data.sale);
+          setIsShowBanner(true)
+        }
+      } catch (error) {
+        console.error('Ошибка при загрузке данных об акции:', error);
+      }
+    };
+
+    fetchSaleInfo();
+  }, []);
+
   function cardPressedHandler(e: any) {
     console.log('card Pressed', e.target.id);
     navigate('/onegood-page', {
@@ -146,8 +168,6 @@ export const CatalogPage: FC = () => {
       },
     });
   }
-
- 
 
   //FIXME: приходит 2 раза - один раз норм, другой undefined
   function typePressedHandler(typeId: string) {
@@ -178,11 +198,9 @@ export const CatalogPage: FC = () => {
     setActiveTypeId(typeId);
   }
 
- 
-
   //@ts-ignore
   async function addToCartHandler(goodId) {
-    setSpinBtn(true)
+    setSpinBtn(true);
     try {
       const response = await axios.post('/user_add_good_tocart', {
         userid: tlgid,
@@ -206,89 +224,128 @@ export const CatalogPage: FC = () => {
     }
   }
 
-  function snakHandler(){
-    setOpenSnakbar(false)
-    setSpinBtn(false)
-
+  function snakHandler() {
+    setOpenSnakbar(false);
+    setSpinBtn(false);
   }
 
   return (
     <Page back={false}>
+      {isLoading && (
+        <div
+          style={{
+            textAlign: 'center',
+            justifyContent: 'center',
+            padding: '100px',
+          }}
+        >
+          <Spinner size="m" />
+        </div>
+      )}
 
-    {isLoading && (
-            <div
-              style={{
-                textAlign: 'center',
-                justifyContent: 'center',
-                padding: '100px',
-              }}
-            >
-              <Spinner size="m" />
-            </div>
-          )}
-
-
-          {!isLoading && (<>
-
-
-      <List>
-       
-       
-        <Section style={{ marginBottom: 100 }}>
-
-             <div className={styles.filterContainer}>
-            {arrayTypesForRender.map((type: any) => (
-              <div
-                key={type.id} // Добавляем key для React
-                className={`${styles.filterItem} ${
-                  activeTypeId === type.id ? styles.active : ''
-                }`}
-                onClick={() => typePressedHandler(type.id)}
-              >
-                {type.name}
-              </div>
-            ))}
-          </div>
-
-
-          {arrayGoodsForRender.map((item: any) => (
-            <>
-              <div className={styles.divCard}>
-                <Card type="plain" style={{width:'90%'}}>
-                  <React.Fragment key=".0">
+      {!isLoading && (
+        <>
+          <List>
+            <Section style={{ marginBottom: 100 }}>
+      
+              {isShowBanner &&
+              <Banner
+                background={
+                  saleInfo?.file?.url ? (
                     <img
-                      alt="image"
-                      id={item.id}
-                      src={item.img}
+                      alt="Sale banner"
+                      src={`${domen}${saleInfo.file.url}`}
                       style={{
-                        display: 'block',
-                        height: 300,
-                        objectFit: 'cover',
-                        width: '100%',
+                            display: 'block',
+                            height: 'auto',
+                            objectFit: 'cover',
+                            width: '100%',
+                            objectPosition: 'center'
                       }}
-                      onClick={(e) => cardPressedHandler(e)}
                     />
+                  ) : (
+                    <img
+                      alt="Default banner"
+                      src="https://www.nasa.gov/wp-content/uploads/2023/10/streams.jpg?resize=1536,864"
+                      style={{ width: '150%' }}
+                    />
+                  )
+                }
+                onClick={() => navigate('/sale-page')}
+                header={saleInfo?.[`title_${language}`] || 'Акция'}
+                subheader={
+                  saleInfo?.[`subtitle_${language}`] || 'Скидка на товар - 20%'
+                }
+                type="inline"
+              >
+                <Button
+                  mode="white"
+                  size="m"
+                  // onClick={()=>navigate('/sale-page')}
+                >
+                  {saleInfo?.[`buttonText_${language}`]}
+                </Button>
+              </Banner>
+              }
 
-                    <Cell readOnly multiline subtitle={item.description_short}>
-                      {item.name}
-                    </Cell>
-                    <Cell>{item.price} {item.valuteToShow}</Cell>
+              <div className={styles.filterContainer}>
+                {arrayTypesForRender.map((type: any) => (
+                  <div
+                    key={type.id} // Добавляем key для React
+                    className={`${styles.filterItem} ${
+                      activeTypeId === type.id ? styles.active : ''
+                    }`}
+                    onClick={() => typePressedHandler(type.id)}
+                  >
+                    {type.name}
+                  </div>
+                ))}
+              </div>
 
-                    <div className={styles.divAddBtn}>
-                      <Button
-                        loading={spinBtn}
-                        before={<Icon28AddCircle />}
-                        stretched
-                        mode="filled"
-                        size="m"
-                        onClick={() => addToCartHandler(item.id)}
-                        style={{ paddingLeft: 30, paddingRight: 30 }}
-                      >
-                        {addToCartT}
-                      </Button>
-                    </div>
+              {arrayGoodsForRender.map((item: any) => (
+                <>
+                  <div className={styles.divCard}>
+                    <Card type="plain" style={{ width: '90%' }}>
+                      <React.Fragment key=".0">
+                        <img
+                          alt="image"
+                          id={item.id}
+                          src={item.img}
+                          style={{
+                            display: 'block',
+                            height: 300,
+                            objectFit: 'cover',
+                            width: '100%',
+                          }}
+                          onClick={(e) => cardPressedHandler(e)}
+                        />
 
-                    {/* <div style={{display:'flex',width:'80%' ,justifyContent:'center', marginLeft:10}}>
+                        <Cell
+                          readOnly
+                          multiline
+                          subtitle={item.description_short}
+                        >
+                          {item.name}
+                        </Cell>
+                        <Cell>
+                          {item.price} {item.valuteToShow}
+                        </Cell>
+
+                        <div className={styles.divAddBtn}>
+                          <Button
+                            loading={spinBtn}
+                            before={<Icon28AddCircle />}
+                            stretched
+                            mode="filled"
+                            size="m"
+                            onClick={() => addToCartHandler(item.id)}
+                            style={{ paddingLeft: 30, paddingRight: 30 }}
+                          >
+                            {addToCartT}
+                          </Button>
+                        </div>
+
+                        {/* <div style={{display:'flex',width:'80%' ,justifyContent:'center', marginLeft:10}}>
                     <Button
                       before={<Icon28AddCircle />}
                       // stretched
@@ -300,24 +357,25 @@ export const CatalogPage: FC = () => {
                       Добавить в корзину
                     </Button>
                     </div> */}
-                  </React.Fragment>
-                </Card>
-              </div>
-            </>
-          ))}
-        </Section>
+                      </React.Fragment>
+                    </Card>
+                  </div>
+                </>
+              ))}
+            </Section>
 
-        {/* <Cell></Cell> */}
-      </List>
+            {/* <Cell></Cell> */}
+          </List>
 
-      <TabbarMenu />
+          <TabbarMenu />
 
-      {openSnakbar && (
-        <Snackbar duration={1200} onClose={snakHandler}>
-          {itemAdded}
-        </Snackbar>
+          {openSnakbar && (
+            <Snackbar duration={1200} onClose={snakHandler}>
+              {itemAdded}
+            </Snackbar>
+          )}
+        </>
       )}
-      </>)}
     </Page>
   );
 };

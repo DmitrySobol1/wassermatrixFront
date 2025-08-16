@@ -3,6 +3,7 @@ import type { ComponentType, JSX } from 'react';
 
 import { EnterPage } from '@/pages/EnterPage/EnterPage';
 import { CatalogPage } from '@/pages/Catalog/Catalog';
+import { SalePage } from '@/pages/Catalog/SalePage';
 import { OneGood } from '@/pages/Catalog/OneGood';
 import { Cart } from '@/pages/Cart/Cart';
 import { DeliveryChoice } from '@/pages/Cart/DeliveryChoice';
@@ -38,6 +39,7 @@ export const routes: Route[] = [
   //SHOP PAGES
   { path: '/catalog-page', Component: CatalogPage},
   { path: '/onegood-page', Component: OneGood},
+  { path: '/sale-page', Component: SalePage},
   
   { path: '/cart-page', Component: Cart},
   { path: '/delivery-choice-page', Component: DeliveryChoice},
