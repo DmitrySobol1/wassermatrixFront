@@ -57,7 +57,7 @@ export const SalePage: FC = () => {
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const { addToCartT, itemAdded } = TEXTS[language];
+  const { addToCartT, itemAdded, buttonT, actionTillT } = TEXTS[language];
 
 
   // получить данные об акции
@@ -127,9 +127,9 @@ export const SalePage: FC = () => {
                                     <img alt="Default banner" src="https://www.nasa.gov/wp-content/uploads/2023/10/streams.jpg?resize=1536,864" style={{width: '150%'}} />
                                   }
                                   // здесь выводить данные из поля title 
-                                  header={saleInfo?.[`title_${language}`] || "Акция"}
+                                  header={saleInfo?.[`title_${language}`] }
                                   // здесь выводить данные из поля subtitle
-                                  subheader={saleInfo?.[`subtitle_${language}`] || "Скидка на товар - 20%"}
+                                  subheader={saleInfo?.[`subtitle_${language}`]}
                                   type="inline"
                                 >
                                   <Cell>
@@ -141,7 +141,7 @@ export const SalePage: FC = () => {
 
                     {/* здесь выводить данные из поля dateUntil */}
                     {saleInfo?.dateUntil && (
-                      <Cell>Акция действует до: {saleInfo.dateUntil}</Cell>
+                      <Cell>{actionTillT} {new Date(saleInfo.dateUntil).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Cell>
                     )}
                     {/* здесь выводить данные из поля info */}
                     {saleInfo?.[`info_${language}`] && (
@@ -157,7 +157,7 @@ export const SalePage: FC = () => {
                       onClick={ ()=>goToOnePageHandler(saleInfo.good._id)}
                       stretched
                       >
-                        {saleInfo?.[`buttonText_${language}`] || 'Перейти к товару'}
+                         {buttonT}
                       </Button>
                       </Section>  
                     }
