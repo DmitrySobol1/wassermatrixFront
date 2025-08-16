@@ -31,9 +31,6 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
-  const startXRef = useRef<number>(0);
-  const currentXRef = useRef<number>(0);
-  const isDraggingRef = useRef<boolean>(false);
 
   // Создаем циклический массив: [last, ...original, first]
   const cyclicSales = sales.length > 1 ? [sales[sales.length - 1], ...sales, sales[0]] : sales;
@@ -57,10 +54,9 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     if (sales.length <= 1) return;
     
     const nextIndex = currentIndex + 1;
-    const actualNextIndex = nextIndex >= totalSlides - 1 ? 1 : nextIndex + 1;
     
-    setCurrentIndex(actualNextIndex);
-    goToSlide(actualNextIndex);
+    setCurrentIndex(nextIndex);
+    goToSlide(nextIndex);
     
     // Если достигли клонированного последнего элемента, перескакиваем на первый
     if (nextIndex >= totalSlides - 1) {
@@ -71,104 +67,14 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     }
   };
 
-  const prevSlide = () => {
-    if (sales.length <= 1) return;
-    
-    const prevIndex = currentIndex - 1;
-    const actualPrevIndex = prevIndex <= 0 ? totalSlides - 2 : prevIndex - 1;
-    
-    setCurrentIndex(actualPrevIndex + 1);
-    goToSlide(actualPrevIndex + 1);
-    
-    // Если достигли клонированного первого элемента, перескакиваем на последний
-    if (prevIndex <= 0) {
-      setTimeout(() => {
-        setCurrentIndex(totalSlides - 2);
-        goToSlide(totalSlides - 2, false);
-      }, 300);
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (sales.length <= 1) return;
-    
-    startXRef.current = e.touches[0].clientX;
-    currentXRef.current = e.touches[0].clientX;
-    isDraggingRef.current = true;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDraggingRef.current || sales.length <= 1) return;
-    
-    currentXRef.current = e.touches[0].clientX;
-    const diff = currentXRef.current - startXRef.current;
-    
-    // Добавляем сопротивление при свайпе
-    if (trackRef.current && Math.abs(diff) > 5) {
-      const currentTranslateX = -currentIndex * 100;
-      const dragOffset = (diff / window.innerWidth) * 100;
-      trackRef.current.style.transform = `translateX(${currentTranslateX + dragOffset}%)`;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDraggingRef.current || sales.length <= 1) return;
-    
-    const diff = currentXRef.current - startXRef.current;
-    const threshold = 20; // Минимальное расстояние для свайпа
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        prevSlide();
-      } else {
-        nextSlide();
-      }
-    } else {
-      // Возвращаем к текущему слайду
-      goToSlide(currentIndex);
+  const handleBannerClick = (e: React.MouseEvent) => {
+    // Предотвращаем переход на следующий слайд если кликнули на кнопку
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) {
+      return;
     }
     
-    isDraggingRef.current = false;
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (sales.length <= 1) return;
-    
-    startXRef.current = e.clientX;
-    currentXRef.current = e.clientX;
-    isDraggingRef.current = true;
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDraggingRef.current || sales.length <= 1) return;
-    
-    currentXRef.current = e.clientX;
-    const diff = currentXRef.current - startXRef.current;
-    
-    if (trackRef.current && Math.abs(diff) > 5) {
-      const currentTranslateX = -currentIndex * 100;
-      const dragOffset = (diff / window.innerWidth) * 100;
-      trackRef.current.style.transform = `translateX(${currentTranslateX + dragOffset}%)`;
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (!isDraggingRef.current || sales.length <= 1) return;
-    
-    const diff = currentXRef.current - startXRef.current;
-    const threshold = 20;
-    
-    if (Math.abs(diff) > threshold) {
-      if (diff > 0) {
-        prevSlide();
-      } else {
-        nextSlide();
-      }
-    } else {
-      goToSlide(currentIndex);
-    }
-    
-    isDraggingRef.current = false;
+    nextSlide();
   };
 
   // Инициализация позиции
@@ -193,16 +99,9 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
         style={{
           transition: isTransitioning ? 'transform 0.3s ease-in-out' : 'none',
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
       >
         {cyclicSales.map((sale, index) => (
-          <div key={`${sale._id}-${index}`} className={styles.bannerSlide}>
+          <div key={`${sale._id}-${index}`} className={styles.bannerSlide} onClick={handleBannerClick}>
             <Banner
               background={
                 sale?.file?.url ? (
@@ -225,13 +124,18 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
                   />
                 )
               }
-              onClick={() => navigate('/sale-page', { state: { saleId: sale._id } })}
+              // onClick={() => navigate('/sale-page', { state: { saleId: sale._id } })}
               header={(sale?.[`title_${language}` as keyof Sale] as string) }
               subheader={(sale?.[`subtitle_${language}` as keyof Sale] as String)}
               type="inline"
             >
               
-                <Button mode="white" size="m">
+                <Button mode="white" size="l"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/sale-page', { state: { saleId: sale._id } });
+                }}
+                >
                   {(sale?.[`buttonText_${language}` as keyof Sale] as string) }
                 </Button>
               
