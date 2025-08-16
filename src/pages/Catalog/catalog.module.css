@@ -70,3 +70,43 @@ width: 93%;
   background: #40a7e3; 
   color: white;
 }
+
+.bannersSwiper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.bannersTrack {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+
+.bannerSlide {
+  flex: 0 0 100%;
+  width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.bannersIndicators {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ddd;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.indicator.active {
+  background-color: #40a7e3;
+}

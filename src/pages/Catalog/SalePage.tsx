@@ -9,17 +9,13 @@ import type { FC } from 'react';
 // import React from 'react';
 import axios from '../../axios';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useContext, useEffect, useState } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
-
-// import { useLocation } from 'react-router-dom';
-// import { useLocation } from 'react-router-dom';
-// import { useLocation, useNavigate } from 'react-router-dom';
 
 // import { settingsButton } from '@telegram-apps/sdk-react';
 
@@ -47,8 +43,8 @@ export const SalePage: FC = () => {
   // const { valute } = useContext(ValuteContext);
 
      const navigate = useNavigate();
-  // const location = useLocation();
-  // const { itemid } = location.state || {};
+  const location = useLocation();
+  const { saleId } = location.state || {};
 
   // const [goodInfo, setGoodInfo] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -65,12 +61,19 @@ export const SalePage: FC = () => {
     const fetchSaleInfo = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('/get_sale_info');
+        const response = await axios.get('/admin_get_sales');
 
-        console.log('SALE INFO', response.data);
+        console.log('SALES INFO', response.data);
 
-        if (response.data.status === 'ok') {
-          setSaleInfo(response.data.sale);
+        if (response.data && response.data.length > 0) {
+          // Если передан saleId, найти конкретную акцию, иначе взять первую
+          const sale = saleId ? 
+            response.data.find((sale: any) => sale._id === saleId) : 
+            response.data[0];
+          
+          if (sale) {
+            setSaleInfo(sale);
+          }
         }
       } catch (error) {
         console.error('Ошибка при загрузке данных об акции:', error);
@@ -80,7 +83,7 @@ export const SalePage: FC = () => {
     };
 
     fetchSaleInfo();
-  }, []);
+  }, [saleId]);
 
  function goToOnePageHandler(id:any){
 

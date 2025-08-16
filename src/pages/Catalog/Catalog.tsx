@@ -6,7 +6,6 @@ import {
   Button,
   Spinner,
   Snackbar,
-  Banner,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import React from 'react';
@@ -25,6 +24,7 @@ import { LanguageContext } from '../../components/App.tsx';
 import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
+import { BannersSwiper } from '../../components/BannersSwiper/BannersSwiper.tsx';
 
 import { useTlgid } from '../../components/Tlgid';
 
@@ -57,7 +57,7 @@ export const CatalogPage: FC = () => {
   const [activeTypeId, setActiveTypeId] = useState<number | null>(1);
   const [isLoading, setIsLoading] = useState(true);
   const [spinBtn, setSpinBtn] = useState(false);
-  const [saleInfo, setSaleInfo] = useState<any>(null);
+  const [salesInfo, setSalesInfo] = useState<any[]>([]);
   const [isShowBanner, setIsShowBanner] = useState(false)
 
   const domen = import.meta.env.VITE_DOMEN;
@@ -140,24 +140,24 @@ export const CatalogPage: FC = () => {
     fetchGoodsTypesInfo();
   }, []);
 
-  // получить данные об акции
+  // получить данные об акциях
   useEffect(() => {
-    const fetchSaleInfo = async () => {
+    const fetchSalesInfo = async () => {
       try {
-        const response = await axios.get('/get_sale_info');
+        const response = await axios.get('/admin_get_sales');
 
-        console.log('SALE INFO', response.data);
+        console.log('SALES INFO', response.data);
 
-        if (response.data.status === 'ok') {
-          setSaleInfo(response.data.sale);
+        if (response.data && response.data.length > 0) {
+          setSalesInfo(response.data);
           setIsShowBanner(true)
         }
       } catch (error) {
-        console.error('Ошибка при загрузке данных об акции:', error);
+        console.error('Ошибка при загрузке данных об акциях:', error);
       }
     };
 
-    fetchSaleInfo();
+    fetchSalesInfo();
   }, []);
 
   function cardPressedHandler(e: any) {
@@ -248,47 +248,15 @@ export const CatalogPage: FC = () => {
           <List>
             <Section style={{ marginBottom: 100 }}>
       
-              {isShowBanner &&
-              <Banner
-                background={
-                  saleInfo?.file?.url ? (
-                    <img
-                      alt="Sale banner"
-                      src={`${domen}${saleInfo.file.url}`}
-                      style={{
-                            display: 'block',
-                            height: 'auto',
-                            objectFit: 'cover',
-                            width: '100%',
-                            objectPosition: 'center'
-                      }}
-                    />
-                  ) : (
-                    <img
-                      alt="Default banner"
-                      src="https://www.nasa.gov/wp-content/uploads/2023/10/streams.jpg?resize=1536,864"
-                      style={{ width: '150%' }}
-                    />
-                  )
-                }
-                onClick={() => navigate('/sale-page')}
-                header={saleInfo?.[`title_${language}`] || 'Акция'}
-                subheader={
-                  saleInfo?.[`subtitle_${language}`] || 'Скидка на товар - 20%'
-                }
-                type="inline"
-              >
-                <Button
-                  mode="white"
-                  size="m"
-                  // onClick={()=>navigate('/sale-page')}
-                >
-                  {saleInfo?.[`buttonText_${language}`]}
-                </Button>
-              </Banner>
-              }
+              {isShowBanner && salesInfo.length > 0 && (
+                <BannersSwiper 
+                  sales={salesInfo}
+                  language={language}
+                  domen={domen}
+                />
+              )}
 
-              <div className={styles.filterContainer}>
+              <div className={styles.filterContainer}> 
                 {arrayTypesForRender.map((type: any) => (
                   <div
                     key={type.id} // Добавляем key для React
