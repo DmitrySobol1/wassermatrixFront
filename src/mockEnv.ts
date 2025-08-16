@@ -68,6 +68,8 @@ if (import.meta.env.DEV) {
         ]).toString()],
         ['tgWebAppVersion', '8.4'],
         ['tgWebAppPlatform', 'tdesktop'],
+        // Mock start parameter for development (this is used as jbid in the app)
+        ['tgWebAppStartParam', 'dev_test_jbid_123'],
       ]),
     });
 
