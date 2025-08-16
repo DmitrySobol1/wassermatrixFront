@@ -104,7 +104,7 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     const diff = currentXRef.current - startXRef.current;
     
     // Добавляем сопротивление при свайпе
-    if (trackRef.current && Math.abs(diff) > 10) {
+    if (trackRef.current && Math.abs(diff) > 5) {
       const currentTranslateX = -currentIndex * 100;
       const dragOffset = (diff / window.innerWidth) * 100;
       trackRef.current.style.transform = `translateX(${currentTranslateX + dragOffset}%)`;
@@ -115,7 +115,7 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     if (!isDraggingRef.current || sales.length <= 1) return;
     
     const diff = currentXRef.current - startXRef.current;
-    const threshold = 50; // Минимальное расстояние для свайпа
+    const threshold = 20; // Минимальное расстояние для свайпа
     
     if (Math.abs(diff) > threshold) {
       if (diff > 0) {
@@ -145,7 +145,7 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     currentXRef.current = e.clientX;
     const diff = currentXRef.current - startXRef.current;
     
-    if (trackRef.current && Math.abs(diff) > 10) {
+    if (trackRef.current && Math.abs(diff) > 5) {
       const currentTranslateX = -currentIndex * 100;
       const dragOffset = (diff / window.innerWidth) * 100;
       trackRef.current.style.transform = `translateX(${currentTranslateX + dragOffset}%)`;
@@ -156,7 +156,7 @@ export const BannersSwiper: React.FC<BannersSwiperProps> = ({ sales, language, d
     if (!isDraggingRef.current || sales.length <= 1) return;
     
     const diff = currentXRef.current - startXRef.current;
-    const threshold = 50;
+    const threshold = 20;
     
     if (Math.abs(diff) > threshold) {
       if (diff > 0) {
