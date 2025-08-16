@@ -1,8 +1,6 @@
 import {
   Cell,
-  List,
   Button,
-  Snackbar,
   Section,
   Spinner,
   Banner,
@@ -20,22 +18,20 @@ import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 
 // import { useLocation } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 // import { useLocation, useNavigate } from 'react-router-dom';
 
 // import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
-import { useTlgid } from '../../components/Tlgid';
+// import { useTlgid } from '../../components/Tlgid';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 
-import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 // import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
 
-import styles from './catalog.module.css';
 import { TEXTS } from './texts.ts';
 
 // import payin from '../../img/payin.png';
@@ -44,15 +40,15 @@ import { TEXTS } from './texts.ts';
 
 export const SalePage: FC = () => {
   //FIXME:
-  const tlgid = useTlgid();
+  // const tlgid = useTlgid();
   // const tlgid = 412697670;
 
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
 
      const navigate = useNavigate();
-  const location = useLocation();
-  const { itemid } = location.state || {};
+  // const location = useLocation();
+  // const { itemid } = location.state || {};
 
   // const [goodInfo, setGoodInfo] = useState({});
   const [isLoading, setIsLoading] = useState(true);
