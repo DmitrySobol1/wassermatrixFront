@@ -202,8 +202,8 @@ export const PaymentChoice: FC = () => {
                     description={
                     <>
                     <div>Кол-во: {quantity} шт.</div> 
-                    <div>Стомость товара: {itemPrice*quantity} {item.valuteToShow}</div>
-                    <div>Стоимость доставки: {deliveryPrice*quantity} {item.valuteToShow}</div>
+                    <div>Стомость товара: {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    <div>Стоимость доставки: {(deliveryPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     </>
                     }
                     // after={`${totalItemCost} ${item.valuteToShow}`}
