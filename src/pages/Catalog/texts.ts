@@ -3,14 +3,16 @@ export const TEXTS = {
    addToCartT: 'Добавить в корзину',
    itemAdded: 'Товар добавлен',
    buttonT: 'Перейти к товару',
-   actionTillT: 'Акция действует до:'
+   actionTillT: 'Акция действует до:',
+   sortByT: 'сортировать по: '
     
   },
   en: {
     addToCartT: 'Add to cart',
     itemAdded: 'Item added',
     buttonT: 'Go to item',
-    actionTillT: 'The promo is valid until:'
+    actionTillT: 'The promo is valid until:',
+    sortByT: 'sort by: '
    
     
   },
@@ -18,7 +20,8 @@ export const TEXTS = {
     addToCartT: 'Artikel hinzugefügt',
     itemAdded: 'Artikel hinzugefügt',
     buttonT: 'Zum Artikel gehen',
-    actionTillT: 'Die Aktion gilt bis:'
+    actionTillT: 'Die Aktion gilt bis:',
+    sortByT: 'sortieren nach: '
     
   },
 };

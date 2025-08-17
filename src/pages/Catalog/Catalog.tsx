@@ -6,6 +6,8 @@ import {
   Button,
   Spinner,
   Snackbar,
+  Accordion,
+  Checkbox,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import React from 'react';
@@ -34,6 +36,8 @@ import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_ci
 
 import styles from './catalog.module.css';
 import { TEXTS } from './texts.ts';
+import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
+import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
 // import payin from '../../img/payin.png';
 // import payout from '../../img/payout.png';
@@ -46,6 +50,16 @@ export const CatalogPage: FC = () => {
   // const tlgid = 777;
 
   const { language } = useContext(LanguageContext);
+  
+  
+  const firstSortArray = {
+    name_de: 'beliebtheit (aufs)',
+    name_en: 'popularity (asc)',
+    name_ru: 'популярности (возр)',
+  }
+
+  //@ts-ignore
+  const firstSort = firstSortArray[`name_${language}`]
 
   const navigate = useNavigate();
 
@@ -58,12 +72,45 @@ export const CatalogPage: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [spinBtn, setSpinBtn] = useState(false);
   const [salesInfo, setSalesInfo] = useState<any[]>([]);
-  const [isShowBanner, setIsShowBanner] = useState(false)
+  const [isShowBanner, setIsShowBanner] = useState(false);
+  const [isSorting, setIsSorting] = useState(false);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+  const [sortType, setSortType] = useState(firstSort);
+  const [sortVariant, setSortVariant] = useState([
+    {
+      id: 1,
+      name_de: 'beliebtheit (aufs)',
+      name_en: 'popularity (asc)',
+      name_ru: 'популярности (возр)',
+      isChoosed: true,
+      sortKey: 'popularity_asc',
+    },
+    {
+      id: 2,
+      name_de: 'beliebtheit (abst)',
+      name_en: 'popularity (desc)',
+      name_ru: 'популярности (убыв)',
+      isChoosed: false,
+      sortKey: 'popularity_desc',
+    },
+    { id: 3, 
+      name_de: 'preis (aufs)', 
+      name_en: 'price (asc)', 
+      name_ru: 'цене (возр)', 
+      isChoosed: false, 
+      sortKey: 'price_asc' },
+    { id: 4, 
+      name_de: 'preis (abst)', 
+      name_en: 'price (desc)', 
+      name_ru: 'цене (убыв)', 
+      isChoosed: false, 
+      sortKey: 'price_desc' },
+  ]);
 
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const { addToCartT, itemAdded } = TEXTS[language];
+  const { addToCartT, itemAdded, sortByT } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -78,6 +125,32 @@ export const CatalogPage: FC = () => {
     }
     settingsButton.onClick(listener);
   }
+
+  // Функция сортировки товаров
+  const sortGoods = (goods: any[], sortType: string) => {
+    const sortedGoods = [...goods];
+
+    switch (sortType) {
+      case 'popularity_asc':
+        return sortedGoods.sort(
+          (a, b) => (a.quantityOfPurchases || 0) - (b.quantityOfPurchases || 0)
+        );
+      case 'popularity_desc':
+        return sortedGoods.sort(
+          (a, b) => (b.quantityOfPurchases || 0) - (a.quantityOfPurchases || 0)
+        );
+      case 'price_asc':
+        return sortedGoods.sort(
+          (a, b) => (a.price_eu || 0) - (b.price_eu || 0)
+        );
+      case 'price_desc':
+        return sortedGoods.sort(
+          (a, b) => (b.price_eu || 0) - (a.price_eu || 0)
+        );
+      default:
+        return sortedGoods;
+    }
+  };
 
   // получить список типов товаров + товары
   useEffect(() => {
@@ -121,6 +194,8 @@ export const CatalogPage: FC = () => {
           type: item.type,
           price: item.priceToShow,
           valuteToShow: item.valuteToShow,
+          quantityOfPurchases: item.quantityOfPurchases || 0,
+          price_eu: item.price_eu || 0,
         }));
 
         setAllGoods(arrayGoodsForRender);
@@ -150,7 +225,7 @@ export const CatalogPage: FC = () => {
 
         if (response.data && response.data.length > 0) {
           setSalesInfo(response.data);
-          setIsShowBanner(true)
+          setIsShowBanner(true);
         }
       } catch (error) {
         console.error('Ошибка при загрузке данных об акциях:', error);
@@ -174,26 +249,23 @@ export const CatalogPage: FC = () => {
     console.log('you choose type=', typeId);
 
     //@ts-ignore
+    let filteredGoods = [];
     if (typeId == '1') {
-      setArrayGoodsForRender(allGoods);
-      setActiveTypeId(1);
-      return;
+      filteredGoods = allGoods;
+    } else {
+      filteredGoods = allGoods.filter((item: any) => item.type === typeId);
     }
 
-    //@ts-ignore
-    let newArray = [];
+    // Получаем текущий ключ сортировки из выбранного варианта
+    const selectedVariant = sortVariant.find((item) => item.isChoosed);
+    const currentSortKey = selectedVariant
+      ? selectedVariant.sortKey
+      : 'popularity_asc';
 
-    allGoods.map((item) => {
-      //@ts-ignore
-      if (item.type === typeId) {
-        console.log('внутри');
-
-        //@ts-ignore
-        newArray = [item, ...newArray];
-      }
-    });
+    // Применяем сортировку к отфильтрованным товарам
+    const sortedGoods = sortGoods(filteredGoods, currentSortKey);
     //@ts-ignore
-    setArrayGoodsForRender(newArray);
+    setArrayGoodsForRender(sortedGoods);
     //@ts-ignore
     setActiveTypeId(typeId);
   }
@@ -229,6 +301,57 @@ export const CatalogPage: FC = () => {
     setSpinBtn(false);
   }
 
+  const handleAccordionChange = (orderId: string) => {
+    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+  };
+
+  // Функция для обработки выбора варианта сортировки
+  const handleSortVariantSelect = (selectedId: number) => {
+    setIsSorting(true);
+
+    // Обновляем состояние вариантов сортировки
+    const updatedVariants = sortVariant.map((item) => ({
+      ...item,
+      isChoosed: item.id === selectedId,
+    }));
+    setSortVariant(updatedVariants);
+
+    // Находим выбранный вариант и обновляем текущий тип сортировки
+    const selectedVariant = sortVariant.find((item) => item.id === selectedId);
+    if (selectedVariant) {
+      //@ts-ignore
+      setSortType(selectedVariant[`name_${language}`]);
+
+      // Применяем сортировку
+      applySortToGoods(selectedVariant.sortKey);
+    }
+
+    // Закрываем accordion
+    setExpandedOrderId(null);
+
+    // Скрываем лоадер через короткое время
+    setTimeout(() => {
+      setIsSorting(false);
+    }, 300);
+  };
+
+  // Функция применения сортировки к товарам
+  const applySortToGoods = (sortKey: string) => {
+    //@ts-ignore
+    let filteredGoods = [];
+    if (activeTypeId == 1) {
+      filteredGoods = allGoods;
+    } else {
+      filteredGoods = allGoods.filter(
+        (item: any) => item.type === activeTypeId
+      );
+    }
+
+    const sortedGoods = sortGoods(filteredGoods, sortKey);
+    //@ts-ignore
+    setArrayGoodsForRender(sortedGoods);
+  };
+
   return (
     <Page back={false}>
       {isLoading && (
@@ -247,16 +370,15 @@ export const CatalogPage: FC = () => {
         <>
           <List>
             <Section style={{ marginBottom: 100 }}>
-      
               {isShowBanner && salesInfo.length > 0 && (
-                <BannersSwiper 
+                <BannersSwiper
                   sales={salesInfo}
                   language={language}
                   domen={domen}
                 />
               )}
 
-              <div className={styles.filterContainer}> 
+              <div className={styles.filterContainer}>
                 {arrayTypesForRender.map((type: any) => (
                   <div
                     key={type.id} // Добавляем key для React
@@ -269,6 +391,44 @@ export const CatalogPage: FC = () => {
                   </div>
                 ))}
               </div>
+
+              <Accordion
+                expanded={expandedOrderId === '1'}
+                onChange={() => handleAccordionChange('1')}
+              >
+                <AccordionSummary>
+                  {sortByT} {' '}
+                  <span
+                    style={{
+                      color: '#40a7e3',
+                      textDecoration: 'underline',
+                      textDecorationStyle: 'dotted',
+                    }}
+                  >
+                    {sortType}
+                  </span>
+                  {isSorting && (
+                    <span style={{ marginLeft: 8 }}>
+                      <Spinner size="s" />
+                    </span>
+                  )}
+                </AccordionSummary>
+                <AccordionContent>
+                  {sortVariant.map((item) => (
+                    <Cell
+                      key={item.id}
+                      onClick={() => handleSortVariantSelect(item.id)}
+                      style={{ cursor: 'pointer' }}
+                    > <div style = {{display: 'flex', alignItems: 'center', justifyContent:'center'}}>
+                      <Checkbox checked={item.isChoosed} readOnly />
+
+                      
+                      <span style={{ marginLeft: 8 }}>{(item as any)[`name_${language}`]}</span>
+                    </div>
+                    </Cell>
+                  ))}
+                </AccordionContent>
+              </Accordion>
 
               {arrayGoodsForRender.map((item: any) => (
                 <>

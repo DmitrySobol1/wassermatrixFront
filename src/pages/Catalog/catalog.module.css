@@ -6,7 +6,7 @@
 .divCard {
   display: flex;
   justify-content: center; 
-margin-top: 20px;  
+/* margin-top: 10px;   */
 padding: 20px 0 ;
 /* gap: 20px */
 }
@@ -36,14 +36,11 @@ width: 93%;
 
 
 
-
-
-
 .filterContainer {
   display: flex;
   overflow-x: auto;
   gap: 12px;
-  padding: 20px 10px;
+  padding: 10px 10px 0 20px;
   max-width: 100%;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
