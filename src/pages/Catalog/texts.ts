@@ -4,7 +4,8 @@ export const TEXTS = {
    itemAdded: 'Товар добавлен',
    buttonT: 'Перейти к товару',
    actionTillT: 'Акция действует до:',
-   sortByT: 'сортировать по: '
+   sortByT: 'сортировать по: ',
+   saleCardT: 'Акция'
     
   },
   en: {
@@ -12,7 +13,8 @@ export const TEXTS = {
     itemAdded: 'Item added',
     buttonT: 'Go to item',
     actionTillT: 'The promo is valid until:',
-    sortByT: 'sort by: '
+    sortByT: 'sort by: ',
+    saleCardT: 'Special offer'
    
     
   },
@@ -21,7 +23,8 @@ export const TEXTS = {
     itemAdded: 'Artikel hinzugefügt',
     buttonT: 'Zum Artikel gehen',
     actionTillT: 'Die Aktion gilt bis:',
-    sortByT: 'sortieren nach: '
+    sortByT: 'sortieren nach: ',
+    saleCardT: 'Sonderangebot'
     
   },
 };

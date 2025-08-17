@@ -38,6 +38,7 @@ import styles from './catalog.module.css';
 import { TEXTS } from './texts.ts';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
+import { CardChip } from '@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip';
 
 // import payin from '../../img/payin.png';
 // import payout from '../../img/payout.png';
@@ -110,7 +111,7 @@ export const CatalogPage: FC = () => {
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const { addToCartT, itemAdded, sortByT } = TEXTS[language];
+  const { addToCartT, itemAdded, sortByT, saleCardT } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -193,7 +194,10 @@ export const CatalogPage: FC = () => {
           id: item._id,
           type: item.type,
           price: item.priceToShow,
+          basePrice: item.basePriceToShowClientValute,
+          isSaleNow: item.isSaleNow,
           valuteToShow: item.valuteToShow,
+          chipInfo: item.saleInfo ? item.saleInfo[`infoForFront_${language}`] : '',
           quantityOfPurchases: item.quantityOfPurchases || 0,
           price_eu: item.price_eu || 0,
         }));
@@ -435,6 +439,12 @@ export const CatalogPage: FC = () => {
                   <div className={styles.divCard}>
                     <Card type="plain" style={{ width: '90%' }}>
                       <React.Fragment key=".0">
+                        {item.isSaleNow &&
+                          <CardChip readOnly style={{ backgroundColor: '#ed6c02' }}>
+                            {/* <span style={{ color: '#ffffff' }}>{saleCardT}</span> */}
+                            <span style={{ color: '#ffffff' }}>{item.chipInfo}</span>
+                          </CardChip>
+                        }
                         <img
                           alt="image"
                           id={item.id}
@@ -456,7 +466,7 @@ export const CatalogPage: FC = () => {
                           {item.name}
                         </Cell>
                         <Cell>
-                          {item.price} {item.valuteToShow}
+                        { item.isSaleNow ? (<><span style={{ textDecoration: 'line-through', marginRight:10 }}>{item.basePrice} {item.valuteToShow}</span><span style={{fontWeight:'bold'}}> {item.price} {item.valuteToShow}</span> </>)  : `${item.price} ${item.valuteToShow}` }
                         </Cell>
 
                         <div className={styles.divAddBtn}>
@@ -473,19 +483,7 @@ export const CatalogPage: FC = () => {
                           </Button>
                         </div>
 
-                        {/* <div style={{display:'flex',width:'80%' ,justifyContent:'center', marginLeft:10}}>
-                    <Button
-                      before={<Icon28AddCircle />}
-                      // stretched
-                      mode="filled"
-                      size="l"
-                      // style = {{width:'70%'}}
-                      onClick={() => addToCartHandler(item.id)}
-                    >
-                      Добавить в корзину
-                    </Button>
-                    </div> */}
-                      </React.Fragment>
+                        </React.Fragment>
                     </Card>
                   </div>
                 </>
