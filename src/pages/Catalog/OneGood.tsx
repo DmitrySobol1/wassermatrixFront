@@ -5,6 +5,7 @@ import {
   Snackbar,
   Section,
   Spinner,
+  Chip,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -72,6 +73,9 @@ export const OneGood: FC = () => {
     price: string;
     id: string;
     valuteToShow: string;
+    basePrice: string;
+    isSaleNow: boolean;
+    infoForFront?: string
   }
 
   // получить товар по id
@@ -97,6 +101,9 @@ export const OneGood: FC = () => {
           type: good.data.type,
           price: good.data.priceToShow,
           valuteToShow: good.data.valuteToShow,
+          isSaleNow: good.data.isSaleNow,
+          basePrice: good.data.basePriceToShowClientValute,
+          infoForFront: good.data?.saleInfo?.[`infoForFront_${language}`]
         };
 
         console.log('goodToRender=', goodToRender);
@@ -167,12 +174,21 @@ export const OneGood: FC = () => {
             <Section style={{ marginBottom: 100 }}>
               <img src={goodInfo?.img || ''} className={styles.img} />
 
+            { goodInfo?.isSaleNow &&     
+              <Chip 
+              mode='elevated' 
+              style={{backgroundColor:'#ed6c02', padding: '5px 20px', marginLeft:20}}>
+                <span style={{color:'white'}}>{goodInfo?.infoForFront}</span>
+              </Chip>
+            }  
+
               <Cell
                 subtitle={goodInfo?.description_short}
-                after={`${goodInfo?.price}${goodInfo?.valuteToShow}`}
+                // after={`${goodInfo?.price}${goodInfo?.valuteToShow}`}
                 multiline
               >
-                {goodInfo?.name}
+               
+               <span style={{marginRight:10}}> {goodInfo?.name}</span> { goodInfo?.isSaleNow ? (<><span style={{ textDecoration: 'line-through', marginRight:10 }}>{goodInfo?.basePrice} {goodInfo?.valuteToShow}</span><span style={{fontWeight:'bold'}}> {goodInfo?.price} {goodInfo?.valuteToShow}</span> </>)  : `${goodInfo?.price} ${goodInfo?.valuteToShow}` }
               </Cell>
 
               {/* <Cell>
