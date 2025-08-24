@@ -5,10 +5,12 @@ import {
   Select,
   Spinner,
   Snackbar,
-  Input
+  Input,
+  IconButton
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useTlgid } from '../../components/Tlgid';
 
@@ -16,6 +18,10 @@ import axios from '../../axios';
 
 import { LanguageContext } from '../../components/App';
 import { ValuteContext } from '../../components/App';
+
+// Icon20QuestionMark
+// import HelpIcon from '@mui/icons-material/Help';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import LanguageIcon from '@mui/icons-material/Language';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -30,6 +36,8 @@ import { TEXTS } from './texts.ts';
 
 
 export const SettingsButtonMenu: FC = () => {
+const navigate = useNavigate();
+
   const [isShowLanguageSelect, setShowLanguageSelect] = useState(false);
   const [isShowValuteSelect, setShowValuteSelect] = useState(false);
   const [isShowPersonalSelect, setShowPersonalSelect] = useState(false);
@@ -197,8 +205,40 @@ export const SettingsButtonMenu: FC = () => {
         <>
           <List>
             
+            <div 
+            onClick={()=>navigate('/onboarding')}
+            // style={{padding: 0, margin: 0}}
+            >
+                
+                <Section>
+                 <Cell
+                 after={
+                    <IconButton
+                            mode="bezeled"
+                            size="s"
+                          >
+                            <HelpOutlineIcon />
+                          </IconButton>  
+                 }
+                 >
+                  <span style={{color:'#168acd', fontWeight: 500}}>Help </span>
+                 </Cell> 
+                 </Section>
+                
+                
+                  
+                
+              </div>
 
-            <Section header={title} style={{marginBottom:100}}>
+            <Section 
+            header={title} 
+            style={{marginBottom:100}}
+            >
+
+
+              
+
+
               <div onClick={showLanguageSelect}>
                 <Cell
                   before={<LanguageIcon />}
@@ -250,6 +290,8 @@ export const SettingsButtonMenu: FC = () => {
                   {personalT}
                 </Cell>
               </div>
+              
+              
               
               {isShowPersonalSelect && (
                 <>

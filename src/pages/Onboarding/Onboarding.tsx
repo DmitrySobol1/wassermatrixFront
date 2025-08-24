@@ -10,9 +10,10 @@ import { LanguageContext } from '../../components/App.tsx';
 
 import { Page } from '@/components/Page.tsx';
 
-import noimage from '../../components/img/noimage.jpg';
-// import onboardingImg2 from '../../img/onb2.jpg';
-// import onboardingImg3 from '../../img/onb3.jpg';
+import pic1 from '../../components/img/img1_onb.jpg';
+import pic2 from '../../components/img/img2_onb.jpg';
+import pic3 from '../../components/img/img3_onb.jpg';
+
 
 import styles from './Onboarding.module.css';
 
@@ -73,7 +74,7 @@ const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
           {step == 1 && (
             <Cell multiline>
               <div className={styles.divImg}>
-                <img src={noimage} className={styles.onboardingImg} />
+                <img src={pic1} className={styles.onboardingImg} />
               </div>
               <p>
                 {textPage1}
@@ -83,7 +84,7 @@ const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
           {step == 2 && (
             <Cell multiline>
               <div className={styles.divImg}>
-                <img src={noimage} className={styles.onboardingImg} />
+                <img src={pic2} className={styles.onboardingImg} />
               </div>
               <p>
                 {textPage2}
@@ -93,7 +94,7 @@ const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
           {step == 3 && (
             <Cell multiline>
               <div className={styles.divImg}>
-                <img src={noimage} className={styles.onboardingImg} />
+                <img src={pic3} className={styles.onboardingImg} />
               </div>
               <p>
                 {textPage3}
