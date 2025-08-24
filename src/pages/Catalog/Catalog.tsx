@@ -241,10 +241,10 @@ export const CatalogPage: FC = () => {
   }, []);
 
   function cardPressedHandler(e: any) {
-    console.log('card Pressed', e.target.id);
+    console.log('card Pressed', e.currentTarget.id);
     navigate('/onegood-page', {
       state: {
-        itemid: e.target.id,
+        itemid: e.currentTarget.id,
       },
     });
   }
@@ -438,7 +438,13 @@ export const CatalogPage: FC = () => {
               {arrayGoodsForRender.map((item: any) => (
                 <>
                   <div className={styles.divCard}>
-                    <Card type="plain" style={{ width: '90%' }}>
+                    <Card 
+                    type="plain" 
+                    style={{ width: '90%' }}
+                    id={item.id}
+                    onClick={(e) => cardPressedHandler(e)}
+                    >
+                      
                       <React.Fragment key=".0">
                         {item.isSaleNow &&
                           <CardChip readOnly style={{ backgroundColor: '#ed6c02' }}>
@@ -446,6 +452,7 @@ export const CatalogPage: FC = () => {
                             <span style={{ color: '#ffffff' }}>{item.chipInfo}</span>
                           </CardChip>
                         }
+                      
                         <img
                           alt="image"
                           id={item.id}
@@ -463,10 +470,15 @@ export const CatalogPage: FC = () => {
                           readOnly
                           multiline
                           subtitle={item.description_short}
+                          id={item.id}
+                          
+
                         >
                           {item.name}
                         </Cell>
-                        <Cell>
+                        <Cell
+                        
+                        >
                         { item.isSaleNow ? (<><span style={{ textDecoration: 'line-through', marginRight:10 }}>{item.basePrice} {item.valuteToShow}</span><span style={{fontWeight:'bold'}}> {item.price} {item.valuteToShow}</span> </>)  : `${item.price} ${item.valuteToShow}` }
                         </Cell>
 
@@ -477,7 +489,10 @@ export const CatalogPage: FC = () => {
                             stretched
                             mode="filled"
                             size="m"
-                            onClick={() => addToCartHandler(item.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCartHandler(item.id);
+                            }}
                             style={{ paddingLeft: 30, paddingRight: 30 }}
                           >
                             {addToCartT}
