@@ -72,7 +72,7 @@ export const Cart: FC = () => {
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const {plusT,minusT,deleteT,totalT,pcsT,addedT,nextBtn,itemAdded} = TEXTS[language];
+  const {plusT,minusT,deleteT,totalT,pcsT,addedT,nextBtn,itemAdded, emptyCartT, toCatalogT} = TEXTS[language];
    
  
   if (settingsButton.mount.isAvailable()) {
@@ -220,12 +220,12 @@ export const Cart: FC = () => {
           { noCart && 
        <>
        <Section>
-       <Cell>Корзина пустая</Cell>
+       <Cell>{emptyCartT}</Cell>
        <Section style={{ marginBottom: 100, padding: 10 }}
         onClick={() => navigate('/catalog-page')}
 
       >
-          <Button stretched>В каталог</Button>
+          <Button stretched>{toCatalogT}</Button>
         </Section> 
         </Section>
         <TabbarMenu />

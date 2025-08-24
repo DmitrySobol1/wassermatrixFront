@@ -1,15 +1,20 @@
 import { Section, Button, Text, Cell } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useContext } from 'react';
-// import { LanguageContext } from '../../components/App.tsx';
+import { useContext } from 'react';
 import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
+import { LanguageContext } from '../../components/App.tsx';
+
+import { TEXTS } from './texts.ts';
 
 export const SuccessPage: FC = () => {
-  // const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
+  const { language } = useContext(LanguageContext);
+
+  //@ts-ignore
+    const { successT, infoT, myOrderT } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -33,10 +38,10 @@ export const SuccessPage: FC = () => {
     <Page back={false}>
       <Section>
         <Cell>
-          <Text weight="2">Заказ успешно оформлен!</Text>
+          <Text weight="2">{successT}</Text>
         </Cell>
         <Cell multiline>
-          Вы можете следить за информацией по заказу в разделе: аккаунт - заказы
+          {infoT}
         </Cell>
 
 
@@ -45,7 +50,7 @@ export const SuccessPage: FC = () => {
          <Section style={{ marginBottom: 100, padding: 10 }}>
 
             <Button stretched onClick={goToCatalog} style={{ marginTop: '20px' }}>
-              Мои заказы
+              {myOrderT}
             </Button>
         </Section>
 

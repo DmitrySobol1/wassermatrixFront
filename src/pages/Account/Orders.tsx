@@ -16,7 +16,7 @@ import { settingsButton, openLink } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
-// import { TEXTS } from './texts.ts';
+import { TEXTS } from './texts.ts';
 import axios from '../../axios';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
@@ -24,11 +24,17 @@ import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blo
 
 
 export const Orders: FC = () => {
+
+  
   const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
-
+  
+  //@ts-ignore
+  const { myOrdersT, orderFromT,currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT,pcsT, notPaydT, payBtnT, loadingT} = TEXTS[language];
+  
+  
   const [isLoading, setIsLoading] = useState(true);
   const [myOrders, setMyOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
@@ -160,7 +166,7 @@ export const Orders: FC = () => {
       {!isLoading && (
         <>
           <List>
-            <Section header="Мои заказы" style={{ marginBottom: 100 }}>
+            <Section header={myOrdersT} style={{ marginBottom: 100 }}> 
               {myOrders && myOrders.length > 0 ? (
                 myOrders.map((order: any) => {
                   // посчитать общую сумму заказа с учетом стоимости доставки
@@ -192,7 +198,7 @@ export const Orders: FC = () => {
                         <AccordionSummary>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <Text weight="2">
-                              Заказ от{' '}
+                              {orderFromT}{' '}
                               {new Date(order.createdAt).toLocaleDateString(
                                 'ru-RU'
                               )}
@@ -201,10 +207,10 @@ export const Orders: FC = () => {
                           </div>
                         </AccordionSummary>
                         <AccordionContent>
-                          <Cell subhead="Текущий статус заказа">
+                          <Cell subhead={currentStatusT}>
                             {order.payStatus === false ? (
                               <span style={{ color: 'red', fontWeight: 600 }}>
-                                не оплачен
+                                {notPaydT}
                               </span>
                             ) : (
                               <div>
@@ -224,7 +230,7 @@ export const Orders: FC = () => {
                                 onClick={() => handleReceipt(order.payment_intent)}
                                 loading = {isButtonLoading}
                               >
-                                Открыть чек
+                                {openReceiptT}
                               </Button>
                             </Cell>
                           )}
@@ -239,11 +245,11 @@ export const Orders: FC = () => {
                               onClick={() => handlePayment(order)}
                               disabled={paymentLoading}
                             >
-                              {paymentLoading ? 'Загрузка...' : 'Оплатить'}
+                              {paymentLoading ? loadingT : payBtnT}
                             </Button>
                           )}
 
-                          <Cell multiline subhead="Адрес доставки">
+                          <Cell multiline subhead={deliveryAddressT}>
                             {order.country}, {order.adress}
                           </Cell>
 
@@ -262,14 +268,14 @@ export const Orders: FC = () => {
                                   multiline
                                   description={
                                     <>
-                                      <div>Кол-во: {quantity} шт.</div>
+                                      <div>{qtyT} {quantity} {pcsT}</div>
                                       <div>
-                                        Стоимость товара:{' '}
+                                        {priceGoodT}{' '}
                                         {(itemPrice * quantity).toFixed(2)}{' '}
                                         {valuteToShowOnFront}
                                       </div>
                                       <div>
-                                        Стоимость доставки:{' '}
+                                        {priceDeliveryT}{' '}
                                         {(deliveryPrice * quantity).toFixed(2)}{' '}
                                         {valuteToShowOnFront}
                                       </div>
@@ -312,7 +318,7 @@ export const Orders: FC = () => {
                                 </Text>
                               }
                             >
-                              <Text weight="2">Общая стоимость:</Text>
+                              <Text weight="2">{itogoT}</Text>
                             </Cell>
 
                             {/* <Cell 

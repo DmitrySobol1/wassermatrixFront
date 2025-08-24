@@ -45,7 +45,7 @@ export const DeliveryChoice: FC = () => {
   const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
   //@ts-ignore
-  const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn } = TEXTS[language];
+  const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn,headerT,selectCountryT, addressT, nameT, phoneT} = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -252,9 +252,9 @@ async function countrySelectHandler(e:any){
         <>
           {/* {console.log('Rendering deliveryTypes:', deliveryTypes, 'Length:', deliveryTypes.length)} */}
             
-              <Section header="Информация по доставке">
+              <Section header={headerT}>
                 <Select 
-                  header="Select Country" 
+                  header={selectCountryT}
                   //  status="focused" 
                   value={selectedCountry}
                   // onChange={(e) => setSelectedCountry(e.target.value)}
@@ -271,7 +271,7 @@ async function countrySelectHandler(e:any){
 
             <Input 
               // status="focused" 
-              header="Address" 
+              header={addressT}
               placeholder="Write and clean me" 
               value={adress} 
               onChange={e => setAdress(e.target.value)}
@@ -288,7 +288,7 @@ async function countrySelectHandler(e:any){
 
             <Input 
               // status="focused" 
-              header="Name" 
+              header={nameT}
               placeholder="Write and clean me" 
               value={userName} 
               onChange={e => setUserName(e.target.value)}
@@ -305,7 +305,7 @@ async function countrySelectHandler(e:any){
            
             <Input 
               // status="focused" 
-              header="Phone" 
+              header={phoneT}
               placeholder="Write and clean me" 
               value={phone} 
               onChange={e => setPhone(e.target.value)}
@@ -324,7 +324,7 @@ async function countrySelectHandler(e:any){
            
 <Cell>
   <>
-<Text weight="2" >Стоимость доставки:</Text>
+<Text weight="2" >{priceDeliveryT}</Text>
             {cart.map((item: any) => (
                 <div key={item.id}>{item[`name_${language}`]} - {(Number(item[`deliveryPriceToShow_${region}`]) * Number(item.qty)).toFixed(2)} {item.valuteToShow} </div>
               ))}

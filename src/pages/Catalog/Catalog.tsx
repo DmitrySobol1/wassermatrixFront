@@ -142,11 +142,11 @@ export const CatalogPage: FC = () => {
         );
       case 'price_asc':
         return sortedGoods.sort(
-          (a, b) => (a.price_eu || 0) - (b.price_eu || 0)
+          (a, b) => (a.price || 0) - (b.price || 0)
         );
       case 'price_desc':
         return sortedGoods.sort(
-          (a, b) => (b.price_eu || 0) - (a.price_eu || 0)
+          (a, b) => (b.price || 0) - (a.price || 0)
         );
       default:
         return sortedGoods;
@@ -200,6 +200,7 @@ export const CatalogPage: FC = () => {
           chipInfo: item.saleInfo ? item.saleInfo[`infoForFront_${language}`] : '',
           quantityOfPurchases: item.quantityOfPurchases || 0,
           price_eu: item.price_eu || 0,
+          
         }));
 
         setAllGoods(arrayGoodsForRender);

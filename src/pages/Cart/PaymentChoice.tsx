@@ -35,7 +35,7 @@ export const PaymentChoice: FC = () => {
   const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
 
   //@ts-ignore
-  const { payBtn } = TEXTS[language];
+  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -188,7 +188,7 @@ export const PaymentChoice: FC = () => {
       {!isLoading && (
         <>
           <List>
-            <Section header="Информация по оплате">
+            <Section header={header2T}>
               {cart.map((item: any) => {
                 const itemPrice = Number(item.priceToShow) || 0;
                 const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
@@ -201,9 +201,9 @@ export const PaymentChoice: FC = () => {
                     multiline
                     description={
                     <>
-                    <div>Кол-во: {quantity} шт.</div> 
-                    <div>Стомость товара: {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
-                    <div>Стоимость доставки: {(deliveryPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    <div>{qtyT} {quantity} {pcsT}</div> 
+                    <div>{priceGoodT} {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    <div>{priceDeliveryT} {(deliveryPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     </>
                     }
                     // after={`${totalItemCost} ${item.valuteToShow}`}
@@ -228,7 +228,7 @@ export const PaymentChoice: FC = () => {
                 }
               >
                 <Text weight="2" >
-                  Итого к оплате
+                  {itogoT}
                 </Text>
               </Cell>
             </Section>
@@ -247,7 +247,7 @@ export const PaymentChoice: FC = () => {
                 onClick={handlePayment}
                 disabled={!cart || cart.length === 0}
               >
-                Оплата
+                {payBtn2T }
               </Button>
             </Section>
           </List>

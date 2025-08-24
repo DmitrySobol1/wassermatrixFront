@@ -12,7 +12,22 @@ export const TEXTS = {
    priceDeliveryT: 'Стоимость доставки:',
    nextBtn: 'Оформить',
    itemAdded: 'Товар добавлен',
-   payBtn: 'К оплате'
+   payBtn: 'К оплате',
+   payBtn2T : 'Оплатить',
+   headerT: 'Информация по доставке',
+   header2T: 'Информация по оплате',
+   selectCountryT: 'Выберите страну',
+   addressT: 'Адресс',
+   nameT: 'Имя',
+   phoneT: 'Телефон',
+   qtyT: 'Кол-во:',
+   priceGoodT: 'Стоимость товара:',
+   itogoT: 'Итого к оплате',
+   successT: 'Заказ успешно оформлен!',
+   infoT: 'Вы можете следить за информацией по заказу в разделе: Аккаунт > Заказы',
+   myOrderT: 'Мои заказы',
+   emptyCartT: 'Корзина пустая',
+   toCatalogT: 'В каталог'
     
   },
   en: {
@@ -28,7 +43,23 @@ export const TEXTS = {
   priceDeliveryT: 'Delivery price:',
    nextBtn: 'To order',
    itemAdded: 'Item added',
-   payBtn: 'To pay'
+   payBtn: 'To pay',
+   payBtn2T : 'Pay',
+   headerT: 'Delivery information',
+   header2T: 'Payment information',
+   selectCountryT: 'Choose country',
+   addressT: 'Address',
+   nameT: 'Name',
+   phoneT: 'Phone',
+   qtyT: 'Amount:',
+   priceGoodT: 'Item price:',
+   itogoT: 'Total to pay',
+   successT: 'Order has been placed successfully !',
+   infoT: 'You can track your order information in the section: Account > Orders',
+   myOrderT: 'My orders',
+   emptyCartT: 'The cart is empty',
+   toCatalogT: 'To catalog'
+
    
     
   },
@@ -45,7 +76,23 @@ export const TEXTS = {
      priceDeliveryT: 'Preis der Lieferung:',
       nextBtn: 'Arrangement',
       itemAdded: 'Artikel hinzugefügt',
-    payBtn: 'Zahlbar an'
+    payBtn: 'Zahlbar an',
+    payBtn2T : 'Bezahlen',
+    headerT: 'Informationen zur Lieferung',
+    header2T: 'Zahlungsinformationen',
+    selectCountryT: 'Land auswählen',
+    addressT: 'Adresse',
+    nameT: 'Name',
+    phoneT: 'Telefon',
+    qtyT: 'Betrag:',
+    priceGoodT: 'Artikelpreis:',
+    itogoT: 'Gesamtbetrag',
+    successT: 'Die Bestellung wurde erfolgreich aufgegeben!',
+     infoT: 'Sie können Ihre Bestellinformationen im Bereich Konto > Bestellungen“ verfolgen',
+     myOrderT: 'Meine Bestellungen',
+     emptyCartT: 'Der warenkorb ist leer',
+     toCatalogT: 'Katalogisieren'
+
       
   },
 };
