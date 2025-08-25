@@ -65,7 +65,7 @@ const navigate = useNavigate();
 
   //FIXME:
   // @ts-ignore
-  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, languageChangedT,valuteChangedT, personalT, nameT, phoneT, addressT, setNameT, setPhoneT, setAddressT } = TEXTS[language];
+  const {title,languageT,valuteT, languageTsubtitle, valuteTsubtitle, languageChangedT,valuteChangedT, personalT, nameT, phoneT, addressT, setNameT, setPhoneT, setAddressT, aboutT } = TEXTS[language];
 
 
   function showLanguageSelect() {
@@ -221,7 +221,7 @@ const navigate = useNavigate();
                           </IconButton>  
                  }
                  >
-                  <span style={{color:'#168acd', fontWeight: 500}}>Help </span>
+                  <span style={{color:'#1f8fcf', fontWeight: 500}}>{aboutT}</span>
                  </Cell> 
                  </Section>
                 

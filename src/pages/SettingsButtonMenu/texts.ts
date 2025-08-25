@@ -13,7 +13,8 @@ export const TEXTS = {
     addressT: 'Адрес',
     setNameT: 'укажите имя',
     setPhoneT: 'укажите телефон',
-    setAddressT: 'укажите адрес'
+    setAddressT: 'укажите адрес',
+    aboutT: 'О магазине'
 
 
     // yourid: 'Ваш ID в приложении:',
@@ -37,7 +38,8 @@ export const TEXTS = {
     addressT: 'Address',
     setNameT: 'set name',
     setPhoneT: 'set phone',
-    setAddressT: 'set address'
+    setAddressT: 'set address',
+    aboutT: 'About'
     // yourid: 'Your ID in app:',
     // purposeid: 'use for internal coin transfer',
     // copiedtext: 'copied',
@@ -58,7 +60,8 @@ export const TEXTS = {
     addressT: 'Adresse',
     setNameT: 'Name festlegen',
     setPhoneT: 'Telefonnummer festlegen',
-    setAddressT: 'Adresse festlegen'
+    setAddressT: 'Adresse festlegen',
+    aboutT: 'Über'
 
 
     // yourid: 'Ihre ID in der App:',
