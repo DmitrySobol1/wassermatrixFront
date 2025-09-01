@@ -6,6 +6,7 @@ import {
   Section,
   Spinner,
   Chip,
+  Subheadline,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -33,6 +34,7 @@ import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 // import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
 
 import styles from './catalog.module.css';
@@ -59,11 +61,12 @@ export const OneGood: FC = () => {
   const [openSnakbar, setOpenSnakbar] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [spinBtn, setSpinBtn] = useState(false);
+  const [viewersCount] = useState(() => Math.floor(Math.random() * 11) + 5);
 
   const domen = import.meta.env.VITE_DOMEN;
 
   //@ts-ignore
-  const { addToCartT, itemAdded } = TEXTS[language];
+  const { addToCartT, itemAdded, goodWatchT, peopleT} = TEXTS[language];
 
   interface GoodInfo {
     img: string;
@@ -174,12 +177,37 @@ export const OneGood: FC = () => {
             <Section style={{ marginBottom: 100 }}>
               <img src={goodInfo?.img || ''} className={styles.img} />
 
+              { !goodInfo?.isSaleNow &&
+              <div style={{ marginLeft: 20 }}>
+                  <Subheadline
+                    level="1"
+                    weight="3"
+                    className={styles.nowWatchText}
+                  >
+                    <RemoveRedEyeIcon sx={{ fontSize: 16, marginRight: '4px' }}/> {goodWatchT} {viewersCount} {peopleT}
+                  </Subheadline>
+                  </div>
+              }
+
+
             { goodInfo?.isSaleNow &&     
-              <Chip 
-              mode='elevated' 
-              style={{backgroundColor:'#ed6c02', padding: '5px 20px', marginLeft:20}}>
-                <span style={{color:'white'}}>{goodInfo?.infoForFront}</span>
-              </Chip>
+              <div className={styles.nowWatchWrapper} >
+                <Chip 
+                mode='elevated' 
+                style={{backgroundColor:'#ed6c02', padding: '5px 20px', marginLeft:20}}>
+                  <span style={{color:'white'}}>{goodInfo?.infoForFront}</span>
+                </Chip>
+                <div>
+                  
+                  <Subheadline
+                    level="1"
+                    weight="3"
+                    className={styles.nowWatchText}
+                  >
+                    <RemoveRedEyeIcon sx={{ fontSize: 16, marginRight: '4px' }}/> {goodWatchT} {viewersCount} {peopleT}
+                  </Subheadline>
+                  </div>
+              </div>
             }  
 
               <Cell

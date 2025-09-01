@@ -107,3 +107,16 @@ width: 93%;
 .indicator.active {
   background-color: #40a7e3;
 }
+
+.nowWatchWrapper {
+  display:flex;
+  align-items: center;
+  gap: 10px
+}
+
+.nowWatchText {
+  color: grey;
+  font-size: 80%;
+  display: flex;
+  align-items: center;
+}
