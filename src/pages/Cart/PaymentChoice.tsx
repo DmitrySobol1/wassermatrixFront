@@ -40,7 +40,6 @@ export const PaymentChoice: FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
   const [promocodeValue, setPromocodeValue] = useState('')
-  const [currentPromocode, setCurrentPromocode] = useState(null)
   const [isPromocodeLoading, setIsPromocodeLoading] = useState(false)
 
   const [isShowPromocodeInfoText, setIsShowPromocodeInfoText] = useState(false)
@@ -130,16 +129,7 @@ export const PaymentChoice: FC = () => {
          setPromocodeInfoType('success')
          setIsShowPromocodeInfoText(true)
 
-
-        // FIXME: временно закомментил
-        // setCurrentPromocode(response.data.promocode);
-        // setSnackbarMessage(`Промокод применён! Скидка: ${response.data.promocode.saleInPercent}%`);
-        // setOpenSnackbar(true);
-        
-        // // Пересчитываем сумму с учетом промокода
-        // const discount = response.data.promocode.saleInPercent / 100;
-        // const discountedTotal = totalOrderSum * (1 - discount);
-        // setTotalOrderSum(discountedTotal);
+       
 
 
       }
@@ -154,7 +144,6 @@ export const PaymentChoice: FC = () => {
       setIsShowPromocodeInfoText(true)
       setPromocodeValue('')
 
-      setCurrentPromocode(null);
     } finally {
       setIsPromocodeLoading(false);
     }
