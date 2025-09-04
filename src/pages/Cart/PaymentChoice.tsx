@@ -6,6 +6,9 @@ import {
   Cell,
   Text,
   Snackbar,
+  Input,
+  Tappable,
+  Chip,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -26,13 +29,24 @@ export const PaymentChoice: FC = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const { cart, deliveryInfo, deliveryRegion } = location.state || {}; 
+  const { cart: initialCart, deliveryInfo, deliveryRegion } = location.state || {}; 
   
+  const [cart, setCart] = useState(initialCart || []);
   const [isLoading, setIsLoading] = useState(false);
   const [totalOrderSum, setTotalOrderSum] = useState(0);
+  const [oldTotalOrderSum, setOldTotalOrderSum] = useState(0)
+  const [isShowOldTotalOrderSum, setIsShowOldTotalOrderSum] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
+  const [promocodeValue, setPromocodeValue] = useState('')
+  const [currentPromocode, setCurrentPromocode] = useState(null)
+  const [isPromocodeLoading, setIsPromocodeLoading] = useState(false)
+
+  const [isShowPromocodeInfoText, setIsShowPromocodeInfoText] = useState(false)
+  const [promocodeInfoText, setPromocodeInfoText] = useState('')
+  const [promocodeInfoType, setPromocodeInfoType] = useState<'success' | 'error'>('error')
+  
 
   //@ts-ignore
   const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T } = TEXTS[language];
@@ -71,54 +85,82 @@ export const PaymentChoice: FC = () => {
     }
   }, []);
 
+  // Функция для проверки промокода
+  const handleApplyPromocode = async () => {
+    
+    if (!promocodeValue.trim()) {
+      // setSnackbarMessage('Введите промокод');
+      // setOpenSnackbar(true);
 
-  // const handleOrder = async () => {
-  //   if (!cart || !deliveryInfo) {
-  //     setSnackbarMessage('Ошибка: отсутствуют данные заказа');
-  //     setOpenSnackbar(true);
-  //     return;
-  //   }
+      setPromocodeInfoText('Введите промокод')
+      setPromocodeInfoType('error')
+      setIsShowPromocodeInfoText(true)
 
-  //   setIsLoading(true);
+      return;
+    }
 
-  //   console.log("HERE", deliveryInfo )
-  //   // return
+    setIsPromocodeLoading(true);
 
-  //   try {
-  //     // Подготавливаем данные для заказа
-  //     const orderData = {
-  //       tlgid: tlgid,
-  //       jbid: null,
-  //       goods: cart.map((item: any) => ({
-  //         itemId: item.itemId,
-  //         qty: item.qty
-  //       })),
-  //       country: deliveryInfo.selectedCountry.name_en,
-  //       regionDelivery: deliveryRegion,
-  //       address: deliveryInfo.address,
-  //       phone: deliveryInfo.phone,
-  //       name: deliveryInfo.userName
-  //     };
+    try {
+      const response = await axios.post('/check_promocode', {
+        code: promocodeValue.trim(),
+        userId: tlgid
+      });
 
-  //     console.log('Отправляем заказ:', orderData);
+      if (response.data.status === 'ok') {
 
-  //     // Отправляем запрос на создание заказа
-  //     const response = await axios.post('/create_order', orderData);
+        console.log('new cart with promo', response.data)
+
+        setCart(response.data.goods)
+
+         const total = response.data.goods.reduce((sum: number, item: any) => {
+          const itemPrice = Number(item.priceToShow) || 0;
+          const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
+          const quantity = Number(item.qty) || 0;
+          
+          return sum + ((itemPrice + deliveryPrice) * quantity);
+         }, 0);
       
-  //     if (response.data.status === 'ok') {
-  //       // Переходим на страницу успешного оформления заказа
-  //       navigate('/success-page');
-  //     } else {
-  //       throw new Error(response.data.message || 'Ошибка при создании заказа');
-  //     }
-  //   } catch (error) {
-  //     console.error('Ошибка при создании заказа:', error);
-  //     setSnackbarMessage('Ошибка при оформлении заказа. Попробуйте еще раз.');
-  //     setOpenSnackbar(true);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+         setOldTotalOrderSum(totalOrderSum)
+         setTotalOrderSum(total);
+         setIsShowOldTotalOrderSum(true);
+
+        //  добавить текст для уведомления юзера
+         setPromocodeInfoText(response.data.textForUser)
+         setPromocodeInfoType('success')
+         setIsShowPromocodeInfoText(true)
+
+
+        // FIXME: временно закомментил
+        // setCurrentPromocode(response.data.promocode);
+        // setSnackbarMessage(`Промокод применён! Скидка: ${response.data.promocode.saleInPercent}%`);
+        // setOpenSnackbar(true);
+        
+        // // Пересчитываем сумму с учетом промокода
+        // const discount = response.data.promocode.saleInPercent / 100;
+        // const discountedTotal = totalOrderSum * (1 - discount);
+        // setTotalOrderSum(discountedTotal);
+
+
+      }
+    } catch (error: any) {
+      console.error('Ошибка при проверке промокода:', error);
+      const errorMessage = error.response?.data?.message || 'Ошибка при проверке промокода';
+      // setSnackbarMessage(errorMessage);
+      // setOpenSnackbar(true);
+
+      setPromocodeInfoText(errorMessage)
+      setPromocodeInfoType('error')
+      setIsShowPromocodeInfoText(true)
+      setPromocodeValue('')
+
+      setCurrentPromocode(null);
+    } finally {
+      setIsPromocodeLoading(false);
+    }
+  };
+
+  
 
   // Обработчик для кнопки "Оплата" - перенаправление на Stripe
   const handlePayment = async () => {
@@ -191,6 +233,7 @@ export const PaymentChoice: FC = () => {
             <Section header={header2T}>
               {cart.map((item: any) => {
                 const itemPrice = Number(item.priceToShow) || 0;
+                const priceWithoutPromo = Number(item.priceToShowNoPromoApplied) || 0
                 const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
                 const quantity = Number(item.qty) || 0;
                 const totalItemCost = ((itemPrice + deliveryPrice) * quantity).toFixed(2);
@@ -202,7 +245,13 @@ export const PaymentChoice: FC = () => {
                     description={
                     <>
                     <div>{qtyT} {quantity} {pcsT}</div> 
+                    {!item.isWithPromoSale && 
                     <div>{priceGoodT} {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    }
+                    {item.isWithPromoSale && 
+                      <div>{priceGoodT} <span style={{textDecoration: 'line-through'}}>{(priceWithoutPromo*quantity).toFixed(2)}</span> {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    }
+
                     <div>{priceDeliveryT} {(deliveryPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     </>
                     }
@@ -223,7 +272,13 @@ export const PaymentChoice: FC = () => {
               multiline
                 after={
                   <Text weight="2" >
-                    {totalOrderSum.toFixed(2)} {valuteToShowOnFront}
+                    {/* {totalOrderSum.toFixed(2)} {valuteToShowOnFront} */}
+                    {!isShowOldTotalOrderSum ? (`${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`) : (
+                      <>
+                        <span style={{textDecoration: 'line-through'}}>{oldTotalOrderSum.toFixed(2)}</span>
+                        {` ${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`}
+                      </>
+                    )}
                   </Text>
                 }
               >
@@ -231,16 +286,67 @@ export const PaymentChoice: FC = () => {
                   {itogoT}
                 </Text>
               </Cell>
+
             </Section>
 
+
+            <Section>
+              
+            
+
+             <Input 
+             status="focused" 
+             header="Input" 
+             placeholder="Введите промокод" 
+             value={promocodeValue} 
+             onChange={e => {setPromocodeValue(e.target.value); setIsShowPromocodeInfoText(false);}} 
+             after={
+                <Tappable Component="div" 
+                  style={{display: 'flex'}} 
+                  onClick={handleApplyPromocode}>
+                <Chip 
+                mode="outline" 
+                style={{backgroundColor:'#a2d7f6ff', padding: '3px 15px 3px 15px', color: 'white'}}
+                >
+                  {isPromocodeLoading ? <Spinner size="s" /> : 'apply'}
+                </Chip>
+                </Tappable>} 
+              />
+              { isShowPromocodeInfoText &&
+                <Text weight="3" style={{
+                  paddingLeft: 22, 
+                  color: promocodeInfoType === 'success' ? 'green' : 'red'
+                }} >
+                  {promocodeInfoText}
+                </Text>
+
+              }
+              
+              
+
+              </Section>      
+              
+            
+            {/* FIXME: раскомменти */}
+              {/* {currentPromocode && (
+                <Section style={{ marginTop: 10 }}>
+                  <Cell 
+                    subtitle={`Скидка: ${currentPromocode.saleInPercent}%`}
+                    before="🎉"
+                  >
+                    Промокод "{currentPromocode.code}" применён
+                  </Cell>
+                </Section>
+              )} */}
+              
+              {/* <Section >
+
+              
+              </Section> */}
+
+
             <Section style={{ marginBottom: 100, padding: 10 }}>
-              {/* <Button 
-                stretched 
-                onClick={handleOrder}
-                disabled={!cart || cart.length === 0}
-              >
-                Оформить заказ
-              </Button> */}
+              
               
               <Button 
                 stretched 
