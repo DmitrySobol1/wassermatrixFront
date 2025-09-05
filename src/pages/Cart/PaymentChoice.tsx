@@ -48,7 +48,7 @@ export const PaymentChoice: FC = () => {
   
 
   //@ts-ignore
-  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T } = TEXTS[language];
+  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT} = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -284,8 +284,8 @@ export const PaymentChoice: FC = () => {
 
              <Input 
              status="focused" 
-             header="Input" 
-             placeholder="Введите промокод" 
+             header={enterPromocodeT}
+             placeholder={promocodePlaceholderT}
              value={promocodeValue} 
              onChange={e => {setPromocodeValue(e.target.value); setIsShowPromocodeInfoText(false);}} 
              after={
@@ -296,7 +296,7 @@ export const PaymentChoice: FC = () => {
                 mode="outline" 
                 style={{backgroundColor:'#a2d7f6ff', padding: '3px 15px 3px 15px', color: 'white'}}
                 >
-                  {isPromocodeLoading ? <Spinner size="s" /> : 'apply'}
+                  {isPromocodeLoading ? <Spinner size="s" /> : applyT }
                 </Chip>
                 </Tappable>} 
               />

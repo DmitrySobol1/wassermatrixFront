@@ -27,7 +27,10 @@ export const TEXTS = {
    infoT: 'Вы можете следить за информацией по заказу в разделе: Аккаунт > Заказы',
    myOrderT: 'Мои заказы',
    emptyCartT: 'Корзина пустая',
-   toCatalogT: 'В каталог'
+   toCatalogT: 'В каталог',
+   enterPromocodeT: 'Укажите промокод',
+   promocodePlaceholderT: 'напишите промокод',
+   applyT: 'применить' 
     
   },
   en: {
@@ -58,7 +61,10 @@ export const TEXTS = {
    infoT: 'You can track your order information in the section: Account > Orders',
    myOrderT: 'My orders',
    emptyCartT: 'The cart is empty',
-   toCatalogT: 'To catalog'
+   toCatalogT: 'To catalog',
+   enterPromocodeT: 'Enter promocode',
+   promocodePlaceholderT: 'fill in promocode',
+   applyT: 'apply' 
 
    
     
@@ -91,8 +97,11 @@ export const TEXTS = {
      infoT: 'Sie können Ihre Bestellinformationen im Bereich Konto > Bestellungen“ verfolgen',
      myOrderT: 'Meine Bestellungen',
      emptyCartT: 'Der warenkorb ist leer',
-     toCatalogT: 'Katalogisieren'
-
+     toCatalogT: 'Katalogisieren',
+     enterPromocodeT: 'Promocode eingeben',
+     promocodePlaceholderT: 'promocode eingeben',
+     applyT: 'anwenden' 
+    
       
   },
 };
