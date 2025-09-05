@@ -13,6 +13,7 @@ import { CancellPay } from '@/pages/Cart/CancellPay';
 
 import { MyAccount } from '@/pages/Account/MyAccount'
 import { Orders } from '@/pages/Account/Orders';
+import { MyPromocodes } from '@/pages/Account/MyPromocodes';
 // import { ShowReceipt } from '@/pages/Account/ShowReceipt';
 
 
@@ -51,6 +52,7 @@ export const routes: Route[] = [
 
   { path: '/myaccount-page', Component: MyAccount},
   { path: '/myorders-page', Component: Orders},
+  { path: '/mypromocodes-page', Component: MyPromocodes},
   // { path: '/showreceipt-page', Component: ShowReceipt},
   
   

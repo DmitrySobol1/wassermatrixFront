@@ -14,7 +14,13 @@ export const TEXTS = {
    pcsT: 'шт.',
    notPaydT: 'не оплачен',
    payBtnT: 'Оплатить',
-   loadingT: 'Загрузка ...'
+   loadingT: 'Загрузка ...',
+   myPromocodesT: 'Мои промокоды',
+   saleT: 'скидка:',
+   validUntilT: 'действует до:',
+   notPromocodeT: 'У вас нет персональных промокодов',
+   footerPromocodesT: 'Нажмите на промокод, чтобы скопировать. Примените его при оплате для получения скидки',
+   copiedT: 'промокод скопирован'
    
     
   },
@@ -33,7 +39,13 @@ export const TEXTS = {
     pcsT: 'pcs.',
     notPaydT: 'not payed',
     payBtnT: 'Pay',
-    loadingT: 'Loading ...'
+    loadingT: 'Loading ...',
+    myPromocodesT: 'My promocodes',
+    saleT: 'sale:',
+    validUntilT: 'valid until:',
+    notPromocodeT: 'You have no personal promocodes now',
+    footerPromocodesT: 'Click on the promo code to copy it. Apply it while pay to receive your discount.',
+    copiedT: 'promocode copied'
   
    
     
@@ -53,8 +65,13 @@ export const TEXTS = {
     pcsT: 'pcs.',
     notPaydT: 'nicht bezahlt',
     payBtnT: 'Bezahlen',
-    loadingT: 'Laden ...'
-    
+    loadingT: 'Laden ...',
+    myPromocodesT: 'Meine promo-codes',
+    saleT: 'sale:',
+    alidUntilT: 'gültig bis:',
+    notPromocodeT: 'Sie haben derzeit keine persönlichen Promo-Codes',
+    footerPromocodesT: 'Klicken Sie auf den Promo-Code, um ihn zu kopieren. Geben Sie ihn beim Bezahlen ein, um den Rabatt zu erhalten',
+    copiedT: 'promo-Code kopiert'
   
 
       

@@ -247,9 +247,8 @@ export const PaymentChoice: FC = () => {
                     // after={`${totalItemCost} ${item.valuteToShow}`}
                     after={ <Text weight="3">{totalItemCost} {item.valuteToShow}</Text>}
                   >
-                    {/* <Text weight="2"> */}
-                      {item[`name_${language}`] || item.name_en}
-                    {/* </Text> */}
+                    {item[`name_${language}`] || item.name_en}
+                    {item.isSaleNow && ' (sale)'}
                   </Cell>
                 );
               })}
@@ -279,9 +278,9 @@ export const PaymentChoice: FC = () => {
             </Section>
 
 
+            {/* условный вывод Section - скрываем если у всех товаров isSaleNow = true */}
+            {!cart.every((item: any) => item.isSaleNow) && (
             <Section>
-              
-            
 
              <Input 
              status="focused" 
@@ -310,11 +309,9 @@ export const PaymentChoice: FC = () => {
                 </Text>
 
               }
-              
-              
 
-              </Section>      
-              
+              </Section>
+            )}
             
             {/* FIXME: раскомменти */}
               {/* {currentPromocode && (
