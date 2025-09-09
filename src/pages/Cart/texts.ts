@@ -28,9 +28,15 @@ export const TEXTS = {
    myOrderT: 'Мои заказы',
    emptyCartT: 'Корзина пустая',
    toCatalogT: 'В каталог',
-   enterPromocodeT: 'Укажите промокод',
+   enterPromocodeT: 'Использовать промокод',
    promocodePlaceholderT: 'напишите промокод',
-   applyT: 'применить' 
+   applyT: 'применить',
+   useCashbackT: 'У вас накоплено баллов:',
+   cashbackPlaceholderT: 'укажите количество',
+   writeoffT: 'списать',
+   zeroCashbackT: 'У вас сейчас 0 баллов',
+   zeroCashbackInfoT: 'Мы начислим вас кешбек баллы после данной покупки',
+   availableCashbackT: 'доступно'
     
   },
   en: {
@@ -62,9 +68,16 @@ export const TEXTS = {
    myOrderT: 'My orders',
    emptyCartT: 'The cart is empty',
    toCatalogT: 'To catalog',
-   enterPromocodeT: 'Enter promocode',
+   enterPromocodeT: 'Use promocode',
    promocodePlaceholderT: 'fill in promocode',
-   applyT: 'apply' 
+   applyT: 'apply',
+   useCashbackT: 'You have cashback points:',
+   cashbackPlaceholderT: 'fill in quantity',
+   writeoffT: 'write off',
+   zeroCashbackT: 'You have 0 cashback points now',
+   zeroCashbackInfoT: 'We will credit you with cashback points after this purchase',
+   availableCashbackT: 'available'
+
 
    
     
@@ -98,9 +111,15 @@ export const TEXTS = {
      myOrderT: 'Meine Bestellungen',
      emptyCartT: 'Der warenkorb ist leer',
      toCatalogT: 'Katalogisieren',
-     enterPromocodeT: 'Promocode eingeben',
+     enterPromocodeT: 'Promocode verwenden',
      promocodePlaceholderT: 'promocode eingeben',
-     applyT: 'anwenden' 
+     applyT: 'anwenden',
+     useCashbackT: 'Sie haben cashback-punkte:',
+       cashbackPlaceholderT: 'menge eingeben',
+       writeoffT: 'abschreiben',
+       zeroCashbackT: 'Sie haben derzeit 0 cashback-punkte',
+       zeroCashbackInfoT: 'Wir schreiben Ihnen nach diesem Kauf Cashback-Punkte gut',
+       availableCashbackT: 'verfügbar'
     
       
   },

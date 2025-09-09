@@ -9,6 +9,8 @@ import {
   Input,
   Tappable,
   Chip,
+  
+  TabsList,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -21,6 +23,7 @@ import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
+import { TabsItem } from '@telegram-apps/telegram-ui/dist/components/Navigation/TabsList/components/TabsItem/TabsItem';
 
 export const PaymentChoice: FC = () => {
   const tlgid = useTlgid();
@@ -40,15 +43,23 @@ export const PaymentChoice: FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
   const [promocodeValue, setPromocodeValue] = useState('')
+  const [cashbackValue, setCashbackValue] = useState('0') // Доступные баллы из БД
+  const [enteredCashbackValue, setEnteredCashbackValue] = useState('') // Введенное количество баллов
   const [isPromocodeLoading, setIsPromocodeLoading] = useState(false)
 
   const [isShowPromocodeInfoText, setIsShowPromocodeInfoText] = useState(false)
   const [promocodeInfoText, setPromocodeInfoText] = useState('')
   const [promocodeInfoType, setPromocodeInfoType] = useState<'success' | 'error'>('error')
-  
+  const [currentPercent,setCurrentPercent] = useState(0)
+  const [willBeCashbacked,setWillBeCashbacked] = useState(0)
+  const [isLoadingSum, setIsLoadingSum] = useState(true)
+  const [userValute, setUserValute] = useState('')
+  const [isCashbackRunoutShow, setIsCashbackRunoutShow] = useState(false)
+  const [selectedTab, setSelectedTab] = useState(1)
+  const [typeLoyaltySystem, setTypeLoyaltySystem] = useState('addCashback')
 
   //@ts-ignore
-  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT} = TEXTS[language];
+  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT} = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -64,33 +75,70 @@ export const PaymentChoice: FC = () => {
     settingsButton.onClick(listener);
   }
 
+ 
+
 
   // Вычисляем общую сумму заказа
   useEffect(() => {
+   
+    const fetchCashbackBalls = async () => {
+   setIsLoadingSum(true)
+      try {
+        const ordersResponse = await axios.get('/user_get_orders', {
+          params: { tlgid, payStatus: true }
+        });
 
-    console.log('Cart', cart)
-
-    if (cart && cart.length > 0) {
-      setValuteToShowOnFront(cart[0].valuteToShow)
-      const total = cart.reduce((sum: number, item: any) => {
-        const itemPrice = Number(item.priceToShow) || 0;
-        const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
-        const quantity = Number(item.qty) || 0;
+        const responseData = ordersResponse.data;
         
-        return sum + ((itemPrice + deliveryPrice) * quantity);
-      }, 0);
-      
-      setTotalOrderSum(total);
-    }
-  }, []);
+        setCashbackValue(responseData.cashbackBall.toString());
+        setEnteredCashbackValue(`${responseData.cashbackBall} ${responseData.valute}`);
+        
+        setCurrentPercent(responseData.currentPercent);
+        setUserValute(responseData.valute)
+        
+        const currentPercentForUseEffect = responseData.currentPercent
+
+        if (responseData.cashbackBall == 0){
+          setIsCashbackRunoutShow(true)
+        }
+
+
+        if (cart && cart.length > 0) {
+        setValuteToShowOnFront(cart[0].valuteToShow);
+        const total = cart.reduce((sum: number, item: any) => {
+          const itemPrice = Number(item.priceToShow) || 0;
+          const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
+          const quantity = Number(item.qty) || 0;
+          
+          return sum + ((itemPrice + deliveryPrice) * quantity);
+        }, 0);
+
+        setTotalOrderSum(total);
+        const countingWillBeCashbacked = (total * (Number(currentPercentForUseEffect) / 100)).toFixed(4);
+
+        console.log('currentPercent', currentPercentForUseEffect);
+        console.log('countingWillBeCashbacked', countingWillBeCashbacked);
+
+        setWillBeCashbacked(Number(countingWillBeCashbacked));
+        setIsLoadingSum(false)
+      }
+
+      } catch (error) {
+        console.error('Error fetching cashback data:', error);
+      }
+    };
+
+
+    fetchCashbackBalls();
+}, []);
+
+   
+
 
   // Функция для проверки промокода
   const handleApplyPromocode = async () => {
     
     if (!promocodeValue.trim()) {
-      // setSnackbarMessage('Введите промокод');
-      // setOpenSnackbar(true);
-
       setPromocodeInfoText('Введите промокод')
       setPromocodeInfoType('error')
       setIsShowPromocodeInfoText(true)
@@ -113,9 +161,9 @@ export const PaymentChoice: FC = () => {
         setCart(response.data.goods)
 
          const total = response.data.goods.reduce((sum: number, item: any) => {
-          const itemPrice = Number(item.priceToShow) || 0;
-          const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
-          const quantity = Number(item.qty) || 0;
+         const itemPrice = Number(item.priceToShow) || 0;
+         const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
+         const quantity = Number(item.qty) || 0;
           
           return sum + ((itemPrice + deliveryPrice) * quantity);
          }, 0);
@@ -129,8 +177,7 @@ export const PaymentChoice: FC = () => {
          setPromocodeInfoType('success')
          setIsShowPromocodeInfoText(true)
 
-       
-
+         setTypeLoyaltySystem('usedPromocode')
 
       }
     } catch (error: any) {
@@ -151,13 +198,76 @@ export const PaymentChoice: FC = () => {
 
   
 
+
+
+  // Функция для списания баллов
+  const handleWriteOffCashback = async () => {
+    
+    
+    setIsPromocodeLoading(true);
+
+    try {
+      const response = await axios.post('/writeoff_cashback', {
+        cashbackValue: cashbackValue,
+        userId: tlgid
+      });
+
+      if (response.data.status === 'ok') {
+
+        console.log('new cart with cashback', response.data)
+
+        setCart(response.data.goods)
+
+         const total = response.data.goods.reduce((sum: number, item: any) => {
+         const itemPrice = Number(item.priceToShow) || 0;
+         const deliveryPrice = Number(item[`deliveryPriceToShow_${deliveryRegion}`]) || 0;
+         const quantity = Number(item.qty) || 0;
+          
+          return sum + ((itemPrice + deliveryPrice) * quantity);
+         }, 0);
+      
+         setOldTotalOrderSum(totalOrderSum)
+         setTotalOrderSum(total);
+         setIsShowOldTotalOrderSum(true);
+
+         //  добавить текст для уведомления юзера
+         setPromocodeInfoText(response.data.textForUser)
+         setPromocodeInfoType('success')
+         setIsShowPromocodeInfoText(true)
+
+         setTypeLoyaltySystem('writeOffCashback')
+
+      }
+    } catch (error: any) {
+      console.error('Ошибка при проверке промокода:', error);
+      // const errorMessage = error.response?.data?.message || 'Ошибка при проверке промокода';
+      // setSnackbarMessage(errorMessage);
+      // setOpenSnackbar(true);
+
+      // setPromocodeInfoText(errorMessage)
+      // setPromocodeInfoType('error')
+      // setIsShowPromocodeInfoText(true)
+      // setPromocodeValue('')
+
+    } finally {
+      setIsPromocodeLoading(false);
+    }
+  };
+  
+
+
+
   // Обработчик для кнопки "Оплата" - перенаправление на Stripe
   const handlePayment = async () => {
+   
     if (!cart || !deliveryInfo) {
       setSnackbarMessage('Ошибка: отсутствуют данные заказа');
       setOpenSnackbar(true);
       return;
     }
+
+    console.log('typeLoyalty', typeLoyaltySystem)
+    // return
 
     setIsLoading(true);
 
@@ -168,7 +278,11 @@ export const PaymentChoice: FC = () => {
         deliveryInfo: deliveryInfo,
         totalSum: totalOrderSum,
         region: deliveryRegion,
-        tlgid: tlgid
+        tlgid: tlgid,
+        typeLoyaltySystem: typeLoyaltySystem,
+        shouldBeCashbacked: willBeCashbacked,
+        cashbackValute: userValute
+
       };
 
       console.log('Создаем Stripe Checkout Session:', paymentData);
@@ -190,6 +304,10 @@ export const PaymentChoice: FC = () => {
       setIsLoading(false);
     }
   };
+
+
+
+
 
   if (!cart) {
     return (
@@ -234,12 +352,24 @@ export const PaymentChoice: FC = () => {
                     description={
                     <>
                     <div>{qtyT} {quantity} {pcsT}</div> 
-                    {!item.isWithPromoSale && 
+                    
+
+                    {/* promo=false */}
+                    {!item.isWithPromoSale && !item.isWithCashbackSale &&
                     <div>{priceGoodT} {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     }
+                                        
+                    {/* promo=true */}
                     {item.isWithPromoSale && 
                       <div>{priceGoodT} <span style={{textDecoration: 'line-through'}}>{(priceWithoutPromo*quantity).toFixed(2)}</span> {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     }
+                   
+                    {/* cashback=true */}
+                    {item.isWithCashbackSale && 
+                      <div>{priceGoodT} <span style={{textDecoration: 'line-through'}}>{(priceWithoutPromo*quantity).toFixed(2)}</span> {(itemPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
+                    }
+
+
 
                     <div>{priceDeliveryT} {(deliveryPrice*quantity).toFixed(2)} {item.valuteToShow}</div>
                     </>
@@ -248,7 +378,8 @@ export const PaymentChoice: FC = () => {
                     after={ <Text weight="3">{totalItemCost} {item.valuteToShow}</Text>}
                   >
                     {item[`name_${language}`] || item.name_en}
-                    {item.isSaleNow && ' (sale)'}
+                    {/* {item.isSaleNow && '(sale)'} */}
+                    {item.isSaleNow && <span style={{color: 'white', backgroundColor: '#ed6c02', padding: 10,   marginLeft:20}}>sale</span>}
                   </Cell>
                 );
               })}
@@ -260,75 +391,158 @@ export const PaymentChoice: FC = () => {
               multiline
                 after={
                   <Text weight="2" >
-                    {/* {totalOrderSum.toFixed(2)} {valuteToShowOnFront} */}
-                    {!isShowOldTotalOrderSum ? (`${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`) : (
-                      <>
-                        <span style={{textDecoration: 'line-through'}}>{oldTotalOrderSum.toFixed(2)}</span>
-                        {` ${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`}
-                      </>
+                    {isLoadingSum ? (
+                      <Spinner size="s" />
+                    ) : (
+                      !isShowOldTotalOrderSum ? 
+                      (`${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`) : 
+                      (
+                        <>
+                          <span style={{textDecoration: 'line-through'}}>{oldTotalOrderSum.toFixed(2)}</span>
+                          {` ${totalOrderSum.toFixed(2)} ${valuteToShowOnFront}`}
+                        </>
+                      )
                     )}
                   </Text>
                 }
               >
                 <Text weight="2" >
                   {itogoT}
+                   
                 </Text>
+                
               </Cell>
 
             </Section>
 
 
-            {/* условный вывод Section - скрываем если у всех товаров isSaleNow = true */}
-            {!cart.every((item: any) => item.isSaleNow) && (
-            <Section>
-
-             <Input 
-             status="focused" 
-             header={enterPromocodeT}
-             placeholder={promocodePlaceholderT}
-             value={promocodeValue} 
-             onChange={e => {setPromocodeValue(e.target.value); setIsShowPromocodeInfoText(false);}} 
-             after={
-                <Tappable Component="div" 
-                  style={{display: 'flex'}} 
-                  onClick={handleApplyPromocode}>
-                <Chip 
-                mode="outline" 
-                style={{backgroundColor:'#a2d7f6ff', padding: '3px 15px 3px 15px', color: 'white'}}
-                >
-                  {isPromocodeLoading ? <Spinner size="s" /> : applyT }
-                </Chip>
-                </Tappable>} 
-              />
-              { isShowPromocodeInfoText &&
-                <Text weight="3" style={{
-                  paddingLeft: 22, 
-                  color: promocodeInfoType === 'success' ? 'green' : 'red'
-                }} >
-                  {promocodeInfoText}
-                </Text>
-
-              }
-
-              </Section>
-            )}
             
-            {/* FIXME: раскомменти */}
-              {/* {currentPromocode && (
-                <Section style={{ marginTop: 10 }}>
-                  <Cell 
-                    subtitle={`Скидка: ${currentPromocode.saleInPercent}%`}
-                    before="🎉"
+            
+           {/* если все товары по sale, то не показываем данную Section   */}
+           {!cart.every((item: any) => item.isSaleNow) && ( 
+           <Section
+            header='Система лояльности'
+           >
+            <TabsList>
+                  
+                  <TabsItem
+                    onClick={() => {setSelectedTab(1); setTypeLoyaltySystem('addCashback');}}
+                    selected={selectedTab === 1 }
                   >
-                    Промокод "{currentPromocode.code}" применён
-                  </Cell>
-                </Section>
-              )} */}
-              
-              {/* <Section >
+                    Начислить
+                  </TabsItem>
+                  
+                  <TabsItem
+                    onClick={() => setSelectedTab(2)}
+                    selected={selectedTab === 2 }
+                  >
+                    Промокод
+                  </TabsItem>
+                  
+                  <TabsItem
+                    onClick={() => setSelectedTab(3)}
+                    selected={selectedTab === 3}
+                  >
+                    Списать
+                  </TabsItem>
+           </TabsList>
 
-              
-              </Section> */}
+           {selectedTab === 1 &&
+              <Cell 
+              multiline
+              // after={`${willBeCashbacked} ${valuteToShowOnFront} (${currentPercent}%)`}
+              after={ isLoadingSum 
+                        ? 
+                        (<Spinner size="s" />)
+                         :
+                        `${willBeCashbacked} ${valuteToShowOnFront} (${currentPercent}%)`}
+              >
+                Начислим баллов за покупку 
+              </Cell>
+           }
+           
+           {selectedTab === 2 &&
+              <>
+                  <Input 
+                    status="focused" 
+                    header={enterPromocodeT}
+                    placeholder={promocodePlaceholderT}
+                    value={promocodeValue} 
+                    onChange={e => {setPromocodeValue(e.target.value); setIsShowPromocodeInfoText(false);}} 
+                    after={
+                      <Tappable Component="div" 
+                        style={{display: 'flex'}} 
+                        onClick={handleApplyPromocode}>
+                        <Chip 
+                          mode="outline" 
+                          style={{backgroundColor:'#a2d7f6ff', padding: '3px 15px 3px 15px', color: 'white'}}
+                        >
+                          {isPromocodeLoading ? <Spinner size="s" /> : applyT }
+                        </Chip>
+                      </Tappable>
+                    } 
+                  />
+
+                  { isShowPromocodeInfoText &&
+                    <Text weight="3" style={{
+                      paddingLeft: 22, 
+                      color: promocodeInfoType === 'success' ? 'green' : 'red'
+                    }} >
+                      {promocodeInfoText}
+                    </Text>
+                  }
+                </>
+           
+           }
+
+           {selectedTab === 3 && 
+           
+            <>
+                
+                { !isShowPromocodeInfoText && !isCashbackRunoutShow &&
+                
+                    <Cell
+                    after={
+                        <Tappable Component="span" 
+                          style={{display: 'flex'}} 
+                          onClick={handleWriteOffCashback}>
+                          <Chip 
+                            mode="outline" 
+                            style={{backgroundColor:'#a2d7f6ff', padding: '3px 10px 3px 10px', color: 'white', minWidth: 100, textAlign:'center'}}
+                          >
+                            {isPromocodeLoading ? <Spinner size="s" /> : writeoffT }
+                          </Chip>
+                        </Tappable>
+                      }
+                    >
+                      {useCashbackT} {enteredCashbackValue}
+                    </Cell>
+                }
+
+                { isShowPromocodeInfoText && !isCashbackRunoutShow &&
+                    <Text weight="3" style={{
+                      paddingLeft: 22, 
+                      color: promocodeInfoType === 'success' ? 'green' : 'red'
+                    }} >
+                      {promocodeInfoText}
+                    </Text>
+                }
+
+                { isCashbackRunoutShow && 
+                  <Cell 
+                  subtitle={zeroCashbackInfoT}
+                  multiline>
+                    {zeroCashbackT}
+                  </Cell>
+               }
+
+
+                </>
+           
+           }
+           
+           </Section>
+           )}
 
 
             <Section style={{ marginBottom: 100, padding: 10 }}>

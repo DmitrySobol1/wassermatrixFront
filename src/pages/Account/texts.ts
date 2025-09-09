@@ -20,7 +20,19 @@ export const TEXTS = {
    validUntilT: 'действует до:',
    notPromocodeT: 'У вас нет персональных промокодов',
    footerPromocodesT: 'Нажмите на промокод, чтобы скопировать. Примените его при оплате для получения скидки',
-   copiedT: 'промокод скопирован'
+   copiedT: 'промокод скопирован',
+   myCashbackT: 'Кэшбэк',
+   myInfoT: 'Мои данные',
+   purchaseQtyT: 'Всего покупок',
+   purchaseSumT: 'Всего покупок на сумму',
+   clientCashbackLevelT: 'Ваш уровень кешбэка',
+   deltaToNextLevelT: 'Сумма покупок до следующего уровня',
+   maxLevelT: 'максимальный уровень',
+   levelT: 'Уровень',
+   totalSumT: 'Сумма всех сделанных покупок: от',
+   fromPurchaseT: 'от покупки',
+   cashbackSystemT: 'Система кешбэка',
+   cashbackBallT: 'Количество баллов'
    
     
   },
@@ -45,7 +57,19 @@ export const TEXTS = {
     validUntilT: 'valid until:',
     notPromocodeT: 'You have no personal promocodes now',
     footerPromocodesT: 'Click on the promo code to copy it. Apply it while pay to receive your discount.',
-    copiedT: 'promocode copied'
+    copiedT: 'promocode copied',
+    myCashbackT: 'Cashback',
+    myInfoT: 'My information',
+    purchaseQtyT: 'Purchases quantity',
+    purchaseSumT: 'Purchases amount',
+    clientCashbackLevelT: 'Your cachback level',
+    deltaToNextLevelT: 'Purchase amount to the next level',
+    maxLevelT: 'max level',
+    levelT: 'Level',
+    totalSumT: 'Total amount of all purchases made: from',
+    fromPurchaseT: 'from purchase',
+    cashbackSystemT: 'Cashback system',
+    cashbackBallT: 'Your current cashback value'
   
    
     
@@ -71,7 +95,19 @@ export const TEXTS = {
     alidUntilT: 'gültig bis:',
     notPromocodeT: 'Sie haben derzeit keine persönlichen Promo-Codes',
     footerPromocodesT: 'Klicken Sie auf den Promo-Code, um ihn zu kopieren. Geben Sie ihn beim Bezahlen ein, um den Rabatt zu erhalten',
-    copiedT: 'promo-Code kopiert'
+    copiedT: 'promo-Code kopiert',
+    myCashbackT: 'Cashback',
+    myInfoT: 'Meine informationen',
+    purchaseQtyT: 'Einkaufsmenge',
+    purchaseSumT: 'Kaufsumme',
+    clientCashbackLevelT: 'Ihre cashback-stufe',
+    deltaToNextLevelT: 'Einkaufsbetrag bis zur nächsten Stufe',
+    maxLevelT: 'maximale stufe',
+    levelT: 'Stufe',
+    totalSumT: 'Gesamtbetrag aller getätigten einkäufe: von',
+    fromPurchaseT: 'vom kauf',
+    cashbackSystemT: 'Cashback-system',
+    ashbackBallT: 'Ihr aktueller cashback-wert'
   
 
       

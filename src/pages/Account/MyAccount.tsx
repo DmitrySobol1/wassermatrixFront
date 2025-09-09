@@ -12,6 +12,7 @@ import { LanguageContext } from '../../components/App';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
+import AddCardIcon from '@mui/icons-material/AddCard';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -43,7 +44,7 @@ export const MyAccount: FC = () => {
 
   //FIXME:
   // @ts-ignore
-  const { headerT, myOrdersT, settingsT, myPromocodesT} = TEXTS[language];
+  const { headerT, myOrdersT, settingsT, myPromocodesT, myCashbackT} = TEXTS[language];
 
   return (
     <Page back={false}>
@@ -78,6 +79,15 @@ export const MyAccount: FC = () => {
               onClick={() => navigate('/mypromocodes-page')}
             >
               {myPromocodesT}
+            </Cell>
+            
+            <Cell
+              before={<AddCardIcon style={{ color: '#168acd' }} />}
+              // before={<Icon32ProfileColoredSquare />}
+              after={<Icon16Chevron />}
+              onClick={() => navigate('/mycashback-page')}
+            >
+              {myCashbackT}
             </Cell>
 
             <Cell

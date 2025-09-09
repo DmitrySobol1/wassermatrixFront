@@ -122,48 +122,7 @@ export const Cart: FC = () => {
     fetchGoodsTypesInfo();
   }, []);
 
-  // function cardPressedHandler(e: any) {
-  //   console.log('card Pressed', e.target.id);
-  //   navigate('/onegood-page', {
-  //     state: {
-  //       itemid: e.target.id,
-  //     },
-  //   });
-  // }
-
-  // function addBtnHandler(e: any) {
-  //   console.log('add btn Pressed', e.target);
-  // }
-
-  //   function typePressedHandler(typeId: string) {
-  //   console.log('You choose type:', typeId);
-  // }
-
-  //FIXME: приходит 2 раза - один раз норм, другой undefined
-  // function typePressedHandler(typeId: string) {
-  //   console.log('you choose type=', typeId);
-
-  //   //@ts-ignore
-  //   if (typeId == '1') {
-  //     setArrayGoodsForRender(allGoods);
-  //     return;
-  //   }
-
-  //   //@ts-ignore
-  //   let newArray = [];
-
-  //   allGoods.map((item) => {
-  //     //@ts-ignore
-  //     if (item.type === typeId) {
-  //       console.log('внутри');
-
-  //       //@ts-ignore
-  //       newArray = [item, ...newArray];
-  //     }
-  //   });
-  //   //@ts-ignore
-  //   setArrayGoodsForRender(newArray);
-  // }
+  
 
   //@ts-ignore
   async function cartButtonsHandler(goodId, action) {
@@ -263,13 +222,7 @@ export const Cart: FC = () => {
 
               <ButtonCell
                 before={
-                  // <IconButton mode="bezeled" size="l">
-                  //   <Title level="3" weight="1" plain>
-                  //     +
-                  //   </Title>
-                  // </IconButton>
                   <Image size={24}>
-                      {/* <Text weight="1">+</Text> */}
                       {<AddCircleOutlineIcon/>}
                   </Image>
                 }
@@ -279,16 +232,10 @@ export const Cart: FC = () => {
                 {!showSpin && <Text weight="2">{plusT}</Text>}
                 {showSpin && <Spinner size="s" />}
               </ButtonCell>
-              {/* <ButtonCell before={<Icon28Close />}>Убрать -1</ButtonCell> */}
               <ButtonCell
                 before={
-                  // <IconButton mode="bezeled" size="m">
-                  //   <Title level="3" weight="1" plain>
-                  //     -
-                  //   </Title>
-                  // </IconButton>
+                  
                    <Image size={24}>
-                      {/* <Text weight="1">-</Text> */}
                       {<RemoveCircleOutlineIcon/>}
                     </Image>
                 }
@@ -305,11 +252,7 @@ export const Cart: FC = () => {
                       {<DeleteOutlineIcon/>}
                     </Image>
                  
-                  // <IconButton mode="bezeled" size="m">
-                  //   <Image size={24}>
-                  //     x
-                  //   </Image>
-                  // </IconButton>
+                 
                 }
                 //@ts-ignore
                 onClick={() => cartButtonsHandler(item.itemId, 'delete')}
@@ -325,7 +268,6 @@ export const Cart: FC = () => {
            <Cell
             //@ts-ignore
                 subtitle={`${totalInfo.totalQty} ${pcsT}`}
-                // before={<Image size={96} src={`${domen}${item.img}`} />}
                 style={{ paddingTop: 15 }}
                  //@ts-ignore
                 after=<Text weight='2'>{`${totalInfo.totalPriceCart} ${valuteToShowOnFront}`}</Text>
@@ -337,10 +279,7 @@ export const Cart: FC = () => {
 
         
       <Section style={{ marginBottom: 100, padding: 10 }}
-      // onClick={()=>navigate('/delivery-choice-page', 
-      //   state: {
-      //       cart: cart
-      //   } )}
+      
 
         onClick={() => navigate('/delivery-choice-page', {
             state: {
