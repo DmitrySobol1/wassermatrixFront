@@ -26,7 +26,7 @@ export const TEXTS = {
    purchaseQtyT: 'Всего покупок',
    purchaseSumT: 'Всего покупок на сумму',
    clientCashbackLevelT: 'Ваш уровень кешбэка',
-   deltaToNextLevelT: 'Сумма покупок до следующего уровня',
+   deltaToNextLevelT: 'Осталось до следующего уровня',
    maxLevelT: 'максимальный уровень',
    levelT: 'Уровень',
    totalSumT: 'Сумма всех сделанных покупок: от',
@@ -63,7 +63,7 @@ export const TEXTS = {
     purchaseQtyT: 'Purchases quantity',
     purchaseSumT: 'Purchases amount',
     clientCashbackLevelT: 'Your cachback level',
-    deltaToNextLevelT: 'Purchase amount to the next level',
+    deltaToNextLevelT: 'Purchase for the next level',
     maxLevelT: 'max level',
     levelT: 'Level',
     totalSumT: 'Total amount of all purchases made: from',
@@ -101,13 +101,13 @@ export const TEXTS = {
     purchaseQtyT: 'Einkaufsmenge',
     purchaseSumT: 'Kaufsumme',
     clientCashbackLevelT: 'Ihre cashback-stufe',
-    deltaToNextLevelT: 'Einkaufsbetrag bis zur nächsten Stufe',
+    deltaToNextLevelT: 'Kauf für die nächste Stufe',
     maxLevelT: 'maximale stufe',
     levelT: 'Stufe',
     totalSumT: 'Gesamtbetrag aller getätigten einkäufe: von',
     fromPurchaseT: 'vom kauf',
     cashbackSystemT: 'Cashback-system',
-    ashbackBallT: 'Ihr aktueller cashback-wert'
+    cashbackBallT: 'Ihr aktueller cashback-wert'
   
 
       

@@ -41,7 +41,8 @@ export const TEXTS = {
    toAddCashbackT: 'Начислить',
    promocodeT: 'Промокод',
    writeOffT: 'Списать',
-   LoyaltySystemT: 'Система лояльности'
+   LoyaltySystemT: 'Система лояльности',
+   setPromocodeT: 'Введите промокод'
     
   },
   en: {
@@ -86,7 +87,8 @@ export const TEXTS = {
    toAddCashbackT: 'To add',
    promocodeT: 'Promocode' ,
    writeOffT: 'Write off',
-   LoyaltySystemT: 'Loyalty programme'
+   LoyaltySystemT: 'Loyalty programme',
+   setPromocodeT: 'Fill in promocode'
    
 
 
@@ -135,7 +137,8 @@ export const TEXTS = {
        toAddCashbackT: 'Hinzufügen',
        promocodeT: 'Promo-code',
        writeOffT: 'Abschreiben',
-       LoyaltySystemT: 'Treueprogramm'
+       LoyaltySystemT: 'Treueprogramm',
+       setPromocodeT: 'Promocode eingeben'
    
     
       

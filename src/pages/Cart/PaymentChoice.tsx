@@ -61,7 +61,7 @@ export const PaymentChoice: FC = () => {
   const [typeLoyaltySystem, setTypeLoyaltySystem] = useState('addCashback')
 
   //@ts-ignore
-  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT, willAddWhenPurchaseT,toAddCashbackT,promocodeT, writeOffT, LoyaltySystemT } = TEXTS[language];
+  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT, willAddWhenPurchaseT,toAddCashbackT,promocodeT, writeOffT, LoyaltySystemT, setPromocodeT } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -142,7 +142,7 @@ export const PaymentChoice: FC = () => {
   const handleApplyPromocode = async () => {
     
     if (!promocodeValue.trim()) {
-      setPromocodeInfoText('Введите промокод')
+      setPromocodeInfoText(setPromocodeT)
       setPromocodeInfoType('error')
       setIsShowPromocodeInfoText(true)
 
