@@ -31,12 +31,17 @@ export const TEXTS = {
    enterPromocodeT: 'Использовать промокод',
    promocodePlaceholderT: 'напишите промокод',
    applyT: 'применить',
-   useCashbackT: 'У вас накоплено баллов:',
+   useCashbackT: 'У вас:',
    cashbackPlaceholderT: 'укажите количество',
    writeoffT: 'списать',
    zeroCashbackT: 'У вас сейчас 0 баллов',
    zeroCashbackInfoT: 'Мы начислим вас кешбек баллы после данной покупки',
-   availableCashbackT: 'доступно'
+   availableCashbackT: 'доступно',
+   willAddWhenPurchaseT: 'Начислим за покупку',
+   toAddCashbackT: 'Начислить',
+   promocodeT: 'Промокод',
+   writeOffT: 'Списать',
+   LoyaltySystemT: 'Система лояльности'
     
   },
   en: {
@@ -71,12 +76,18 @@ export const TEXTS = {
    enterPromocodeT: 'Use promocode',
    promocodePlaceholderT: 'fill in promocode',
    applyT: 'apply',
-   useCashbackT: 'You have cashback points:',
+   useCashbackT: 'You have:',
    cashbackPlaceholderT: 'fill in quantity',
    writeoffT: 'write off',
    zeroCashbackT: 'You have 0 cashback points now',
    zeroCashbackInfoT: 'We will credit you with cashback points after this purchase',
-   availableCashbackT: 'available'
+   availableCashbackT: 'available',
+   willAddWhenPurchaseT: 'will add when purshase',
+   toAddCashbackT: 'To add',
+   promocodeT: 'Promocode' ,
+   writeOffT: 'Write off',
+   LoyaltySystemT: 'Loyalty programme'
+   
 
 
    
@@ -114,12 +125,18 @@ export const TEXTS = {
      enterPromocodeT: 'Promocode verwenden',
      promocodePlaceholderT: 'promocode eingeben',
      applyT: 'anwenden',
-     useCashbackT: 'Sie haben cashback-punkte:',
+     useCashbackT: 'Sie haben:',
        cashbackPlaceholderT: 'menge eingeben',
        writeoffT: 'abschreiben',
        zeroCashbackT: 'Sie haben derzeit 0 cashback-punkte',
        zeroCashbackInfoT: 'Wir schreiben Ihnen nach diesem Kauf Cashback-Punkte gut',
-       availableCashbackT: 'verfügbar'
+       availableCashbackT: 'verfügbar',
+       willAddWhenPurchaseT: 'wird beim Kauf hinzugefügt',
+       toAddCashbackT: 'Hinzufügen',
+       promocodeT: 'Promo-code',
+       writeOffT: 'Abschreiben',
+       LoyaltySystemT: 'Treueprogramm'
+   
     
       
   },

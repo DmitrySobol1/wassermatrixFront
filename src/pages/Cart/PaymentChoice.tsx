@@ -9,7 +9,6 @@ import {
   Input,
   Tappable,
   Chip,
-  
   TabsList,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
@@ -24,6 +23,7 @@ import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
 import { TabsItem } from '@telegram-apps/telegram-ui/dist/components/Navigation/TabsList/components/TabsItem/TabsItem';
+import { Loyalty } from '@mui/icons-material';
 
 export const PaymentChoice: FC = () => {
   const tlgid = useTlgid();
@@ -35,6 +35,8 @@ export const PaymentChoice: FC = () => {
   const { cart: initialCart, deliveryInfo, deliveryRegion } = location.state || {}; 
   
   const [cart, setCart] = useState(initialCart || []);
+  const [rebootedCartPrice, setRebooredCartPrice] = useState(initialCart || []);
+  const [rebootedTotalCartPrice, setRebootedTotalCartPrice] = useState (0)
   const [isLoading, setIsLoading] = useState(false);
   const [totalOrderSum, setTotalOrderSum] = useState(0);
   const [oldTotalOrderSum, setOldTotalOrderSum] = useState(0)
@@ -59,7 +61,7 @@ export const PaymentChoice: FC = () => {
   const [typeLoyaltySystem, setTypeLoyaltySystem] = useState('addCashback')
 
   //@ts-ignore
-  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT} = TEXTS[language];
+  const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT, willAddWhenPurchaseT,toAddCashbackT,promocodeT, writeOffT, LoyaltySystemT } = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -114,6 +116,7 @@ export const PaymentChoice: FC = () => {
         }, 0);
 
         setTotalOrderSum(total);
+        setRebootedTotalCartPrice(total)
         const countingWillBeCashbacked = (total * (Number(currentPercentForUseEffect) / 100)).toFixed(4);
 
         console.log('currentPercent', currentPercentForUseEffect);
@@ -421,43 +424,42 @@ export const PaymentChoice: FC = () => {
            {/* если все товары по sale, то не показываем данную Section   */}
            {!cart.every((item: any) => item.isSaleNow) && ( 
            <Section
-            header='Система лояльности'
+            header={LoyaltySystemT}
            >
             <TabsList>
                   
                   <TabsItem
-                    onClick={() => {setSelectedTab(1); setTypeLoyaltySystem('addCashback');}}
+                    onClick={() => {setSelectedTab(1); setTypeLoyaltySystem('addCashback'); setCart(rebootedCartPrice); setIsShowOldTotalOrderSum(false);  setTotalOrderSum(rebootedTotalCartPrice);setPromocodeValue(''); setIsShowPromocodeInfoText(false)}}
                     selected={selectedTab === 1 }
                   >
-                    Начислить
+                    {toAddCashbackT}
                   </TabsItem>
                   
                   <TabsItem
-                    onClick={() => setSelectedTab(2)}
+                    onClick={() => {setSelectedTab(2) ; setCart(rebootedCartPrice); setIsShowOldTotalOrderSum(false);  setTotalOrderSum(rebootedTotalCartPrice); setPromocodeValue('');setIsShowPromocodeInfoText(false)}}
                     selected={selectedTab === 2 }
                   >
-                    Промокод
+                    {promocodeT}
                   </TabsItem>
                   
                   <TabsItem
-                    onClick={() => setSelectedTab(3)}
+                    onClick={() => {setSelectedTab(3); setCart(rebootedCartPrice); setIsShowOldTotalOrderSum(false);  setTotalOrderSum(rebootedTotalCartPrice); setPromocodeValue(''); setIsShowPromocodeInfoText(false)}}
                     selected={selectedTab === 3}
                   >
-                    Списать
+                    {writeOffT}
                   </TabsItem>
            </TabsList>
 
            {selectedTab === 1 &&
               <Cell 
               multiline
-              // after={`${willBeCashbacked} ${valuteToShowOnFront} (${currentPercent}%)`}
               after={ isLoadingSum 
                         ? 
                         (<Spinner size="s" />)
                          :
                         `${willBeCashbacked} ${valuteToShowOnFront} (${currentPercent}%)`}
               >
-                Начислим баллов за покупку 
+                {willAddWhenPurchaseT}
               </Cell>
            }
            
