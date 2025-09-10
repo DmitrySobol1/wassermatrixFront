@@ -15,6 +15,7 @@ import { MyAccount } from '@/pages/Account/MyAccount'
 import { Orders } from '@/pages/Account/Orders';
 import { MyPromocodes } from '@/pages/Account/MyPromocodes';
 import { MyCashbacksBalls } from '@/pages/Account/MyCashbacksBalls';
+import { ReferalSystem } from '@/pages/Account/ReferalSystem';
 // import { ShowReceipt } from '@/pages/Account/ShowReceipt';
 
 
@@ -55,6 +56,7 @@ export const routes: Route[] = [
   { path: '/myorders-page', Component: Orders},
   { path: '/mypromocodes-page', Component: MyPromocodes},
   { path: '/mycashback-page', Component: MyCashbacksBalls},
+  { path: '/referalsystem-page', Component: ReferalSystem},
   // { path: '/showreceipt-page', Component: ShowReceipt},
   
   

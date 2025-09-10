@@ -13,6 +13,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import AddCardIcon from '@mui/icons-material/AddCard';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -44,7 +45,7 @@ export const MyAccount: FC = () => {
 
   //FIXME:
   // @ts-ignore
-  const { headerT, myOrdersT, settingsT, myPromocodesT, myCashbackT} = TEXTS[language];
+  const { headerT, myOrdersT, settingsT, myPromocodesT, myCashbackT, referalSystemT} = TEXTS[language];
 
   return (
     <Page back={false}>
@@ -88,6 +89,15 @@ export const MyAccount: FC = () => {
               onClick={() => navigate('/mycashback-page')}
             >
               {myCashbackT}
+            </Cell>
+            
+            <Cell
+              before={<GroupAddIcon style={{ color: '#168acd' }} />}
+              // before={<Icon32ProfileColoredSquare />}
+              after={<Icon16Chevron />}
+              onClick={() => navigate('/referalsystem-page')}
+            >
+              {referalSystemT}
             </Cell>
 
             <Cell

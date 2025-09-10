@@ -32,7 +32,8 @@ export const TEXTS = {
    totalSumT: 'Сумма всех сделанных покупок: от',
    fromPurchaseT: 'от покупки',
    cashbackSystemT: 'Система кешбэка',
-   cashbackBallT: 'Количество баллов'
+   cashbackBallT: 'Количество баллов',
+   referalSystemT: 'Реферальная система'
    
     
   },
@@ -69,7 +70,8 @@ export const TEXTS = {
     totalSumT: 'Total amount of all purchases made: from',
     fromPurchaseT: 'from purchase',
     cashbackSystemT: 'Cashback system',
-    cashbackBallT: 'Your current cashback value'
+    cashbackBallT: 'Your current cashback value',
+    referalSystemT: 'Referal system'
   
    
     
@@ -107,7 +109,8 @@ export const TEXTS = {
     totalSumT: 'Gesamtbetrag aller getätigten einkäufe: von',
     fromPurchaseT: 'vom kauf',
     cashbackSystemT: 'Cashback-system',
-    cashbackBallT: 'Ihr aktueller cashback-wert'
+    cashbackBallT: 'Ihr aktueller cashback-wert',
+    referalSystemT: 'Empfehlungssystem'
   
 
       
