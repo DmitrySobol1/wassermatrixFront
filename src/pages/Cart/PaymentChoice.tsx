@@ -23,7 +23,6 @@ import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
 import { TabsItem } from '@telegram-apps/telegram-ui/dist/components/Navigation/TabsList/components/TabsItem/TabsItem';
-import { Loyalty } from '@mui/icons-material';
 
 export const PaymentChoice: FC = () => {
   const tlgid = useTlgid();
@@ -35,7 +34,8 @@ export const PaymentChoice: FC = () => {
   const { cart: initialCart, deliveryInfo, deliveryRegion } = location.state || {}; 
   
   const [cart, setCart] = useState(initialCart || []);
-  const [rebootedCartPrice, setRebooredCartPrice] = useState(initialCart || []);
+  // const [rebootedCartPrice, setRebootedCartPrice] = useState(initialCart || []);
+  const [rebootedCartPrice] = useState(initialCart || []);
   const [rebootedTotalCartPrice, setRebootedTotalCartPrice] = useState (0)
   const [isLoading, setIsLoading] = useState(false);
   const [totalOrderSum, setTotalOrderSum] = useState(0);
