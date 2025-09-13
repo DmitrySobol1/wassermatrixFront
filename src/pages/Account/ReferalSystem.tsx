@@ -4,6 +4,7 @@ import {
   Cell,
   Accordion,
   Button,
+  Caption,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
@@ -34,35 +35,45 @@ export const ReferalSystem: FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [referals, setReferals] = useState([]);
+  const [infoAboutQuantity, setInfoAboutQuantity] = useState([]);
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
 
-  // Получение списка рефералов
+  // Получение списка рефералов и информации о количественных промокодах
   useEffect(() => {
-    const fetchReferals = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get('/get_referals', {
-          params: { 
-            father: tlgid,
-            isSonEnterToApp: true
-          }
-        });
+        const [referalsResponse, quantityInfoResponse] = await Promise.all([
+          axios.get('/get_referals', {
+            params: {
+              father: tlgid,
+              isSonEnterToApp: true
+            }
+          }),
+          axios.get('/referals_promoForQuantity')
+        ]);
 
-        console.log('ref response= ', response)
-        
-        if (response.data.status === 'ok') {
-          setReferals(response.data.referals || []);
+        console.log('ref response= ', referalsResponse);
+        console.log('quantity info response= ', quantityInfoResponse);
+
+        if (referalsResponse.data.status === 'ok') {
+          setReferals(referalsResponse.data.referals || []);
+        }
+
+        if (quantityInfoResponse.data) {
+          setInfoAboutQuantity(quantityInfoResponse.data);
         }
       } catch (error) {
-        console.error('Ошибка при получении рефералов:', error);
+        console.error('Ошибка при получении данных:', error);
         setReferals([]);
+        setInfoAboutQuantity([]);
       } finally {
         setIsLoading(false);
       }
     };
 
     if (tlgid) {
-      fetchReferals();
+      fetchData();
     }
   }, [tlgid]);
 
@@ -153,6 +164,7 @@ export const ReferalSystem: FC = () => {
 
           <Section
           header = 'Мои рефералы'
+          style={{marginBottom: 10}}
           >
 
           {referals.length === 0 ? (
@@ -193,6 +205,60 @@ export const ReferalSystem: FC = () => {
 
           </Section>
 
+
+          <Section
+          header='Как работает реферальная система'
+          style={{marginBottom: 100}}
+          >
+
+            
+            <Accordion 
+              expanded={isAccordionOpen} 
+              onChange={() => setIsAccordionOpen(!isAccordionOpen)}
+            >
+              <AccordionSummary>
+                Промокоды
+              </AccordionSummary>
+              <AccordionContent>
+                {/* <Cell
+                multiline>
+                Чем больше людей пригласишь, тем выше будет промокод со скидкой
+                </Cell> */}
+                <Cell
+                multiline
+                style={{marginTop: 0}}
+                >
+                    <Caption
+                                level="1"
+                                weight="2"
+                                // style={{marginLeft: 20}}
+                              >
+                    Чем больше людей пригласишь, тем выше будет промокод со скидкой
+                    </Caption>
+                {infoAboutQuantity.map((info: any, index: number) => (
+                  
+                  <div key={index}>
+                    <div
+                    // style={{marginLeft: 20}}
+                    >
+                      <Caption
+                            level="1"
+                            weight="3"
+                          >
+                          
+                      {index+1}) за {info.qty} чел. - промокод на скидку -{info.sale}%
+                      </Caption>
+                      </div>
+                  </div>
+                  
+                ))}
+                </Cell>
+              </AccordionContent>
+            </Accordion>
+          
+
+              
+          </Section>
           
 
           <TabbarMenu />
