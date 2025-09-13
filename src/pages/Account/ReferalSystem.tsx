@@ -290,10 +290,7 @@ export const ReferalSystem: FC = () => {
                 Кэшбек за покупки рефералов
               </AccordionSummary>
               <AccordionContent>
-                {/* <Cell
-                multiline>
-                Чем больше людей пригласишь, тем выше будет промокод со скидкой
-                </Cell> */}
+                
                 <Cell
                 multiline
                 style={{marginTop: 0}}
@@ -324,7 +321,7 @@ export const ReferalSystem: FC = () => {
           
 
               
-          </Section>
+          </Section> 
           
 
           <TabbarMenu />
