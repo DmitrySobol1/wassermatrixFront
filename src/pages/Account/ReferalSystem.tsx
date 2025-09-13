@@ -31,7 +31,7 @@ export const ReferalSystem: FC = () => {
   const { language } = useContext(LanguageContext);
 
   //@ts-ignore
-  const { myPromocodesT, saleT, validUntilT, notPromocodeT, footerPromocodesT, copiedT,refMessageT, referalSystemT, refInfoHeaderT, refInfoText1T,refInfoText2T,inviteBtnT, myReferalsT, listReferalsT, personT, noRefT, howRefWorksT,quantityRefT, zaT, za2T, getCbT, myCashbackT, purchasedT} = TEXTS[language];
+  const { myPromocodesT, saleT, validUntilT, notPromocodeT, footerPromocodesT, copiedT,refMessageT, referalSystemT, refInfoHeaderT, refInfoText1T,refInfoText2T,inviteBtnT, myReferalsT, listReferalsT, personT, noRefT, howRefWorksT,quantityRefT, zaT, za2T, getCbT, myCashbackT, purchasedT, refInfoText3T} = TEXTS[language];
 
   const [isLoading, setIsLoading] = useState(false);
   const [referals, setReferals] = useState([]);
@@ -243,7 +243,7 @@ export const ReferalSystem: FC = () => {
               onChange={() => handleAccordionChange('promocodes')}
             >
               <AccordionSummary>
-                {refInfoText1T}
+                {refInfoText3T}
               </AccordionSummary>
               <AccordionContent>
                 
