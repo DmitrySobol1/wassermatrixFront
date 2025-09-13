@@ -37,8 +37,21 @@ export const TEXTS = {
    refMessageT: '👆 Рекомендую данный магазин',
    howCBworksT: 'Как работает система кешбэка',
    cashbackLevelsT: 'Уровни кешбэка',
-   cashbackInfoT: 'За ваши покупки вам начисляются баллы кешбека, которыми можно оплачивать дальнейшие покупки. Чем больше общая сумма всех покупок - тем выше процент кешбека:'
-   
+   cashbackInfoT: 'За ваши покупки вам начисляются баллы кешбека, которыми можно оплачивать дальнейшие покупки. Чем больше общая сумма всех покупок - тем выше процент кешбека:',
+   refInfoHeaderT: 'Приглашайте рефералов и получайте:',
+   refInfoText1T: 'Промокоды за количество приглашенных',
+   refInfoText2T: 'Кешбек за покупки рефералов ',
+   inviteBtnT: 'Пригласить друга',
+   myReferalsT: 'Мои рефералы',
+   listReferalsT: 'Список рефералов',
+   personT: 'чел.',
+   noRefT: 'У вас пока нет рефералов',
+   howRefWorksT: 'Как работает реферальная система',
+   quantityRefT: 'Чем больше людей пригласите, тем выше будет промокод со скидкой:',
+   zaT: 'за',
+   za2T: 'чел. - промокод на скидку',
+   getCbT: 'Получайте кешбек баллы за все покупки ваших рефералов:',
+   purchasedT: 'от купленных товаров'
     
   },
   en: {
@@ -79,7 +92,21 @@ export const TEXTS = {
     refMessageT: '👆 I recommend this store',
     howCBworksT: 'How cashback system works',
     cashbackLevelsT: 'Cashback levels',
-    cashbackInfoT: 'You earn cashback points for your purchases, which can be used to pay for future purchases. The higher the total amount of all purchases, the higher the cashback percentage:'
+    cashbackInfoT: 'You earn cashback points for your purchases, which can be used to pay for future purchases. The higher the total amount of all purchases, the higher the cashback percentage:',
+    refInfoHeaderT: 'Invite referals and get:',
+    refInfoText1T: 'Promocode for quantity of invited referals',
+   refInfoText2T: 'Cashback for referals purchase',
+   inviteBtnT: 'Invite friend',
+   myReferalsT: 'My referals',
+   listReferalsT: 'Referals list',
+   personT: 'pers.',
+   noRefT: 'You have no referals yet',
+   howRefWorksT: 'How referal system works',
+   quantityRefT: 'The more people you invite, the higher the discount promo code you get:',
+   zaT: 'for',
+   za2T: 'pers. - promocode with sale',
+   getCbT: 'Get cashback points for all purchases made by referals:',
+   purchasedT: 'from purchesed goods'
   
    
     
@@ -114,17 +141,29 @@ export const TEXTS = {
     deltaToNextLevelT: 'Kauf für die nächste Stufe',
     maxLevelT: 'maximale stufe',
     levelT: 'Stufe',
-    totalSumT: 'Gesamtbetrag aller von Ihnen getätigten Einkäufe ≥', 
+    totalSumT: 'Gesamtbetrag der getätigten Einkäufe ≥', 
     fromPurchaseT: 'vom kauf',
     cashbackSystemT: 'Cashback-system',
     cashbackBallT: 'Ihr aktueller cashback-wert',
     referalSystemT: 'Empfehlungssystem',
     refMessageT: '👆 Ich empfehle diesen Shop weiter',
-    howCBworksT: 'Gesamtbetrag aller von Ihnen getätigten Einkäufe',
+    howCBworksT: 'Wie funktioniert Cashback',
     cashbackLevelsT: 'Cashback-stufen',
-    cashbackInfoT: 'Für Ihre Einkäufe erhalten Sie Cashback-Punkte, mit denen Sie weitere Einkäufe bezahlen können. Je höher der Gesamtbetrag aller Einkäufe ist, desto höher ist der Cashback-Prozentsatz:'
-  
-
+    cashbackInfoT: 'Für Ihre Einkäufe erhalten Sie Cashback-Punkte, mit denen Sie weitere Einkäufe bezahlen können. Je höher der Gesamtbetrag aller Einkäufe ist, desto höher ist der Cashback-Prozentsatz:',
+    refInfoHeaderT: 'Laden sie freunde ein und erhalten sie:',
+    refInfoText1T: 'Promocode für die Anzahl der eingeladenen Empfehlungen',
+    refInfoText2T: 'Cashback für Empfehlungen',
+    inviteBtnT: 'Freund einladen',
+    myReferalsT: 'Meine empfehlungen',
+    listReferalsT: 'Empfehlungsliste',
+    personT: 'pers.',
+    noRefT: 'Sie haben noch keine Empfehlungen',
+    howRefWorksT: 'Wie das Empfehlungssystem funktioniert',
+    quantityRefT: 'Je mehr Personen Sie einladen, desto höher ist der Rabatt-Promo-Code, den Sie erhalten:',
+    zaT: 'für',
+    za2T: 'pers. - promo-Code mit rabatt',
+    getCbT: 'Erhalten Sie Cashback-Punkte für alle Einkäufe, die von Ihren Empfehlungen getätigt werden:',
+    purchasedT: 'von gekauften Waren'
       
   },
 };

@@ -31,7 +31,7 @@ export const ReferalSystem: FC = () => {
   const { language } = useContext(LanguageContext);
 
   //@ts-ignore
-  const { myPromocodesT, saleT, validUntilT, notPromocodeT, footerPromocodesT, copiedT,refMessageT} = TEXTS[language];
+  const { myPromocodesT, saleT, validUntilT, notPromocodeT, footerPromocodesT, copiedT,refMessageT, referalSystemT, refInfoHeaderT, refInfoText1T,refInfoText2T,inviteBtnT, myReferalsT, listReferalsT, personT, noRefT, howRefWorksT,quantityRefT, zaT, za2T, getCbT, myCashbackT, purchasedT} = TEXTS[language];
 
   const [isLoading, setIsLoading] = useState(false);
   const [referals, setReferals] = useState([]);
@@ -147,20 +147,20 @@ export const ReferalSystem: FC = () => {
       {!isLoading && (
         <>
           <Section 
-          header='Referal system'
+          header={referalSystemT}
           style={{marginBottom: 10}}
           >
 
            <Cell
-              // before={<GroupAddIcon />}
+              multiline
               subtitle={
                 <>
-                <div>1) Промокоды за количество приглашенных</div>
-                <div>2) Кешбек за покупки рефералов</div>
+                <div>1) {refInfoText1T}</div>
+                <div>2) {refInfoText2T}</div>
                 </>
               }
             >
-              Приглашайте рефералов и получайте:
+              {refInfoHeaderT}
             </Cell>
             
             
@@ -169,14 +169,14 @@ export const ReferalSystem: FC = () => {
             onClick={btnAddFriendHandler}
             style={{marginLeft: 20, marginBottom: 10}}
             >
-               <div style={{display:'flex',gap: 5, alignItems: 'center' }}><AddCircleSharpIcon/> Пригласить друга</div>
+               <div style={{display:'flex',gap: 5, alignItems: 'center' }}><AddCircleSharpIcon/> {inviteBtnT}</div>
             </Button>
 
           
           </Section>
 
           <Section
-          header = 'Мои рефералы'
+          header = {myReferalsT}
           style={{marginBottom: 10}}
           >
 
@@ -188,12 +188,12 @@ export const ReferalSystem: FC = () => {
               onChange={() => handleAccordionChange('referals')}
             >
               <AccordionSummary>
-                Список рефералов (0 чел.):
+                {listReferalsT} (0 {personT}):
               </AccordionSummary>
               
               <AccordionContent>
-                  <Cell>
-                    У вас пока нет рефералов
+                  <Cell multiline>
+                    {noRefT}
                   </Cell>
               </AccordionContent>
             </Accordion>
@@ -203,7 +203,7 @@ export const ReferalSystem: FC = () => {
               onChange={() => handleAccordionChange('referals')}
             >
               <AccordionSummary>
-                Список рефералов ({referals.length} чел.)
+                {listReferalsT} ({referals.length} {personT})
               </AccordionSummary>
               
               <AccordionContent>
@@ -233,7 +233,7 @@ export const ReferalSystem: FC = () => {
 
 
           <Section
-          header='Как работает реферальная система'
+          header={howRefWorksT}
           style={{marginBottom: 100}}
           >
 
@@ -243,13 +243,10 @@ export const ReferalSystem: FC = () => {
               onChange={() => handleAccordionChange('promocodes')}
             >
               <AccordionSummary>
-                Промокоды за приглашенных
+                {refInfoText1T}
               </AccordionSummary>
               <AccordionContent>
-                {/* <Cell
-                multiline>
-                Чем больше людей пригласишь, тем выше будет промокод со скидкой
-                </Cell> */}
+                
                 <Cell
                 multiline
                 style={{marginTop: 0}}
@@ -259,7 +256,7 @@ export const ReferalSystem: FC = () => {
                                 weight="3"
                                 // style={{marginLeft: 20}}
                               >
-                    Чем больше людей пригласите, тем выше будет промокод со скидкой:  
+                        {quantityRefT}  
                     </Subheadline>
                 {infoAboutQuantity.map((info: any, index: number) => (
                   
@@ -272,7 +269,7 @@ export const ReferalSystem: FC = () => {
                             weight="3"
                           >
                           
-                      {index+1}) за {info.qty} чел. - промокод на скидку -{info.sale}%
+                      {index+1}) {zaT} {info.qty} {za2T} -{info.sale}%
                       </Subheadline>
                       </div>
                   </div>
@@ -287,7 +284,7 @@ export const ReferalSystem: FC = () => {
               onChange={() => handleAccordionChange('cashback')}
             >
               <AccordionSummary>
-                Кэшбек за покупки рефералов
+                {refInfoText2T}
               </AccordionSummary>
               <AccordionContent>
                 
@@ -301,7 +298,8 @@ export const ReferalSystem: FC = () => {
                                 weight="3"
                                 // style={{marginLeft: 20}}
                               >
-                    Получайте кешбек баллы за все покупки ваших рефералов:
+                    
+                    {getCbT}
                     </Subheadline>
                     </div>
                   <div>
@@ -309,7 +307,7 @@ export const ReferalSystem: FC = () => {
                             level="1"
                             weight="3"
                           >
-                          Кешбек = {infoAboutPurchase}% от купленных товаров
+                          {myCashbackT} = {infoAboutPurchase}% {purchasedT}
                       
                       </Subheadline>
                       </div>
