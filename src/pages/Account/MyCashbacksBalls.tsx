@@ -24,7 +24,7 @@ export const MyCashbacksBalls: FC = () => {
   const { language } = useContext(LanguageContext);
 
   //@ts-ignore
-  const {myPromocodesT,saleT,validUntilT,notPromocodeT,footerPromocodesT,copiedT,myInfoT, purchaseQtyT, pcsT, purchaseSumT, clientCashbackLevelT, deltaToNextLevelT, maxLevelT,levelT,totalSumT,fromPurchaseT, cashbackSystemT, cashbackBallT} = TEXTS[language];
+  const {myPromocodesT,saleT,validUntilT,notPromocodeT,footerPromocodesT,copiedT,myInfoT, purchaseQtyT, pcsT, purchaseSumT, clientCashbackLevelT, deltaToNextLevelT, maxLevelT,levelT,totalSumT,fromPurchaseT, cashbackSystemT, cashbackBallT,howCBworksT,cashbackLevelsT, cashbackInfoT} = TEXTS[language];
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -125,32 +125,22 @@ export const MyCashbacksBalls: FC = () => {
             </Cell>
           </Section>
 
-          {/* <Section header={cashbackSystemT}>
-            {cashbackLevels.map((level: any, index: number) => (
-              <Cell
-                key={level._id || index}
-                subtitle={`${totalSumT} ${level.sum} ${userValute}`}
-              >
-                {levelT} {level.position} - {level.percent}% {fromPurchaseT}
-              </Cell>
-            ))}
-          </Section> */}
 
           
           <Section 
-          header="Как работает система кешбека" 
+          header={howCBworksT}
           style={{ marginBottom: 100 }}>
             <Accordion
               
               expanded={isAccordionOpen}
               onChange={() => setIsAccordionOpen(!isAccordionOpen)}
             >
-              <AccordionSummary>Уровни кешбека</AccordionSummary>
+              <AccordionSummary>{cashbackLevelsT}</AccordionSummary>
               <AccordionContent>
                 <Cell
                 multiline
                 >
-                  За ваши покупки вам начисляются баллы кешбека, которыми можно оплачивать дальнейшие покупки. Чем больше общая сумма всех покупок - тем выше процент кешбека:
+                  {cashbackInfoT}
                 </Cell>
                 {cashbackLevels.map((level: any, index: number) => (
                   <Cell

@@ -34,7 +34,10 @@ export const TEXTS = {
    cashbackSystemT: 'Система кешбэка',
    cashbackBallT: 'Количество баллов',
    referalSystemT: 'Реферальная система',
-   refMessageT: '👆 Рекомендую данный магазин'
+   refMessageT: '👆 Рекомендую данный магазин',
+   howCBworksT: 'Как работает система кешбэка',
+   cashbackLevelsT: 'Уровни кешбэка',
+   cashbackInfoT: 'За ваши покупки вам начисляются баллы кешбека, которыми можно оплачивать дальнейшие покупки. Чем больше общая сумма всех покупок - тем выше процент кешбека:'
    
     
   },
@@ -73,7 +76,10 @@ export const TEXTS = {
     cashbackSystemT: 'Cashback system',
     cashbackBallT: 'Your current cashback value',
     referalSystemT: 'Referal system',
-    refMessageT: '👆 I recommend this store'
+    refMessageT: '👆 I recommend this store',
+    howCBworksT: 'How cashback system works',
+    cashbackLevelsT: 'Cashback levels',
+    cashbackInfoT: 'You earn cashback points for your purchases, which can be used to pay for future purchases. The higher the total amount of all purchases, the higher the cashback percentage:'
   
    
     
@@ -113,7 +119,10 @@ export const TEXTS = {
     cashbackSystemT: 'Cashback-system',
     cashbackBallT: 'Ihr aktueller cashback-wert',
     referalSystemT: 'Empfehlungssystem',
-    refMessageT: '👆 Ich empfehle diesen Shop weiter'
+    refMessageT: '👆 Ich empfehle diesen Shop weiter',
+    howCBworksT: 'Gesamtbetrag aller von Ihnen getätigten Einkäufe',
+    cashbackLevelsT: 'Cashback-stufen',
+    cashbackInfoT: 'Für Ihre Einkäufe erhalten Sie Cashback-Punkte, mit denen Sie weitere Einkäufe bezahlen können. Je höher der Gesamtbetrag aller Einkäufe ist, desto höher ist der Cashback-Prozentsatz:'
   
 
       
