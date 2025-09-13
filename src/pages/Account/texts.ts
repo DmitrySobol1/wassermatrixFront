@@ -33,7 +33,8 @@ export const TEXTS = {
    fromPurchaseT: 'от покупки',
    cashbackSystemT: 'Система кешбэка',
    cashbackBallT: 'Количество баллов',
-   referalSystemT: 'Реферальная система'
+   referalSystemT: 'Реферальная система',
+   refMessageT: '👆 Рекомендую данный магазин'
    
     
   },
@@ -71,7 +72,8 @@ export const TEXTS = {
     fromPurchaseT: 'from purchase',
     cashbackSystemT: 'Cashback system',
     cashbackBallT: 'Your current cashback value',
-    referalSystemT: 'Referal system'
+    referalSystemT: 'Referal system',
+    refMessageT: '👆 I recommend this store'
   
    
     
@@ -110,7 +112,8 @@ export const TEXTS = {
     fromPurchaseT: 'vom kauf',
     cashbackSystemT: 'Cashback-system',
     cashbackBallT: 'Ihr aktueller cashback-wert',
-    referalSystemT: 'Empfehlungssystem'
+    referalSystemT: 'Empfehlungssystem',
+    refMessageT: '👆 Ich empfehle diesen Shop weiter'
   
 
       
