@@ -4,7 +4,7 @@ import {
   Cell,
   Accordion,
   Button,
-  Caption,
+  Subheadline,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useEffect, useState, useContext } from 'react';
@@ -36,25 +36,33 @@ export const ReferalSystem: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [referals, setReferals] = useState([]);
   const [infoAboutQuantity, setInfoAboutQuantity] = useState([]);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const [infoAboutPurchase, setInfoAboutPurchase] = useState(0);
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+  // Функция для управления аккордеонами (только один может быть открыт)
+  const handleAccordionChange = (accordionId: string) => {
+    setOpenAccordion(openAccordion === accordionId ? null : accordionId);
+  };
 
   // Получение списка рефералов и информации о количественных промокодах
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [referalsResponse, quantityInfoResponse] = await Promise.all([
+        const [referalsResponse, quantityInfoResponse, purchaseInfoResponse] = await Promise.all([
           axios.get('/get_referals', {
             params: {
               father: tlgid,
               isSonEnterToApp: true
             }
           }),
-          axios.get('/referals_promoForQuantity')
+          axios.get('/referals_promoForQuantity'),
+          axios.get('/referals_promoForPurchase')
         ]);
 
         console.log('ref response= ', referalsResponse);
         console.log('quantity info response= ', quantityInfoResponse);
+        console.log('purchase InfoResponse= ', purchaseInfoResponse);
 
         if (referalsResponse.data.status === 'ok') {
           setReferals(referalsResponse.data.referals || []);
@@ -62,6 +70,11 @@ export const ReferalSystem: FC = () => {
 
         if (quantityInfoResponse.data) {
           setInfoAboutQuantity(quantityInfoResponse.data);
+        }
+
+        if (purchaseInfoResponse.data) {
+          setInfoAboutPurchase(purchaseInfoResponse.data[0].sale)
+
         }
       } catch (error) {
         console.error('Ошибка при получении данных:', error);
@@ -170,9 +183,9 @@ export const ReferalSystem: FC = () => {
           {referals.length === 0 ? (
            
 
-            <Accordion 
-              expanded={isAccordionOpen} 
-              onChange={() => setIsAccordionOpen(!isAccordionOpen)}
+            <Accordion
+              expanded={openAccordion === 'referals'}
+              onChange={() => handleAccordionChange('referals')}
             >
               <AccordionSummary>
                 Список рефералов (0 чел.):
@@ -185,20 +198,33 @@ export const ReferalSystem: FC = () => {
               </AccordionContent>
             </Accordion>
           ) : (
-            <Accordion 
-              expanded={isAccordionOpen} 
-              onChange={() => setIsAccordionOpen(!isAccordionOpen)}
+            <Accordion
+              expanded={openAccordion === 'referals'}
+              onChange={() => handleAccordionChange('referals')}
             >
               <AccordionSummary>
                 Список рефералов ({referals.length} чел.)
               </AccordionSummary>
               
               <AccordionContent>
+                <Cell>
+
                 {referals.map((referal: any, index: number) => (
-                  <Cell key={index}>
-                    {index+1}) {referal.username ? `username: ${referal.username}` : `telegram id: ${referal.son}`}
+
+                    
+
+                    <div key={index}>
+                      <Subheadline 
+                      level="1"
+                          weight="3"
+                      > 
+                          {index+1}) {referal.username ? `username: ${referal.username}` : `telegram id: ${referal.son}`}
+                      
+                      </Subheadline>
+                      </div>
+                    
+                  ))}
                   </Cell>
-                ))}
               </AccordionContent>
             </Accordion>
           )}
@@ -212,12 +238,12 @@ export const ReferalSystem: FC = () => {
           >
 
             
-            <Accordion 
-              expanded={isAccordionOpen} 
-              onChange={() => setIsAccordionOpen(!isAccordionOpen)}
+            <Accordion
+              expanded={openAccordion === 'promocodes'}
+              onChange={() => handleAccordionChange('promocodes')}
             >
               <AccordionSummary>
-                Промокоды
+                Промокоды за приглашенных
               </AccordionSummary>
               <AccordionContent>
                 {/* <Cell
@@ -228,30 +254,70 @@ export const ReferalSystem: FC = () => {
                 multiline
                 style={{marginTop: 0}}
                 >
-                    <Caption
+                    <Subheadline
                                 level="1"
-                                weight="2"
+                                weight="3"
                                 // style={{marginLeft: 20}}
                               >
-                    Чем больше людей пригласишь, тем выше будет промокод со скидкой
-                    </Caption>
+                    Чем больше людей пригласите, тем выше будет промокод со скидкой:  
+                    </Subheadline>
                 {infoAboutQuantity.map((info: any, index: number) => (
                   
                   <div key={index}>
                     <div
                     // style={{marginLeft: 20}}
                     >
-                      <Caption
+                      <Subheadline
                             level="1"
                             weight="3"
                           >
                           
                       {index+1}) за {info.qty} чел. - промокод на скидку -{info.sale}%
-                      </Caption>
+                      </Subheadline>
                       </div>
                   </div>
                   
                 ))}
+                </Cell>
+              </AccordionContent>
+            </Accordion>
+
+            <Accordion
+              expanded={openAccordion === 'cashback'}
+              onChange={() => handleAccordionChange('cashback')}
+            >
+              <AccordionSummary>
+                Кэшбек за покупки рефералов
+              </AccordionSummary>
+              <AccordionContent>
+                {/* <Cell
+                multiline>
+                Чем больше людей пригласишь, тем выше будет промокод со скидкой
+                </Cell> */}
+                <Cell
+                multiline
+                style={{marginTop: 0}}
+                >
+                    <div>
+                    <Subheadline
+                                level="1"
+                                weight="3"
+                                // style={{marginLeft: 20}}
+                              >
+                    Получайте кешбек баллы за все покупки ваших рефералов:
+                    </Subheadline>
+                    </div>
+                  <div>
+                      <Subheadline
+                            level="1"
+                            weight="3"
+                          >
+                          Кешбек = {infoAboutPurchase}% от купленных товаров
+                      
+                      </Subheadline>
+                      </div>
+                      
+                  
                 </Cell>
               </AccordionContent>
             </Accordion>
