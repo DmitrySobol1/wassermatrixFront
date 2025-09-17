@@ -117,7 +117,7 @@ export const ReferalSystem: FC = () => {
     let reflink = `${firstPart}-${secondPart}-${thirdPart}`;
     reflink = reflink.slice(0, -2)
     // reflink = reflink + languageInteger
-    reflink = reflink + 'en'
+    reflink = reflink + language
 
     // const msgtxt = tlgMessage;
     const msgtxt = refMessageT;

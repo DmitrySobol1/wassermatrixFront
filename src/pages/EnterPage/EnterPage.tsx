@@ -27,59 +27,38 @@ export const EnterPage: FC = () => {
     const { setLanguage } = useContext(LanguageContext);
     const { setValute } = useContext(ValuteContext);
 
-    // const [jbid, setJbid]=useState('')
-  
    //FIXME:
   const tlgid = useTlgid();
-  // const tlgid = 412697670;
-  // const tlgid = 777;
 
 
 
 const lp = useMemo(() => retrieveLaunchParams(), []);
 
-// Debug logging for tgWebAppStartParam
-// console.log('📋 Launch Params Debug:', {
-//   tgWebAppStartParam: lp.tgWebAppStartParam,
-//   allParams: lp,
-//   isDev: import.meta.env.DEV
-// });
-
-//  <DisplayData rows={[]}>
-//   { title: 'tgWebAppStartParam', value: lp.tgWebAppStartParam },
-// </DisplayData> 
-
-
 
 
   // для рендера
   useEffect(() => {
-    //@ts-ignore
-    // setJbid(lp.tgWebAppStartParam)
-
-    // Fallback value for development if tgWebAppStartParam is not available
-    const jbidValue = lp.start || 'dev_fallback_jbid';
+    const jbidValue = lp.start || 111 ;
+    const langFromBot = lp.langfrombot || 'de'
     
-    // console.log('🚀 Sending request with jbid:', jbidValue);
+    // console.log('jbid=', jbidValue);
+    // console.log('langFromBot=', langFromBot);
+
+    // return
 
     axios
-      .post('/enter', { 
+      .post('/enter', {  
         tlgid: tlgid,
-        jbid: jbidValue
+        jbid: jbidValue,
+        language: langFromBot 
       })
       .then((response) => {
         if (response.data.userData.result === 'showOnboarding') {
-          
-          // const nowpaymentid = response.data.userData.nowpaymentid;
-          // console.log('showOnboarding');
 
-          // console.log('✅ Response received - jbid:', jbidValue)
           navigate('/onboarding');
         } else if (response.data.userData.result === 'showCatalogPage') {
-          // console.log(response.data.userData);
           setLanguage(response.data.userData.language)
           setValute(response.data.userData.valute)
-          // console.log('✅ Response received - jbid:', jbidValue)
           navigate('/catalog-page')  
         }
       })
@@ -88,8 +67,7 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
         console.error('❌ Failed jbid value was:', jbidValue);
       })
       .finally(() => {
-        // setShowLoader(false);
-        // setWolfButtonActive(true);
+        
       });
   }, []);
 

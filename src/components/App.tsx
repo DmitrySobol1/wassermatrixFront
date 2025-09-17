@@ -18,11 +18,11 @@ import { routes } from '@/navigation/routes.tsx';
 
 type LanguageContextType = {
   language: string;
-  setLanguage: Dispatch<SetStateAction<string>>;
+  setLanguage: Dispatch<SetStateAction<string>>; 
 };
 
 export const LanguageContext = createContext<LanguageContextType>({
-  language: 'ru', // значение по умолчанию
+  language: 'en', // значение по умолчанию
   setLanguage: () => {}, // заглушка для функции
 });
 
@@ -86,6 +86,6 @@ export function App() {
       </TotalBalanceContext.Provider>
       </ValuteContext.Provider>
       </LanguageContext.Provider>
-    </AppRoot>
+    </AppRoot> 
   );
 }
