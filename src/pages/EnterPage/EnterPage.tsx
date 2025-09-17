@@ -44,7 +44,6 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
     // console.log('jbid=', jbidValue);
     // console.log('langFromBot=', langFromBot);
 
-    // return
 
     axios
       .post('/enter', {  
@@ -55,6 +54,10 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
       .then((response) => {
         if (response.data.userData.result === 'showOnboarding') {
 
+          console.log('lang from back=', response.data.userData.language )
+          // return
+
+          setLanguage(response.data.userData.language)
           navigate('/onboarding');
         } else if (response.data.userData.result === 'showCatalogPage') {
           setLanguage(response.data.userData.language)
