@@ -6,6 +6,7 @@ import {
   List,
   Accordion,
   Button,
+  Caption,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -223,7 +224,16 @@ export const Orders: FC = () => {
                               )}
                             </Text>
                              {order.payStatus === true ?
-                              (<span style={{backgroundColor: '#e6f2f9', color:'#40a7e3', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>{order.orderStatus?.[`name_${language}`]}</span>)
+                              (<span style={{backgroundColor: '#e6f2f9', color:'#40a7e3', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>
+                                 <Caption
+                                    level="1"
+                                    weight="3"
+                                  >
+                                    {order.orderStatus?.[`name_${language}`]}
+                                  </Caption>
+                              
+                                
+                              </span>)
                               :
                               (<span style={{backgroundColor: 'coral', color:'white', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>{notPaydT}</span>)
                              }
