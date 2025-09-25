@@ -288,7 +288,7 @@ export const PaymentChoice: FC = () => {
 
       };
 
-      console.log('Создаем Stripe Checkout Session:', paymentData);
+      console.log('Создаем Stripe Checkout Session: ', paymentData);
 
       // Отправляем запрос на создание Stripe Checkout Session
       const response = await axios.post('/create_payment_session', paymentData);

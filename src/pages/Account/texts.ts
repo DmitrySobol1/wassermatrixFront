@@ -52,7 +52,9 @@ export const TEXTS = {
    zaT: 'за',
    za2T: 'чел. - промокод на скидку',
    getCbT: 'Получайте кешбек баллы за все покупки ваших рефералов:',
-   purchasedT: 'от купленных товаров'
+   purchasedT: 'от купленных товаров',
+   etaT: 'ожидаемая дата доставки: ',
+   pressAsDeliveredT: 'отметьте, когда получите заказ'
     
   },
   en: {
@@ -108,7 +110,9 @@ export const TEXTS = {
    zaT: 'for',
    za2T: 'pers. - promocode with sale',
    getCbT: 'Get cashback points for all purchases made by referals:',
-   purchasedT: 'from purchesed goods'
+   purchasedT: 'from purchesed goods',
+   etaT: 'estimate date of delivery: ',
+   pressAsDeliveredT: 'press, when order delivered'
   
    
     
@@ -166,7 +170,9 @@ export const TEXTS = {
     zaT: 'für',
     za2T: 'pers. - promo-Code mit rabatt',
     getCbT: 'Erhalten Sie Cashback-Punkte für alle Einkäufe, die von Ihren Empfehlungen getätigt werden:',
-    purchasedT: 'von gekauften Waren'
+    purchasedT: 'von gekauften Waren',
+    etaT: 'voraussichtlicher liefertermin: ',
+    pressAsDeliveredT: 'presse, wenn bestellung geliefert'
       
   },
 };

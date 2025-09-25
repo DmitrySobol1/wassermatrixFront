@@ -32,7 +32,7 @@ export const Orders: FC = () => {
   const navigate = useNavigate();
   
   //@ts-ignore
-  const { myOrdersT, orderFromT,currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT,pcsT, notPaydT, payBtnT, loadingT} = TEXTS[language];
+  const { myOrdersT, orderFromT,currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT,pcsT, notPaydT, payBtnT, loadingT, etaT, pressAsDeliveredT} = TEXTS[language];
   
   
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +41,8 @@ export const Orders: FC = () => {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [valuteToShowOnFront, setValuteToShowOnFront] = useState('');
   const [isButtonLoading, setIsButtonLoading] = useState(false)
+  const [isButtonDeliveredLoading, setIsButtonDeliveredLoading] = useState(false)
+  const [isShowDeliveredBtn, setIsShowDeliveredBtn] = useState(true)
   const [isShowReceipt, setIsShowReceipt] = useState(false)
 
   // Функция для управления открытием/закрытием аккордеонов
@@ -111,7 +113,7 @@ export const Orders: FC = () => {
     if (tlgid) {
       fetchMyOrders();
     }
-  }, [tlgid]);
+  }, [tlgid, isShowDeliveredBtn]);
 
 
   // Обработчик для кнопки "Чек"
@@ -148,6 +150,32 @@ export const Orders: FC = () => {
       setIsButtonLoading(false);
     }
   };
+  
+  // Обработчик для кнопки "заказ доставлен"
+  const handleDelivered = async (orderid: string) => {
+    setIsButtonDeliveredLoading(true);
+
+    try {
+      // Отправляем запрос на получение URL чека
+      const response = await axios.post('/change_orderInfo', 
+        { orderid: orderid, tlgid: tlgid}
+      );
+
+      if (response.data.status === 'changed') {
+          console.log('пометил как полученный')
+          setIsShowDeliveredBtn(false)
+        } else {
+          console.log('пометил как НЕ полученный')
+        }
+      } catch (error) {
+      console.error('Ошибка при отметке заказа полученным', error);
+      // setIsShowReceipt(true)
+    } finally {
+      setIsButtonDeliveredLoading(false);
+    }
+  };
+
+  
 
   return (
     <Page back={true}>
@@ -180,16 +208,7 @@ export const Orders: FC = () => {
 
                   return (
                     <>
-                      {/* <Cell
-                      key={order._id}
-                      multiline
-                      subtitle={`${totalSum.toFixed(2)} ${order.valuteToShow || valute} • ${order.country}`}
-                     after={order.orderStatus?.[`name_${language}`]}
-                    >
-                      <Text weight="2">
-                        Заказ от {new Date(order.createdAt).toLocaleDateString('ru-RU')}
-                      </Text>
-                    </Cell> */}
+                     
 
                       <Accordion
                         expanded={expandedOrderId === order._id}
@@ -198,11 +217,16 @@ export const Orders: FC = () => {
                         <AccordionSummary>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <Text weight="2">
-                              {orderFromT}{' '}
+                              {orderFromT}{' '} 
                               {new Date(order.createdAt).toLocaleDateString(
                                 'ru-RU'
                               )}
                             </Text>
+                             {order.payStatus === true ?
+                              (<span style={{backgroundColor: '#e6f2f9', color:'#40a7e3', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>{order.orderStatus?.[`name_${language}`]}</span>)
+                              :
+                              (<span style={{backgroundColor: 'coral', color:'white', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>{notPaydT}</span>)
+                             }
                            
                           </div>
                         </AccordionSummary>
@@ -215,14 +239,26 @@ export const Orders: FC = () => {
                             ) : (
                               <div>
                                 {order.orderStatus?.[`name_${language}`]}
-                                {order.eta && (
+                                {(order.eta && order.orderStatus._id != '689b8af622baabcbb7047b9e') && (
                                   <div style={{ fontSize: '0.875rem', color: '#000000ff', marginTop: 5 }}>
-                                    ожидаемая дата доставки: {new Date(order.eta).toLocaleDateString('ru-RU')}
+                                    {etaT} {new Date(order.eta).toLocaleDateString('ru-RU')}
                                   </div>
                                 )}
                               </div>
                             )}
                           </Cell>
+
+                          {order.orderStatus._id === '689b8ace384ddd696a12e0ec' && isShowDeliveredBtn && (
+                            <Cell>
+                              <Button 
+                                onClick={() => handleDelivered(order._id)}
+                                loading = {isButtonDeliveredLoading}
+                                style={{backgroundColor:'#8be78b', color: 'black'}}
+                              >
+                                {pressAsDeliveredT}
+                              </Button>
+                            </Cell>
+                          )}
 
                           {order.payStatus === true && (
                             <Cell>
