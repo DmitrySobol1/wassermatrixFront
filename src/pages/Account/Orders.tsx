@@ -211,9 +211,14 @@ export const Orders: FC = () => {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <Text weight="2">
                               {orderFromT}{' '} 
-                              {new Date(order.createdAt).toLocaleDateString(
+                              {/* {new Date(order.createdAt).toLocaleDateString(
                                 'ru-RU'
-                              )}
+                              )} */}
+                              {new Date(order.createdAt).toLocaleDateString('de-DE', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: '2-digit'
+                              })}
                             </Text>
                              {order.payStatus === true ?
                               (<span style={{backgroundColor: '#e6f2f9', color:'#40a7e3', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>
