@@ -382,7 +382,7 @@ export const PaymentChoice: FC = () => {
                   >
                     {item[`name_${language}`] || item.name_en}
                     {/* {item.isSaleNow && '(sale)'} */}
-                    {item.isSaleNow && <span style={{color: 'white', backgroundColor: '#ed6c02', padding: 10,   marginLeft:20}}>sale</span>}
+                    {item.isSaleNow && <span style={{color: 'white', backgroundColor: '#ed6c02', padding: 10,  marginLeft:20}}>sale</span>}
                   </Cell>
                 );
               })}

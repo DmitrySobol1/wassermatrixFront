@@ -198,14 +198,6 @@ export const Orders: FC = () => {
             <Section header={myOrdersT} style={{ marginBottom: 100 }}> 
               {myOrders && myOrders.length > 0 ? (
                 myOrders.map((order: any) => {
-                  // посчитать общую сумму заказа с учетом стоимости доставки
-                  // const totalSum = order.goods?.reduce((sum: number, item: any) => {
-                  //   const itemPrice = Number(item.priceToShow) || 0;
-                  //   const deliveryPrice = Number(item[`delivery_price_${order.regionDelivery}`]) || 0;
-                  //   const quantity = Number(item.qty) || 0;
-
-                  //   return sum + ((itemPrice + deliveryPrice) * quantity);
-                  // }, 0) || 0;
 
                   return (
                     <>
@@ -235,7 +227,14 @@ export const Orders: FC = () => {
                                 
                               </span>)
                               :
-                              (<span style={{backgroundColor: 'coral', color:'white', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>{notPaydT}</span>)
+                              (<span style={{backgroundColor: '#ed6c02', color:'white', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>
+                                <Caption
+                                    level="1"
+                                    weight="3"
+                                  >
+                                    {notPaydT}
+                                  </Caption>
+                                </span>)
                              }
                            
                           </div>
@@ -243,7 +242,7 @@ export const Orders: FC = () => {
                         <AccordionContent>
                           <Cell subhead={currentStatusT}>
                             {order.payStatus === false ? (
-                              <span style={{ color: 'red', fontWeight: 600 }}>
+                              <span style={{ color: '#ed6c02', fontWeight: 600 }}>
                                 {notPaydT}
                               </span>
                             ) : (
