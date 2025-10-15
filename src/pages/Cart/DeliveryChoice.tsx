@@ -45,7 +45,7 @@ export const DeliveryChoice: FC = () => {
   const [isLoadingProfile, setIsLoadingProfile] = useState(false)
 
   //@ts-ignore
-  const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn,headerT,selectCountryT, addressT, nameT, phoneT} = TEXTS[language];
+  const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn,headerT,selectCountryT, addressT, nameT, phoneT, adressInputT, nameInputT, phoneInputT} = TEXTS[language];
 
   if (settingsButton.mount.isAvailable()) {
     settingsButton.mount();
@@ -272,7 +272,7 @@ async function countrySelectHandler(e:any){
             <Input 
               // status="focused" 
               header={addressT}
-              placeholder="Write and clean me" 
+              placeholder={adressInputT}
               value={adress} 
               onChange={e => setAdress(e.target.value)}
               onBlur={e => handleAddressBlur(e.target.value)}
@@ -289,7 +289,7 @@ async function countrySelectHandler(e:any){
             <Input 
               // status="focused" 
               header={nameT}
-              placeholder="Write and clean me" 
+              placeholder={nameInputT}
               value={userName} 
               onChange={e => setUserName(e.target.value)}
               onBlur={e => handleNameBlur(e.target.value)}
@@ -306,7 +306,7 @@ async function countrySelectHandler(e:any){
             <Input 
               // status="focused" 
               header={phoneT}
-              placeholder="Write and clean me" 
+              placeholder={phoneInputT}
               value={phone} 
               onChange={e => setPhone(e.target.value)}
               onBlur={e => handlePhoneBlur(e.target.value)}
