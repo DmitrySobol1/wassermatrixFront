@@ -1,6 +1,6 @@
-import { Section, List} from '@telegram-apps/telegram-ui';
+import { Section, List, Spinner} from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useEffect,useContext} from 'react';
+import { useEffect,useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import axios from '../../axios';
@@ -22,7 +22,7 @@ import {useMemo } from 'react';
 export const EnterPage: FC = () => {
   const navigate = useNavigate();
   
-   
+  const [isLoading] = useState(true); 
 
     const { setLanguage } = useContext(LanguageContext);
     const { setValute } = useContext(ValuteContext);
@@ -76,8 +76,22 @@ const lp = useMemo(() => retrieveLaunchParams(), []);
 
   return (
     <Page>
+
+      {isLoading && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  justifyContent: 'center',
+                  padding: '100px',
+                }}
+              >
+                <Spinner size="m" />
+              </div>
+            )}
+
+
       <List>
-        <Section>EnterPage</Section>
+        <Section></Section>
         {/* <Cell>jbid = {jbid} </Cell> */}
       </List>
     </Page>
