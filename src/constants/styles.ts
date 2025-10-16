@@ -7,4 +7,10 @@ export const ACCOUNT_STYLES = {
     justifyContent: 'center',
     padding: '100px',
   } as const,
+  sectionMarginBottom: {
+    marginBottom: 10,
+  } as const,
+  sectionMarginBottomLarge: {
+    marginBottom: 100,
+  } as const,
 } as const;

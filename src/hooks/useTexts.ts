@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { LanguageContext } from '@/components/App';
 import type { SupportedLanguage } from '@/types/i18n.types';
 
@@ -16,7 +16,9 @@ import type { SupportedLanguage } from '@/types/i18n.types';
 export function useTexts<T>(textsMap: Record<SupportedLanguage, T>): T {
   const { language } = useContext(LanguageContext);
 
-  // Safely access the texts with fallback to English
-  const validLanguage = language as SupportedLanguage;
-  return textsMap[validLanguage] || textsMap.en;
+  // Memoize to prevent unnecessary recalculations
+  return useMemo(() => {
+    const validLanguage = language as SupportedLanguage;
+    return textsMap[validLanguage] || textsMap.en;
+  }, [language, textsMap]);
 }

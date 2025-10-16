@@ -18,4 +18,21 @@ export type TabbarTexts = {
   thirdTab: string;
 };
 
-// Add more text types as needed for other pages
+// Data types for Cashback functionality
+export interface CashbackLevel {
+  _id: string;
+  position: number;
+  percent: number;
+  sum: number;
+}
+
+export interface CashbackData {
+  purchaseQty: number;
+  purchaseSum: number;
+  clientCashbackLevel: string;
+  deltaToNextLevel: number;
+  cashbackLevels: CashbackLevel[];
+  currentPercent: string;
+  userValute: string;
+  cashbackBall: number;
+}

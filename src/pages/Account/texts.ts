@@ -56,6 +56,9 @@ export type AccountTexts = {
   purchasedT: string;
   etaT: string;
   pressAsDeliveredT: string;
+  errorT: string;
+  btnErrorT: string;
+  renewT: string
 };
 
 export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
@@ -114,7 +117,10 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
    getCbT: 'Получайте кешбек баллы за все покупки ваших рефералов:',
    purchasedT: 'от купленных товаров',
    etaT: 'ожидаемая дата доставки: ',
-   pressAsDeliveredT: 'отметьте, когда получите заказ'
+   pressAsDeliveredT: 'отметьте, когда получите заказ',
+   errorT: 'Что-то пошло не так...',
+   btnErrorT: 'Попробовать ещё раз',
+   renewT: 'обновление...'
     
   },
   en: {
@@ -172,7 +178,10 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
    getCbT: 'Get cashback points for all purchases made by referals:',
    purchasedT: 'from purchesed goods',
    etaT: 'estimate date of delivery: ',
-   pressAsDeliveredT: 'press, when order delivered'
+   pressAsDeliveredT: 'press, when order delivered',
+   errorT: 'Something went wrong...',
+   btnErrorT: 'Try again',
+   renewT: 'renew...'
   
    
     
@@ -232,7 +241,10 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
     getCbT: 'Erhalten Sie Cashback-Punkte für alle Einkäufe, die von Ihren Empfehlungen getätigt werden:',
     purchasedT: 'von gekauften Waren',
     etaT: 'voraussichtlicher liefertermin: ',
-    pressAsDeliveredT: 'presse, wenn bestellung geliefert'
+    pressAsDeliveredT: 'presse, wenn bestellung geliefert',
+    errorT: 'Etwas ist schiefgelaufen...',
+    btnErrorT: 'Versuchen Sie es erneut',
+    renewT: 'erneuern...'
       
   },
 };

@@ -9,6 +9,8 @@ import { AppRoot } from '@telegram-apps/telegram-ui';
 
 import { useState } from 'react';
 import { createContext, Dispatch, SetStateAction } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { routes } from '@/navigation/routes.tsx';
 import type { SupportedLanguage } from '@/types/i18n.types';
@@ -16,6 +18,18 @@ import type { SupportedLanguage } from '@/types/i18n.types';
 import { useTlgid } from '../components/Tlgid';
 import { useEffect } from 'react';
 import axios from '../axios';
+
+// Create a client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // Data is fresh for 5 minutes
+      gcTime: 10 * 60 * 1000, // Cache persists for 10 minutes (was cacheTime in v4)
+      retry: 2, // Retry failed requests 2 times
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+    },
+  },
+});
 
 type LanguageContextType = {
   language: SupportedLanguage;
@@ -79,24 +93,29 @@ export function App() {
   const [valute, setValute] = useState('₽');
 
   return (
-    <AppRoot
-      appearance={isDark ? 'dark' : 'light'}
-      platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}
-    >
-      <LanguageContext.Provider value={{ language, setLanguage }}>
-        <ValuteContext.Provider value={{ valute, setValute }}>
-          <TotalBalanceContext.Provider value={{ balance, setBalance }}>
-            <HashRouter>
-              <Routes>
-                {routes.map((route) => (
-                  <Route key={route.path} {...route} />
-                ))}
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </HashRouter>
-          </TotalBalanceContext.Provider>
-        </ValuteContext.Provider>
-      </LanguageContext.Provider>
-    </AppRoot>
+    <QueryClientProvider client={queryClient}>
+      <AppRoot
+        appearance={isDark ? 'dark' : 'light'}
+        platform={['macos', 'ios'].includes(lp.tgWebAppPlatform) ? 'ios' : 'base'}
+      >
+        <LanguageContext.Provider value={{ language, setLanguage }}>
+          <ValuteContext.Provider value={{ valute, setValute }}>
+            <TotalBalanceContext.Provider value={{ balance, setBalance }}>
+              <HashRouter>
+                <Routes>
+                  {routes.map((route) => (
+                    <Route key={route.path} {...route} />
+                  ))}
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </HashRouter>
+            </TotalBalanceContext.Provider>
+          </ValuteContext.Provider>
+        </LanguageContext.Provider>
+      </AppRoot>
+
+      {/* React Query DevTools - only visible in development */}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
