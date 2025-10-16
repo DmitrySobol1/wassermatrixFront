@@ -10,7 +10,7 @@ import {
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 import { settingsButton, openLink } from '@telegram-apps/sdk-react';
@@ -22,6 +22,60 @@ import axios from '../../axios';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
+// Константы стилей для предотвращения создания новых объектов при каждом рендере
+const styles = {
+  loadingContainer: {
+    textAlign: 'center' as const,
+    justifyContent: 'center',
+    padding: '100px',
+  },
+  accordionSummary: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  paidBadge: {
+    backgroundColor: '#e6f2f9',
+    color: '#40a7e3',
+    padding: '3px 5px',
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  unpaidBadge: {
+    backgroundColor: '#ed6c02',
+    color: 'white',
+    padding: '3px 5px',
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  unpaidText: {
+    color: '#ed6c02',
+    fontWeight: 600,
+  },
+  etaText: {
+    fontSize: '0.875rem',
+    color: '#000000ff',
+    marginTop: 5,
+  },
+  deliveredButton: {
+    backgroundColor: '#8be78b',
+    color: 'black',
+  },
+  paymentButton: {
+    marginLeft: 20,
+  },
+  sectionMargin: {
+    marginBottom: 100,
+  },
+
+} as const;
+
+
+const ERROR_MESSAGE_STYLE: React.CSSProperties = {
+  color: 'red',
+  marginBottom: '10px',
+};
 
 
 export const Orders: FC = () => {
@@ -31,29 +85,31 @@ export const Orders: FC = () => {
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
-  
-  //@ts-ignore
-  const { myOrdersT, orderFromT,currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT,pcsT, notPaydT, payBtnT, loadingT, etaT, pressAsDeliveredT} = TEXTS[language];
+
+  // Мемоизация текстов для избежания повторной деструктуризации при каждом рендере
+  const texts = useMemo(() => TEXTS[language as keyof typeof TEXTS], [language]);
+  const { myOrdersT, orderFromT, currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT, pcsT, notPaydT, payBtnT, loadingT, etaT, pressAsDeliveredT, errorT, btnErrorT} = texts;
   
   
   const [isLoading, setIsLoading] = useState(true);
-  const [myOrders, setMyOrders] = useState([]);
+  const [myOrders, setMyOrders] = useState<any[]>([]);
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [valuteToShowOnFront, setValuteToShowOnFront] = useState('');
-  const [isButtonLoading, setIsButtonLoading] = useState(false)
-  const [isButtonDeliveredLoading, setIsButtonDeliveredLoading] = useState(false)
-  const [isShowDeliveredBtn, setIsShowDeliveredBtn] = useState(true)
-  const [isShowReceipt, setIsShowReceipt] = useState(false)
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isButtonDeliveredLoading, setIsButtonDeliveredLoading] = useState(false);
+  const [isShowDeliveredBtn, setIsShowDeliveredBtn] = useState(true);
+  const [isShowReceipt, setIsShowReceipt] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Функция для управления открытием/закрытием аккордеонов
-  const handleAccordionChange = (orderId: string) => {
-    setIsShowReceipt(false)
-    setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
-  };
+  // Функция для управления открытием/закрытием аккордеонов (мемоизирована)
+  const handleAccordionChange = useCallback((orderId: string) => {
+    setIsShowReceipt(false);
+    setExpandedOrderId(prev => prev === orderId ? null : orderId);
+  }, []);
 
-  // Обработчик для кнопки "Оплатить"
-  const handlePayment = async (order: any) => {
+  // Обработчик для кнопки "Оплатить" (мемоизирован)
+  const handlePayment = useCallback(async (order: any) => {
     setPaymentLoading(true);
 
     try {
@@ -73,31 +129,48 @@ export const Orders: FC = () => {
       }
     } catch (error) {
       console.error('Ошибка при переходе к оплате:', error);
-      
+
     } finally {
       setPaymentLoading(false);
     }
-  };
+  }, [tlgid]);
 
-  if (settingsButton.mount.isAvailable()) {
+  // Инициализация кнопки настроек Telegram с правильной очисткой
+  useEffect(() => {
+    if (!settingsButton.mount.isAvailable() || !settingsButton.onClick.isAvailable()) {
+      return;
+    }
+
     settingsButton.mount();
     settingsButton.isMounted();
     settingsButton.show();
-  }
 
-  if (settingsButton.onClick.isAvailable()) {
-    function listener() {
+    const handleSettingsClick = () => {
       console.log('Clicked!');
       navigate('/setting-button-menu');
-    }
-    settingsButton.onClick(listener);
-  }
+    };
+
+    settingsButton.onClick(handleSettingsClick);
+
+    // Cleanup функция для предотвращения утечки памяти
+    return () => {
+      // Удаляем обработчик события при размонтировании
+      try {
+        if (settingsButton.offClick && typeof settingsButton.offClick === 'function') {
+          settingsButton.offClick(handleSettingsClick);
+        }
+      } catch (e) {
+        console.log('Settings button cleanup:', e);
+      }
+    };
+  }, [navigate]);
 
   // для получения данных о моих заказах из БД OrdersModel
   useEffect(() => {
     const fetchMyOrders = async () => {
       try {
         setIsLoading(true);
+        setError(null); // Сбрасываем предыдущую ошибку
         // endpoint для получения информации, поиск заказов по tlgid
         const response = await axios.get(`/user_get_my_orders?tlgid=${tlgid}`);
 
@@ -106,6 +179,7 @@ export const Orders: FC = () => {
         setValuteToShowOnFront(response.data.valuteToShow);
       } catch (error) {
         console.error('Ошибка при загрузке заказов:', error);
+        setError('Не удалось загрузить заказы. Проверьте интернет-соединение.');
       } finally {
         setIsLoading(false);
       }
@@ -114,11 +188,11 @@ export const Orders: FC = () => {
     if (tlgid) {
       fetchMyOrders();
     }
-  }, [tlgid, isShowDeliveredBtn]);
+  }, [tlgid]); // Убрали isShowDeliveredBtn из зависимостей
 
 
-  // Обработчик для кнопки "Чек"
-  const handleReceipt = async (paymentIntent: string) => {
+  // Обработчик для кнопки "Чек" (мемоизирован)
+  const handleReceipt = useCallback(async (paymentIntent: string) => {
     setIsButtonLoading(true);
 
     try {
@@ -128,11 +202,6 @@ export const Orders: FC = () => {
       });
 
       if (response.data.status === 'ok' && response.data.url) {
-        // Открываем URL чека внутри Telegram Mini App
-        // setReceiptUrl(response.data.url)
-        // setIsShowReceipt(true)
-        // setIsButtonLoading(false);
-        
         // Используем Telegram API для открытия ссылки
         if (openLink.isAvailable()) {
           openLink(response.data.url);
@@ -141,63 +210,111 @@ export const Orders: FC = () => {
           window.open(response.data.url);
         }
       } else {
-        setIsShowReceipt(true)
+        setIsShowReceipt(true);
         setIsButtonLoading(false);
       }
     } catch (error) {
       console.error('Ошибка при получении чека:', error);
-      setIsShowReceipt(true)
+      setIsShowReceipt(true);
     } finally {
       setIsButtonLoading(false);
     }
-  };
-  
-  // Обработчик для кнопки "заказ доставлен"
-  const handleDelivered = async (orderid: string) => {
+  }, []);
+
+  // Обработчик для кнопки "заказ доставлен" (мемоизирован с локальным обновлением state)
+  const handleDelivered = useCallback(async (orderid: string) => {
     setIsButtonDeliveredLoading(true);
 
     try {
-      // Отправляем запрос на получение URL чека
-      const response = await axios.post('/change_orderInfo', 
-        { orderid: orderid, tlgid: tlgid}
+      const response = await axios.post('/change_orderInfo',
+        { orderid: orderid, tlgid: tlgid }
       );
 
       if (response.data.status === 'changed') {
-          console.log('пометил как полученный')
-          setIsShowDeliveredBtn(false)
-        } else {
-          console.log('пометил как НЕ полученный')
-        }
-      } catch (error) {
+        console.log('пометил как полученный');
+        // Локальное обновление без повторного запроса к серверу
+        setMyOrders(prevOrders =>
+          prevOrders.map((order: any) =>
+            order._id === orderid
+              ? { ...order, isDelivered: true }
+              : order
+          )
+        );
+        setIsShowDeliveredBtn(false);
+      } else {
+        console.log('пометил как НЕ полученный');
+      }
+    } catch (error) {
       console.error('Ошибка при отметке заказа полученным', error);
-      // setIsShowReceipt(true)
     } finally {
       setIsButtonDeliveredLoading(false);
     }
-  };
+  }, [tlgid]);
 
-  
+  // Мемоизация вычислений заказов для предотвращения повторных расчетов при каждом рендере
+  const ordersWithCalculations = useMemo(() => {
+    if (!myOrders || myOrders.length === 0) return [];
+
+    return myOrders.map((order: any) => {
+      const itemsWithTotals = order.goods.map((item: any, index: number) => {
+        const itemPrice = Number(item.priceToShow) || 0;
+        const deliveryPrice = Number(item.convertedDeliveryPrice) || 0;
+        const quantity = Number(item.qty) || 0;
+        const totalItemCost = (itemPrice + deliveryPrice) * quantity;
+
+        return {
+          ...item,
+          itemPrice,
+          deliveryPrice,
+          quantity,
+          totalItemCost,
+          itemSubtotal: itemPrice * quantity,
+          deliverySubtotal: deliveryPrice * quantity,
+          index, // Сохраняем индекс для ключа
+        };
+      });
+
+      const orderTotal = itemsWithTotals.reduce(
+        (sum: number, item: any) => sum + item.totalItemCost,
+        0
+      );
+
+      return {
+        ...order,
+        goods: itemsWithTotals,
+        orderTotal,
+      };
+    });
+  }, [myOrders]);
 
   return (
     <Page back={true}>
       {isLoading && (
-        <div
-          style={{
-            textAlign: 'center',
-            justifyContent: 'center',
-            padding: '100px',
-          }}
-        >
+        <div style={styles.loadingContainer}>
           <Spinner size="m" />
         </div>
       )}
 
-      {!isLoading && (
+
+      {error && !isLoading && (
+        <Section>
+                        <Cell>
+                          <div style={ERROR_MESSAGE_STYLE}>
+                             {errorT}
+                          </div>
+                          <Button onClick={() => window.location.reload()} size="m">
+                            {btnErrorT}
+                          </Button>
+                        </Cell>
+                      </Section>
+      )}
+
+      {!isLoading && !error && (
         <>
           <List>
-            <Section header={myOrdersT} style={{ marginBottom: 100 }}> 
-              {myOrders && myOrders.length > 0 ? (
-                myOrders.map((order: any) => {
+            <Section header={myOrdersT} style={styles.sectionMargin}>
+              {ordersWithCalculations && ordersWithCalculations.length > 0 ? (
+                ordersWithCalculations.map((order: any) => {
 
                   return (
                     <>
@@ -208,53 +325,41 @@ export const Orders: FC = () => {
                         onChange={() => handleAccordionChange(order._id)}
                       >
                         <AccordionSummary>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                          <div style={styles.accordionSummary}>
                             <Text weight="2">
-                              {orderFromT}{' '} 
-                              {/* {new Date(order.createdAt).toLocaleDateString(
-                                'ru-RU'
-                              )} */}
+                              {orderFromT}{' '}
                               {new Date(order.createdAt).toLocaleDateString('de-DE', {
                                 day: '2-digit',
                                 month: '2-digit',
                                 year: '2-digit'
                               })}
                             </Text>
-                             {order.payStatus === true ?
-                              (<span style={{backgroundColor: '#e6f2f9', color:'#40a7e3', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>
-                                 <Caption
-                                    level="1"
-                                    weight="3"
-                                  >
-                                    {order.orderStatus?.[`name_${language}`]}
-                                  </Caption>
-                              
-                                
-                              </span>)
-                              :
-                              (<span style={{backgroundColor: '#ed6c02', color:'white', padding:'3px 5px 3px 5px', borderRadius:10, marginLeft: 10 }}>
-                                <Caption
-                                    level="1"
-                                    weight="3"
-                                  >
-                                    {notPaydT}
-                                  </Caption>
-                                </span>)
-                             }
-                           
+                             {order.payStatus === true ? (
+                              <span style={styles.paidBadge}>
+                                <Caption level="1" weight="3">
+                                  {order.orderStatus?.[`name_${language}`]}
+                                </Caption>
+                              </span>
+                             ) : (
+                              <span style={styles.unpaidBadge}>
+                                <Caption level="1" weight="3">
+                                  {notPaydT}
+                                </Caption>
+                              </span>
+                             )}
                           </div>
                         </AccordionSummary>
                         <AccordionContent>
                           <Cell subhead={currentStatusT}>
                             {order.payStatus === false ? (
-                              <span style={{ color: '#ed6c02', fontWeight: 600 }}>
+                              <span style={styles.unpaidText}>
                                 {notPaydT}
                               </span>
                             ) : (
                               <div>
                                 {order.orderStatus?.[`name_${language}`]}
-                                {(order.eta && order.orderStatus._id != '689b8af622baabcbb7047b9e') && (
-                                  <div style={{ fontSize: '0.875rem', color: '#000000ff', marginTop: 5 }}>
+                                {(order.eta && order.orderStatus._id !== '689b8af622baabcbb7047b9e') && (
+                                  <div style={styles.etaText}>
                                     {etaT} {new Date(order.eta).toLocaleDateString('ru-RU')}
                                   </div>
                                 )}
@@ -264,10 +369,10 @@ export const Orders: FC = () => {
 
                           {order.orderStatus._id === '689b8ace384ddd696a12e0ec' && isShowDeliveredBtn && (
                             <Cell>
-                              <Button 
+                              <Button
                                 onClick={() => handleDelivered(order._id)}
-                                loading = {isButtonDeliveredLoading}
-                                style={{backgroundColor:'#8be78b', color: 'black'}}
+                                loading={isButtonDeliveredLoading}
+                                style={styles.deliveredButton}
                               >
                                 {pressAsDeliveredT}
                               </Button>
@@ -276,22 +381,22 @@ export const Orders: FC = () => {
 
                           {order.payStatus === true && (
                             <Cell>
-                              <Button 
+                              <Button
                                 onClick={() => handleReceipt(order.payment_intent)}
-                                loading = {isButtonLoading}
+                                loading={isButtonLoading}
                               >
                                 {openReceiptT}
                               </Button>
                             </Cell>
                           )}
 
-                          {isShowReceipt &&
+                          {isShowReceipt && (
                             <Cell multiline>чек не доступен</Cell>
-                          }
+                          )}
 
                           {order.payStatus === false && (
                             <Button
-                              style={{ marginLeft: 20 }}
+                              style={styles.paymentButton}
                               onClick={() => handlePayment(order)}
                               disabled={paymentLoading}
                             >
@@ -304,44 +409,35 @@ export const Orders: FC = () => {
                           </Cell>
 
                           <List>
-                            {order.goods.map((item: any, index: number) => {
-                              const itemPrice = Number(item.priceToShow) || 0;
-                              const deliveryPrice =
-                                Number(item.convertedDeliveryPrice) || 0;
-                              const quantity = Number(item.qty) || 0;
-                              const totalItemCost =
-                                (itemPrice + deliveryPrice) * quantity;
-
-                              return (
-                                <Cell
-                                  key={`${item.itemId}-${index}`}
-                                  multiline
-                                  description={
-                                    <>
-                                      <div>{qtyT} {quantity} {pcsT}</div>
-                                      <div>
-                                        {priceGoodT}{' '}
-                                        {(itemPrice * quantity).toFixed(2)}{' '}
-                                        {valuteToShowOnFront}
-                                      </div>
-                                      <div>
-                                        {priceDeliveryT}{' '}
-                                        {(deliveryPrice * quantity).toFixed(2)}{' '}
-                                        {valuteToShowOnFront}
-                                      </div>
-                                    </>
-                                  }
-                                  after={
-                                    <Text weight="3">
-                                      {totalItemCost.toFixed(2)}{' '}
+                            {order.goods.map((item: any) => (
+                              <Cell
+                                key={`${item.itemId}-${item.index}`}
+                                multiline
+                                description={
+                                  <>
+                                    <div>{qtyT} {item.quantity} {pcsT}</div>
+                                    <div>
+                                      {priceGoodT}{' '}
+                                      {item.itemSubtotal.toFixed(2)}{' '}
                                       {valuteToShowOnFront}
-                                    </Text>
-                                  }
-                                >
-                                  {item[`name_${language}`] || item.name_en}
-                                </Cell>
-                              );
-                            })}
+                                    </div>
+                                    <div>
+                                      {priceDeliveryT}{' '}
+                                      {item.deliverySubtotal.toFixed(2)}{' '}
+                                      {valuteToShowOnFront}
+                                    </div>
+                                  </>
+                                }
+                                after={
+                                  <Text weight="3">
+                                    {item.totalItemCost.toFixed(2)}{' '}
+                                    {valuteToShowOnFront}
+                                  </Text>
+                                }
+                              >
+                                {item[`name_${language}`] || item.name_en}
+                              </Cell>
+                            ))}
                           </List>
 
                           {/* Информация о заказе */}
@@ -350,43 +446,13 @@ export const Orders: FC = () => {
                               multiline
                               after={
                                 <Text weight="3">
-                                  {order.goods
-                                    .reduce((total: number, item: any) => {
-                                      const itemPrice =
-                                        Number(item.priceToShow) || 0;
-                                      const deliveryPrice =
-                                        Number(item.convertedDeliveryPrice) ||
-                                        0;
-                                      const quantity = Number(item.qty) || 0;
-                                      return (
-                                        total +
-                                        (itemPrice + deliveryPrice) * quantity
-                                      );
-                                    }, 0)
-                                    .toFixed(2)}{' '}
+                                  {order.orderTotal.toFixed(2)}{' '}
                                   {valuteToShowOnFront}
                                 </Text>
                               }
                             >
                               <Text weight="2">{itogoT}</Text>
                             </Cell>
-
-                            {/* <Cell 
-                            description="Текущий статус заказа"
-                          >
-                            <Text weight="2">
-                              Статус: {order.orderStatus?.[`name_${language}`] || order.orderStatus?.name_en || 'Неизвестно'}
-                            </Text>
-                          </Cell> */}
-
-                            {/* <Cell 
-                            multiline
-                            subhead="Адрес доставки"
-                          >
-                            
-                              {order.country}, {order.adress}
-                            
-                          </Cell> */}
                           </Section>
                         </AccordionContent>
                       </Accordion>
