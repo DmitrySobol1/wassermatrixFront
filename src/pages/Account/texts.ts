@@ -1,4 +1,64 @@
-export const TEXTS = {
+import type { SupportedLanguage } from '@/types/i18n.types';
+
+export type AccountTexts = {
+  headerT: string;
+  myOrdersT: string;
+  settingsT: string;
+  orderFromT: string;
+  currentStatusT: string;
+  openReceiptT: string;
+  deliveryAddressT: string;
+  qtyT: string;
+  priceGoodT: string;
+  priceDeliveryT: string;
+  itogoT: string;
+  pcsT: string;
+  notPaydT: string;
+  payBtnT: string;
+  loadingT: string;
+  myPromocodesT: string;
+  saleT: string;
+  validUntilT: string;
+  notPromocodeT: string;
+  footerPromocodesT: string;
+  copiedT: string;
+  myCashbackT: string;
+  myInfoT: string;
+  purchaseQtyT: string;
+  purchaseSumT: string;
+  clientCashbackLevelT: string;
+  deltaToNextLevelT: string;
+  maxLevelT: string;
+  levelT: string;
+  totalSumT: string;
+  fromPurchaseT: string;
+  cashbackSystemT: string;
+  cashbackBallT: string;
+  referalSystemT: string;
+  refMessageT: string;
+  howCBworksT: string;
+  cashbackLevelsT: string;
+  cashbackInfoT: string;
+  refInfoHeaderT: string;
+  refInfoText1T: string;
+  refInfoText2T: string;
+  refInfoText3T: string;
+  inviteBtnT: string;
+  myReferalsT: string;
+  listReferalsT: string;
+  personT: string;
+  noRefT: string;
+  howRefWorksT: string;
+  quantityRefT: string;
+  zaT: string;
+  za2T: string;
+  getCbT: string;
+  purchasedT: string;
+  etaT: string;
+  pressAsDeliveredT: string;
+};
+
+export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
   ru: {
    headerT: 'Мой аккаунт',
    myOrdersT: 'Мои заказы',
@@ -135,7 +195,7 @@ export const TEXTS = {
     loadingT: 'Laden ...',
     myPromocodesT: 'Meine promo-codes',
     saleT: 'sale:',
-    alidUntilT: 'gültig bis:',
+    validUntilT: 'gültig bis:',
     notPromocodeT: 'Sie haben derzeit keine persönlichen Promo-Codes',
     footerPromocodesT: 'Klicken Sie auf den Promo-Code, um ihn zu kopieren. Geben Sie ihn beim Bezahlen ein, um den Rabatt zu erhalten',
     copiedT: 'promo-Code kopiert',

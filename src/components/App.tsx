@@ -11,17 +11,15 @@ import { useState } from 'react';
 import { createContext, Dispatch, SetStateAction } from 'react';
 
 import { routes } from '@/navigation/routes.tsx';
-
-// FIXME: change type
-// export const LanguageContext:any = createContext('');
+import type { SupportedLanguage } from '@/types/i18n.types';
 
 import { useTlgid } from '../components/Tlgid';
 import { useEffect } from 'react';
 import axios from '../axios';
 
 type LanguageContextType = {
-  language: string;
-  setLanguage: Dispatch<SetStateAction<string>>;
+  language: SupportedLanguage;
+  setLanguage: Dispatch<SetStateAction<SupportedLanguage>>;
 };
 
 export const LanguageContext = createContext<LanguageContextType>({
@@ -50,7 +48,7 @@ export const ValuteContext = createContext<ValuteContextType>({
 });
 
 export function App() {
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState<SupportedLanguage>('en');
 
   const tlgid = useTlgid();
 
@@ -64,7 +62,8 @@ export function App() {
         if (response) {
           console.log('lang from back=', response.data.userData.language);
 
-          setLanguage(response.data.userData.language);
+          const receivedLanguage = response.data.userData.language as SupportedLanguage;
+          setLanguage(receivedLanguage);
         }
       })
       .catch((error) => {
@@ -76,7 +75,6 @@ export function App() {
   const lp = useMemo(() => retrieveLaunchParams(), []);
   const isDark = useSignal(isMiniAppDark);
 
-  // const [language, setLanguage] = useState('en');
   const [balance, setBalance] = useState(0);
   const [valute, setValute] = useState('₽');
 

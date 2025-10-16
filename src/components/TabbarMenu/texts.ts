@@ -1,9 +1,10 @@
-export const TEXTS = {
+import type { SupportedLanguage, TabbarTexts } from '@/types/i18n.types';
+
+export const TEXTS: Record<SupportedLanguage, TabbarTexts> = {
   ru: {
     firstTab: 'Каталог',
     secondTab: 'Корзина',
     thirdTab: 'Кабинет',
-    
   },
   en: {
     firstTab: 'Catalog',
@@ -11,7 +12,7 @@ export const TEXTS = {
     thirdTab: 'Account',
   },
   de: {
-     firstTab: 'Katalog',
+    firstTab: 'Katalog',
     secondTab: 'Wagen',
     thirdTab: 'Konto',
   },
