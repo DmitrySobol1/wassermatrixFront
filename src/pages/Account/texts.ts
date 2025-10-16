@@ -58,7 +58,9 @@ export type AccountTexts = {
   pressAsDeliveredT: string;
   errorT: string;
   btnErrorT: string;
-  renewT: string
+  renewT: string;
+  noOrderT: string;
+  cantLoadRefT: string
 };
 
 export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
@@ -120,7 +122,9 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
    pressAsDeliveredT: 'отметьте, когда получите заказ',
    errorT: 'Что-то пошло не так...',
    btnErrorT: 'Попробовать ещё раз',
-   renewT: 'обновление...'
+   renewT: 'обновление...',
+   noOrderT: 'У вас пока нет заказов',
+   cantLoadRefT: 'Не удалось загрузить список рефералов, попробуйте позже'
     
   },
   en: {
@@ -181,7 +185,9 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
    pressAsDeliveredT: 'press, when order delivered',
    errorT: 'Something went wrong...',
    btnErrorT: 'Try again',
-   renewT: 'renew...'
+   renewT: 'renew...',
+   noOrderT: 'You have no order yet',
+   cantLoadRefT: 'Some mistake when loading referal list, plese try later'
   
    
     
@@ -244,7 +250,9 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
     pressAsDeliveredT: 'presse, wenn bestellung geliefert',
     errorT: 'Etwas ist schiefgelaufen...',
     btnErrorT: 'Versuchen Sie es erneut',
-    renewT: 'erneuern...'
+    renewT: 'erneuern...',
+     noOrderT: 'Sie haben noch keine Bestellung aufgegeben',
+     cantLoadRefT: 'Beim Laden der Empfehlungsliste ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut'
       
   },
 };

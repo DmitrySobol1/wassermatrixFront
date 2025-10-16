@@ -1,3 +1,31 @@
+/**
+ * Страница "Мои заказы"
+ *
+ * Отображает историю заказов пользователя с детальной информацией о каждом заказе.
+ *
+ * Основные возможности:
+ * - Загрузка истории заказов пользователя через API (/user_get_my_orders)
+ * - Отображение заказов с expandable аккордеонами
+ * - Информация о статусе оплаты и доставки
+ * - Повторная оплата неоплаченных заказов (Stripe integration)
+ * - Просмотр чеков оплаченных заказов (/get_receipt)
+ * - Отметка заказа как доставленного (/change_orderInfo)
+ * - Детальная информация по каждому товару в заказе
+ * - Автоматический расчет стоимости с учетом доставки
+ * - Мультиязычность (ru, en, de)
+ * - Мультивалютность
+ *
+ * Оптимизации производительности:
+ * - Мемоизация всех обработчиков событий (useCallback)
+ * - Мемоизация сложных вычислений заказов (useMemo) - предотвращает O(n²) сложность
+ * - Мемоизация текстовых переводов (useMemo)
+ * - Вынос всех стилей в константы (предотвращает создание новых объектов)
+ * - Правильная очистка settingsButton listener (предотвращает утечку памяти)
+ * - Локальное обновление состояния без дополнительных API запросов
+ * - Корректные зависимости useEffect (устранены лишние API запросы)
+ * - Обработка ошибок с UI для повторной попытки
+ * - Функциональное обновление состояния (prevState pattern)
+ */
 import {
   Section,
   Spinner,
@@ -22,6 +50,9 @@ import axios from '../../axios';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
+// ============================================================================
+// Константы стилей
+// ============================================================================
 // Константы стилей для предотвращения создания новых объектов при каждом рендере
 const styles = {
   loadingContainer: {
@@ -71,16 +102,22 @@ const styles = {
 
 } as const;
 
-
 const ERROR_MESSAGE_STYLE: React.CSSProperties = {
   color: 'red',
   marginBottom: '10px',
 };
 
+// ============================================================================
+// Основной компонент
+// ============================================================================
 
+/**
+ * Компонент страницы "Мои заказы"
+ *
+ * Отображает список заказов с детальной информацией, возможностью оплаты,
+ * просмотра чеков и отметки доставки.
+ */
 export const Orders: FC = () => {
-
-  
   const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
@@ -88,7 +125,7 @@ export const Orders: FC = () => {
 
   // Мемоизация текстов для избежания повторной деструктуризации при каждом рендере
   const texts = useMemo(() => TEXTS[language as keyof typeof TEXTS], [language]);
-  const { myOrdersT, orderFromT, currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT, pcsT, notPaydT, payBtnT, loadingT, etaT, pressAsDeliveredT, errorT, btnErrorT} = texts;
+  const { myOrdersT, orderFromT, currentStatusT, openReceiptT, deliveryAddressT, qtyT, priceGoodT, priceDeliveryT, itogoT, pcsT, notPaydT, payBtnT, loadingT, etaT, pressAsDeliveredT, errorT, btnErrorT, noOrderT} = texts;
   
   
   const [isLoading, setIsLoading] = useState(true);
@@ -460,8 +497,8 @@ export const Orders: FC = () => {
                   );
                 })
               ) : (
-                <Cell>
-                  <Text>У вас пока нет заказов</Text>
+                <Cell multiline>
+                  <Text>{noOrderT}</Text>
                 </Cell>
               )}
             </Section>
