@@ -1,15 +1,72 @@
-import { Section, Button, Text, Cell } from '@telegram-apps/telegram-ui';
-import type { FC } from 'react';
+// ============================================================================
+// React & hooks
+// ============================================================================
+import { type FC, useCallback, useContext } from 'react';
+
+// ============================================================================
+// Routing
+// ============================================================================
 import { useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
-// import { useContext } from 'react';
-// import { LanguageContext } from '../../components/App.tsx';
-import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
+
+// ============================================================================
+// UI components
+// ============================================================================
+import { Section, Button, Text, Cell } from '@telegram-apps/telegram-ui';
+
+// ============================================================================
+// Local components & hooks
+// ============================================================================
 import { Page } from '@/components/Page.tsx';
+import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
+import { LanguageContext } from '../../components/App.tsx';
 import { useSettingsButton } from '@/hooks/useSettingsButton';
 
+// ============================================================================
+// Data
+// ============================================================================
+import { TEXTS } from './texts.ts';
+
+// ============================================================================
+// Константы стилей
+// ============================================================================
+
+const SECTION_STYLE: React.CSSProperties = {
+  marginBottom: 100,
+  padding: 10,
+};
+
+const BUTTON_STYLE: React.CSSProperties = {
+  marginTop: '20px',
+};
+
+// ============================================================================
+// Основной компонент
+// ============================================================================
+
+/**
+ * Страница отмены платежа
+ *
+ * Отображается когда платеж не прошел или был отменен пользователем.
+ * Предоставляет информацию о проблеме и возможность вернуться к заказу.
+ *
+ * Основные возможности:
+ * - Уведомление пользователя о неудачной оплате
+ * - Навигация на страницу "Мои заказы" для повторной попытки оплаты
+ * - Поддержка мультиязычности (ru, en, de)
+ * - Интеграция с Telegram settings button
+ *
+ * Маршрут: /cancellpay-page
+ *
+ * Оптимизации производительности:
+ * - Мемоизация обработчиков событий (useCallback)
+ * - Константные стили вместо инлайн-объектов (предотвращает лишние ре-рендеры)
+ * - Правильная очистка settingsButton listener через useSettingsButton hook
+ */
 export const CancellPay: FC = () => {
-  // const { language } = useContext(LanguageContext);
+  const { language } = useContext(LanguageContext);
+
+  const { errorT, goToT, goToBtnT } = TEXTS[language];
+
   const navigate = useNavigate();
 
   // Мемоизированный обработчик для settingsButton
@@ -21,30 +78,21 @@ export const CancellPay: FC = () => {
   useSettingsButton(handleSettingsClick);
 
   // Мемоизированный обработчик для кнопки
-  const goToCatalog = useCallback(() => {
+  const goToOrders = useCallback(() => {
     navigate('/myorders-page');
   }, [navigate]);
 
   return (
     <Page back={false}>
-      <Section>
+      <Section style={SECTION_STYLE}>
         <Cell>
-          <Text weight="2">Что-то пошло не так!</Text>
+          <Text weight="2">{errorT}</Text>
         </Cell>
-        <Cell multiline>
-          Перейдите в раздел "аккаунт &gt; заказы" и оплатите заказ
-        </Cell>
+        <Cell multiline>{goToT}</Cell>
 
-
-      
-      
-         <Section style={{ marginBottom: 100, padding: 10 }}>
-
-            <Button stretched onClick={goToCatalog} style={{ marginTop: '20px' }}>
-              В аккаунт &gt; заказы
-            </Button>
-        </Section>
-
+        <Button stretched onClick={goToOrders} style={BUTTON_STYLE}>
+          {goToBtnT}
+        </Button>
       </Section>
 
       <TabbarMenu />

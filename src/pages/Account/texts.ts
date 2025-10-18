@@ -120,7 +120,7 @@ export const TEXTS: Record<SupportedLanguage, AccountTexts> = {
    purchasedT: 'от купленных товаров',
    etaT: 'ожидаемая дата доставки: ',
    pressAsDeliveredT: 'отметьте, когда получите заказ',
-   errorT: 'Что-то пошло не так...',
+   errorT: 'Что-то пошло не так...', 
    btnErrorT: 'Попробовать ещё раз',
    renewT: 'обновление...',
    noOrderT: 'У вас пока нет заказов',

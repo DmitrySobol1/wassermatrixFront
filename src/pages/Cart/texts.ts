@@ -1,4 +1,69 @@
-export const TEXTS = {
+// ============================================================================
+// Типы
+// ============================================================================
+
+/**
+ * Интерфейс для текстовых констант страниц корзины и оплаты
+ *
+ * Поддерживаемые языки: ru, en, de
+ */
+interface TextsType {
+  plusT: string;
+  minusT: string;
+  deleteT: string;
+  totalT: string;
+  pcsT: string;
+  addedT: string;
+  typeDeliveryT: string;
+  chooseTypeT: string;
+  infoAboutDeliveryT: string;
+  priceDeliveryT: string;
+  nextBtn: string;
+  itemAdded: string;
+  payBtn: string;
+  payBtn2T: string;
+  headerT: string;
+  header2T: string;
+  selectCountryT: string;
+  addressT: string;
+  adressInputT: string;
+  nameT: string;
+  nameInputT: string;
+  phoneT: string;
+  phoneInputT: string;
+  qtyT: string;
+  priceGoodT: string;
+  itogoT: string;
+  successT: string;
+  infoT: string;
+  myOrderT: string;
+  emptyCartT: string;
+  toCatalogT: string;
+  enterPromocodeT: string;
+  promocodePlaceholderT: string;
+  applyT: string;
+  useCashbackT: string;
+  cashbackPlaceholderT: string;
+  writeoffT: string;
+  zeroCashbackT: string;
+  zeroCashbackInfoT: string;
+  availableCashbackT: string;
+  willAddWhenPurchaseT: string;
+  toAddCashbackT: string;
+  promocodeT: string;
+  writeOffT: string;
+  LoyaltySystemT: string;
+  setPromocodeT: string;
+  errorT: string;
+  goToT: string;
+  goToBtnT: string;
+}
+
+// ============================================================================
+// Константы
+// ============================================================================
+
+export const TEXTS: Record<'ru' | 'en' | 'de', TextsType> = {
   ru: {
    plusT: 'плюс 1',
    minusT: 'минус 1',
@@ -45,7 +110,10 @@ export const TEXTS = {
    promocodeT: 'Промокод',
    writeOffT: 'Списать',
    LoyaltySystemT: 'Система лояльности',
-   setPromocodeT: 'Введите промокод'
+   setPromocodeT: 'Введите промокод',
+    errorT: 'Что-то пошло не так...',
+    goToT: 'Перейдите в раздел Аккаунт - Заказы и оплатите заказ',
+    goToBtnT: 'Перейти в Аккаунт' 
     
   },
   en: {
@@ -94,7 +162,10 @@ export const TEXTS = {
    promocodeT: 'Promocode' ,
    writeOffT: 'Write off',
    LoyaltySystemT: 'Loyalty programme',
-   setPromocodeT: 'Fill in promocode'
+   setPromocodeT: 'Fill in promocode',
+   errorT: 'Something went wrong...',
+   goToT: 'Go to Account - Orders and pay for your order',
+   goToBtnT: 'Go to Account' 
    
 
 
@@ -147,7 +218,10 @@ export const TEXTS = {
        promocodeT: 'Promo-code',
        writeOffT: 'Abschreiben',
        LoyaltySystemT: 'Treueprogramm',
-       setPromocodeT: 'Promocode eingeben'
+       setPromocodeT: 'Promocode eingeben',
+       errorT: 'Etwas ist schiefgelaufen...',
+       goToT: 'Gehen Sie zum Abschnitt Konto – Bestellungen und bezahlen Sie Ihre Bestellung',
+       goToBtnT: 'Gehen Sie zu Konto' 
    
     
       

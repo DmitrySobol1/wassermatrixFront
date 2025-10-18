@@ -8,280 +8,330 @@ import {
   Snackbar,
   Spinner,
   Button
-
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-// import React from 'react';
 import axios from '../../axios';
-
 import { useNavigate } from 'react-router-dom';
-
-import { useEffect, useState, useContext, useCallback } from 'react';
-// import { useContext, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useContext, useCallback, memo, useMemo } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
-// import { TotalBalanceContext } from '../../components/App.tsx';
-// import { ValuteContext } from '../../components/App.tsx';
-
-// import { useLocation } from 'react-router-dom';
-
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-// import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
-
 import { useTlgid } from '../../components/Tlgid';
-
-// import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
-// import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
-
-// import styles from './walletpage.module.css';
 import { TEXTS } from './texts.ts';
 import { useSettingsButton } from '@/hooks/useSettingsButton';
 
-// import payin from '../../img/payin.png';
-// import payout from '../../img/payout.png';
-// import changebetweenusers from '../../img/changebetweenusers.png';
+// ============================================================================
+// Типы
+// ============================================================================
+
+interface CartItem {
+  itemId: string;
+  qty: number;
+  img: string;
+  totalpriceItem: number;
+  priceToShow: number;
+  valuteToShow: string;
+  name_ru: string;
+  name_en: string;
+  name_de: string;
+}
+
+interface TotalInfo {
+  totalQty: number;
+  totalPriceCart: number;
+  valuteToShow: string;
+  goods: CartItem[];
+}
+
+interface CartState {
+  cart: CartItem[];
+  totalInfo: Partial<TotalInfo>;
+  valuteToShowOnFront: string;
+  isLoading: boolean;
+  noCart: boolean;
+}
+
+interface LoadingItem {
+  id: string;
+  action: 'plus' | 'minus' | 'delete';
+}
+
+// ============================================================================
+// Константы
+// ============================================================================
+
+const DOMEN = import.meta.env.VITE_DOMEN;
+
+const SPINNER_CONTAINER_STYLE: React.CSSProperties = {
+  textAlign: 'center',
+  justifyContent: 'center',
+  padding: '100px',
+};
+
+const BOTTOM_SECTION_STYLE: React.CSSProperties = {
+  marginBottom: 100,
+  padding: 10,
+};
+
+const CELL_STYLE: React.CSSProperties = {
+  paddingTop: 15,
+};
+
+// ============================================================================
+// Вспомогательные компоненты
+// ============================================================================
+
+interface CartItemProps {
+  item: CartItem;
+  language: string;
+  loadingItem: LoadingItem | null;
+  onCartAction: (goodId: string, action: 'plus' | 'minus' | 'delete') => void;
+  texts: {
+    addedT: string;
+    pcsT: string;
+    plusT: string;
+    minusT: string;
+    deleteT: string;
+  };
+}
+
+/**
+ * Мемоизированный компонент товара в корзине
+ * Предотвращает ре-рендеры неизмененных товаров
+ */
+const CartItem = memo<CartItemProps>(({ item, language, loadingItem, onCartAction, texts }) => {
+  const isItemLoading = loadingItem?.id === item.itemId;
+  const itemName = item[`name_${language}` as keyof CartItem] as string;
+  const { addedT, pcsT, plusT, minusT, deleteT } = texts;
+
+  return (
+    <Section>
+      <Cell
+        subtitle={`${addedT} ${item.qty} ${pcsT}`}
+        before={<Image size={96} src={`${DOMEN}${item.img}`} />}
+        style={CELL_STYLE}
+        after={`${item.totalpriceItem}${item.valuteToShow}`}
+        description={`1 ${pcsT} x ${item.priceToShow} ${item.valuteToShow}`}
+        multiline
+      >
+        {itemName}
+      </Cell>
+
+      <ButtonCell
+        before={<Image size={24}><AddCircleOutlineIcon /></Image>}
+        onClick={() => onCartAction(item.itemId, 'plus')}
+        disabled={loadingItem !== null}
+      >
+        {isItemLoading && loadingItem.action === 'plus' ? (
+          <Spinner size="s" />
+        ) : (
+          <Text weight="2">{plusT}</Text>
+        )}
+      </ButtonCell>
+
+      <ButtonCell
+        before={<Image size={24}><RemoveCircleOutlineIcon /></Image>}
+        onClick={() => onCartAction(item.itemId, 'minus')}
+        disabled={loadingItem !== null}
+      >
+        {isItemLoading && loadingItem.action === 'minus' ? (
+          <Spinner size="s" />
+        ) : (
+          <Text weight="2">{minusT}</Text>
+        )}
+      </ButtonCell>
+
+      <ButtonCell
+        before={<Image size={24}><DeleteOutlineIcon /></Image>}
+        onClick={() => onCartAction(item.itemId, 'delete')}
+        disabled={loadingItem !== null}
+      >
+        {isItemLoading && loadingItem.action === 'delete' ? (
+          <Spinner size="s" />
+        ) : (
+          <Text weight="2">{deleteT}</Text>
+        )}
+      </ButtonCell>
+    </Section>
+  );
+});
+
+CartItem.displayName = 'CartItem';
+
+// ============================================================================
+// Основной компонент
+// ============================================================================
 
 export const Cart: FC = () => {
-  //FIXME:
   const tlgid = useTlgid();
-  // const tlgid = 412697670;
-  // const tlgid = 777;
-
   const { language } = useContext(LanguageContext);
-  // const { valute } = useContext(ValuteContext);
-
   const navigate = useNavigate();
 
-  
-  const [cart, setCart] = useState([]);
-  const [totalInfo, setTotalInfo] = useState({});
+  // Состояния корзины
+  const [cartState, setCartState] = useState<CartState>({
+    cart: [],
+    totalInfo: {},
+    valuteToShowOnFront: '',
+    isLoading: true,
+    noCart: false,
+  });
+
+  // UI состояния
   const [openSnakbar, setOpenSnakbar] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showSpin,setShowSpin] = useState(false)
-  const [noCart, setNoCart] = useState(false)
-  const [valuteToShowOnFront,setValuteToShowOnFront] = useState('')
+  const [loadingItem, setLoadingItem] = useState<LoadingItem | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // const [cart,setCart] = useState([])
+  // Деструктуризация текстов
+  const texts = TEXTS[language];
+  const { plusT, minusT, deleteT, totalT, pcsT, addedT, nextBtn, itemAdded, emptyCartT, toCatalogT, errorT } = texts;
 
-  const domen = import.meta.env.VITE_DOMEN;
+  // Мемоизированный объект текстов для CartItem
+  const cartItemTexts = useMemo(() => ({
+    addedT,
+    pcsT,
+    plusT,
+    minusT,
+    deleteT,
+  }), [addedT, pcsT, plusT, minusT, deleteT]);
 
-  //@ts-ignore
-  const {plusT,minusT,deleteT,totalT,pcsT,addedT,nextBtn,itemAdded, emptyCartT, toCatalogT} = TEXTS[language];
-
-  // Мемоизированный обработчик для settingsButton
+  // Мемоизированные обработчики навигации
   const handleSettingsClick = useCallback(() => {
     navigate('/setting-button-menu');
   }, [navigate]);
 
+  const handleNavigateToCatalog = useCallback(() => {
+    navigate('/catalog-page');
+  }, [navigate]);
+
+  const handleNavigateToDelivery = useCallback(() => {
+    navigate('/delivery-choice-page', {
+      state: { cart: cartState.cart },
+    });
+  }, [navigate, cartState.cart]);
+
   // Используем custom hook с автоматическим cleanup
   useSettingsButton(handleSettingsClick);
 
-  // получить корзину
+  // Загрузка корзины
   useEffect(() => {
-    const fetchGoodsTypesInfo = async () => {
+    const fetchCart = async () => {
       try {
-        const cart = await axios.get('/user_get_mycart', {
-          params: {
-            tlgid,
-          },
+        const response = await axios.get('/user_get_mycart', {
+          params: { tlgid },
         });
-        console.log('cart', cart);
+        console.log('cart', response);
 
-        if (cart.data.goods.length == 0) {
-            setNoCart(true)
-            
-        } 
-
-        setCart(cart.data.goods);
-        setValuteToShowOnFront(cart.data.valuteToShow)
-        setTotalInfo(cart.data)
-        setIsLoading(false)
+        setCartState({
+          cart: response.data.goods,
+          totalInfo: response.data,
+          valuteToShowOnFront: response.data.valuteToShow,
+          isLoading: false,
+          noCart: response.data.goods.length === 0,
+        });
       } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      } finally {
-        // setShowLoader(false);
-        // setWolfButtonActive(true);
+        console.error('Ошибка при загрузке корзины:', error);
+        setError(errorT);
+        setCartState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
-    fetchGoodsTypesInfo();
-  }, []);
+    fetchCart();
+  }, [tlgid, errorT]);
 
-  
+  // Мемоизированный обработчик действий с корзиной
+  const cartButtonsHandler = useCallback(async (goodId: string, action: 'plus' | 'minus' | 'delete') => {
+    // Блокируем повторные клики
+    if (loadingItem) return;
 
-  //@ts-ignore
-  async function cartButtonsHandler(goodId, action) {
-    setShowSpin(true)
+    setLoadingItem({ id: goodId, action });
+    setError(null);
+
     try {
-      const response = await axios.post('/user_add_good_tocart', {
+      await axios.post('/user_add_good_tocart', {
         userid: tlgid,
         action: action,
-        goodsarray: [
-          {
-            itemId: goodId,
-            qty: 1,
-          },
-        ],
+        goodsarray: [{ itemId: goodId, qty: 1 }],
       });
 
-      const cart = await axios.get('/user_get_mycart', {
-        params: {
-          tlgid,
-        },
+      // Получаем обновленную корзину
+      const response = await axios.get('/user_get_mycart', {
+        params: { tlgid },
       });
-      console.log('cart', cart);
-      
+      console.log('cart updated', response);
 
-      setCart(cart.data.goods);
-      setTotalInfo(cart.data)
-      setShowSpin(false)
-      console.log(response.data);
-      // setOpenSnakbar(true);
+      setCartState({
+        cart: response.data.goods,
+        totalInfo: response.data,
+        valuteToShowOnFront: response.data.valuteToShow,
+        isLoading: false,
+        noCart: response.data.goods.length === 0,
+      });
     } catch (error) {
-      console.error('Ошибка при выполнении запроса:', error);
+      console.error('Ошибка при обновлении корзины:', error);
+      setError(errorT);
     } finally {
-      // setShowLoader(false);
-      // setWolfButtonActive(true);
+      setLoadingItem(null);
     }
-  }
+  }, [tlgid, loadingItem, errorT]);
 
-  return (
-    <Page back={false}>
-
-    {isLoading && (
-        <div
-          style={{
-            textAlign: 'center',
-            justifyContent: 'center',
-            padding: '100px',
-          }}
-        >
+  // Early return для loading состояния
+  if (cartState.isLoading) {
+    return (
+      <Page back={false}>
+        <div style={SPINNER_CONTAINER_STYLE}>
           <Spinner size="m" />
         </div>
-      )}
+      </Page>
+    );
+  }
 
-      
-          { noCart && 
-       <>
-       <Section>
-       <Cell>{emptyCartT}</Cell>
-       <Section style={{ marginBottom: 100, padding: 10 }}
-        onClick={() => navigate('/catalog-page')}
-
-      >
-          <Button stretched>{toCatalogT}</Button>
-        </Section> 
+  // Early return для пустой корзины
+  if (cartState.noCart) {
+    return (
+      <Page back={false}>
+        <Section>
+          <Cell>{emptyCartT}</Cell>
+          <Section style={BOTTOM_SECTION_STYLE} onClick={handleNavigateToCatalog}>
+            <Button stretched>{toCatalogT}</Button>
+          </Section>
         </Section>
         <TabbarMenu />
-       </>
-      }
+      </Page>
+    );
+  }
 
-      {!isLoading && !noCart &&  <>
-
-
-
-
+  // Основной контент корзины
+  return (
+    <Page back={false}>
       <List>
-        
-
-        {cart.map((item:any) => (
-          <>
-            <Section >
-              
-              <Cell
-              //@ts-ignore
-                subtitle={`${addedT} ${item.qty} ${pcsT}`}
-                //@ts-ignore
-                before={<Image size={96} src={`${domen}${item.img}`} />}
-                style={{ paddingTop: 15 }}
-                //@ts-ignore
-                after={`${item.totalpriceItem}${item.valuteToShow}`}
-                description={`1 ${pcsT} x ${item.priceToShow} ${item.valuteToShow}`}
-                multiline
-              >
-                
-                 
-                {item[`name_${language}`]}
-              </Cell>
-              {/* <ButtonCell before={<Icon28AddCircle />}> */}
-
-              <ButtonCell
-                before={
-                  <Image size={24}>
-                      {<AddCircleOutlineIcon/>}
-                  </Image>
-                }
-                //@ts-ignore
-                onClick={() => cartButtonsHandler(item.itemId, 'plus')}
-              >
-                {!showSpin && <Text weight="2">{plusT}</Text>}
-                {showSpin && <Spinner size="s" />}
-              </ButtonCell>
-              <ButtonCell
-                before={
-                  
-                   <Image size={24}>
-                      {<RemoveCircleOutlineIcon/>}
-                    </Image>
-                }
-                //@ts-ignore
-                onClick={() => cartButtonsHandler(item.itemId, 'minus')}
-              >
-                {!showSpin &&<Text weight="2">{minusT}</Text>}
-                {showSpin && <Spinner size="s" />}
-              </ButtonCell>
-              <ButtonCell
-                before={
-                  
-                    <Image size={24}>
-                      {<DeleteOutlineIcon/>}
-                    </Image>
-                 
-                 
-                }
-                //@ts-ignore
-                onClick={() => cartButtonsHandler(item.itemId, 'delete')}
-              >
-               {!showSpin && <Text weight="2">{deleteT}</Text>}
-                {showSpin && <Spinner size="s" />}
-              </ButtonCell>
-            </Section>
-          </>
+        {cartState.cart.map((item) => (
+          <CartItem
+            key={item.itemId}
+            item={item}
+            language={language}
+            loadingItem={loadingItem}
+            onCartAction={cartButtonsHandler}
+            texts={cartItemTexts}
+          />
         ))}
 
-        <Section >
-           <Cell
-            //@ts-ignore
-                subtitle={`${totalInfo.totalQty} ${pcsT}`}
-                style={{ paddingTop: 15 }}
-                 //@ts-ignore
-                after=<Text weight='2'>{`${totalInfo.totalPriceCart} ${valuteToShowOnFront}`}</Text>
-              >
-                {' '}
-                <Text weight='2'>{totalT}</Text>
-              </Cell>
+        <Section>
+          <Cell
+            subtitle={`${cartState.totalInfo.totalQty} ${pcsT}`}
+            style={CELL_STYLE}
+            after={<Text weight='2'>{`${cartState.totalInfo.totalPriceCart} ${cartState.valuteToShowOnFront}`}</Text>}
+          >
+            <Text weight='2'>{totalT}</Text>
+          </Cell>
         </Section>
 
-        
-      <Section style={{ marginBottom: 100, padding: 10 }}
-      
-
-        onClick={() => navigate('/delivery-choice-page', {
-            state: {
-                cart: cart
-            }
-        })}
-
-      >
+        <Section style={BOTTOM_SECTION_STYLE} onClick={handleNavigateToDelivery}>
           <Button stretched>{nextBtn}</Button>
         </Section>
       </List>
-
 
       {openSnakbar && (
         <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
@@ -289,8 +339,13 @@ export const Cart: FC = () => {
         </Snackbar>
       )}
 
+      {error && (
+        <Snackbar duration={3000} onClose={() => setError(null)}>
+          {error}
+        </Snackbar>
+      )}
+
       <TabbarMenu />
-      </>}
     </Page>
   );
 };
