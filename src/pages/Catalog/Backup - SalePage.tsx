@@ -11,11 +11,13 @@ import axios from '../../axios';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
+
+// import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
@@ -23,7 +25,6 @@ import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 // import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
 
@@ -41,7 +42,7 @@ export const SalePage: FC = () => {
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
 
-  const navigate = useNavigate();
+     const navigate = useNavigate();
   const location = useLocation();
   const { saleId } = location.state || {};
 
@@ -53,14 +54,6 @@ export const SalePage: FC = () => {
 
   //@ts-ignore
   const { addToCartT, itemAdded, buttonT, actionTillT } = TEXTS[language];
-
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
-
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
 
 
   // получить данные об акции

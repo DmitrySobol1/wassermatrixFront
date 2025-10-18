@@ -15,13 +15,15 @@ import axios from '../../axios';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 
 // import { useLocation } from 'react-router-dom';
+
+import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { BannersSwiper } from '../../components/BannersSwiper/BannersSwiper.tsx';
@@ -34,7 +36,6 @@ import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_ci
 
 import styles from './catalog.module.css';
 import { TEXTS } from './texts.ts';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 import { CardChip } from '@telegram-apps/telegram-ui/dist/components/Blocks/Card/components/CardChip/CardChip';
@@ -112,13 +113,19 @@ export const CatalogPage: FC = () => {
   //@ts-ignore
   const { addToCartT, itemAdded, sortByT, saleCardT } = TEXTS[language];
 
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
+  if (settingsButton.mount.isAvailable()) {
+    settingsButton.mount();
+    settingsButton.isMounted(); // true
+    settingsButton.show();
+  }
 
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
+  if (settingsButton.onClick.isAvailable()) {
+    function listener() {
+      console.log('Clicked!');
+      navigate('/setting-button-menu');
+    }
+    settingsButton.onClick(listener);
+  }
 
   // Функция сортировки товаров
   const sortGoods = (goods: any[], sortType: string) => {

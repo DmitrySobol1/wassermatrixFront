@@ -12,9 +12,9 @@ import type { FC } from 'react';
 // import React from 'react';
 import axios from '../../axios';
 
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
@@ -24,13 +24,14 @@ import { LanguageContext } from '../../components/App.tsx';
 import { useLocation } from 'react-router-dom';
 // import { useLocation, useNavigate } from 'react-router-dom';
 
+// import { settingsButton } from '@telegram-apps/sdk-react';
+
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 
 import { useTlgid } from '../../components/Tlgid';
 
 // import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
@@ -51,7 +52,7 @@ export const OneGood: FC = () => {
   const { language } = useContext(LanguageContext);
   // const { valute } = useContext(ValuteContext);
 
-  const navigate = useNavigate();
+  //    const navigate = useNavigate();
   const location = useLocation();
   const { itemid } = location.state || {};
 
@@ -66,14 +67,6 @@ export const OneGood: FC = () => {
 
   //@ts-ignore
   const { addToCartT, itemAdded, goodWatchT, peopleT} = TEXTS[language];
-
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
-
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
 
   interface GoodInfo {
     img: string;
