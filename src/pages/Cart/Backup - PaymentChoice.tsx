@@ -13,16 +13,16 @@ import {
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
+import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
 import { TabsItem } from '@telegram-apps/telegram-ui/dist/components/Navigation/TabsList/components/TabsItem/TabsItem';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 export const PaymentChoice: FC = () => {
   const tlgid = useTlgid();
@@ -63,15 +63,21 @@ export const PaymentChoice: FC = () => {
   //@ts-ignore
   const { payBtn,priceDeliveryT, header2T, qtyT, priceGoodT, pcsT, itogoT, payBtn2T, enterPromocodeT, promocodePlaceholderT,applyT, useCashbackT,cashbackPlaceholderT,writeoffT,zeroCashbackT,zeroCashbackInfoT,availableCashbackT, willAddWhenPurchaseT,toAddCashbackT,promocodeT, writeOffT, LoyaltySystemT, setPromocodeT } = TEXTS[language];
 
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
+  if (settingsButton.mount.isAvailable()) {
+    settingsButton.mount();
+    settingsButton.isMounted();
+    settingsButton.show();
+  }
+  
+  if (settingsButton.onClick.isAvailable()) {
+    function listener() {
+      console.log('Clicked!');
+      navigate('/setting-button-menu');
+    }
+    settingsButton.onClick(listener);
+  }
 
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
-
-
+ 
 
 
   // Вычисляем общую сумму заказа

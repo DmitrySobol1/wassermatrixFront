@@ -41,12 +41,13 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext, useMemo, useCallback } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
-import { settingsButton, openLink } from '@telegram-apps/sdk-react';
+import { openLink } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
+import { useSettingsButton } from '@/hooks/useSettingsButton';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
@@ -172,35 +173,13 @@ export const Orders: FC = () => {
     }
   }, [tlgid]);
 
-  // Инициализация кнопки настроек Telegram с правильной очисткой
-  useEffect(() => {
-    if (!settingsButton.mount.isAvailable() || !settingsButton.onClick.isAvailable()) {
-      return;
-    }
-
-    settingsButton.mount();
-    settingsButton.isMounted();
-    settingsButton.show();
-
-    const handleSettingsClick = () => {
-      console.log('Clicked!');
-      navigate('/setting-button-menu');
-    };
-
-    settingsButton.onClick(handleSettingsClick);
-
-    // Cleanup функция для предотвращения утечки памяти
-    return () => {
-      // Удаляем обработчик события при размонтировании
-      try {
-        if (settingsButton.offClick && typeof settingsButton.offClick === 'function') {
-          settingsButton.offClick(handleSettingsClick);
-        }
-      } catch (e) {
-        console.log('Settings button cleanup:', e);
-      }
-    };
+  // Мемоизированный обработчик для settingsButton
+  const handleSettingsClick = useCallback(() => {
+    navigate('/setting-button-menu');
   }, [navigate]);
+
+  // Используем custom hook с автоматическим cleanup
+  useSettingsButton(handleSettingsClick);
 
   // для получения данных о моих заказах из БД OrdersModel
   useEffect(() => {

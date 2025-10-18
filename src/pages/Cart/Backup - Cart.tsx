@@ -8,7 +8,7 @@ import {
   Snackbar,
   Spinner,
   Button
-
+  
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 // import React from 'react';
@@ -16,13 +16,15 @@ import axios from '../../axios';
 
 import { useNavigate } from 'react-router-dom';
 
-import { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState,useContext } from 'react';
 // import { useContext, useEffect, useState, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { TotalBalanceContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
 
 // import { useLocation } from 'react-router-dom';
+
+import { settingsButton } from '@telegram-apps/sdk-react';
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -40,7 +42,6 @@ import { Page } from '@/components/Page.tsx';
 
 // import styles from './walletpage.module.css';
 import { TEXTS } from './texts.ts';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 // import payin from '../../img/payin.png';
 // import payout from '../../img/payout.png';
@@ -72,14 +73,23 @@ export const Cart: FC = () => {
 
   //@ts-ignore
   const {plusT,minusT,deleteT,totalT,pcsT,addedT,nextBtn,itemAdded, emptyCartT, toCatalogT} = TEXTS[language];
+   
+ 
+  if (settingsButton.mount.isAvailable()) {
+      settingsButton.mount();
+      settingsButton.isMounted(); // true
+      settingsButton.show();
+    }
+  
+    if (settingsButton.onClick.isAvailable()) {
+      function listener() {
+        console.log('Clicked!');
+        navigate('/setting-button-menu');
+      }
+      settingsButton.onClick(listener);
+    }
 
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
-
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
+ 
 
   // получить корзину
   useEffect(() => {

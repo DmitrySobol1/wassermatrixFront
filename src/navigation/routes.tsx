@@ -56,7 +56,6 @@ export const routes: Route[] = [
   { path: '/mypromocodes-page', Component: MyPromocodes},
   { path: '/mycashback-page', Component: MyCashbacksBalls},
   { path: '/referalsystem-page', Component: ReferalSystem},
-  // { path: '/showreceipt-page', Component: ShowReceipt},
   
   
   { path: '/setting-button-menu', Component: SettingsButtonMenu, title: 'Settings Button Menu' },

@@ -1,32 +1,38 @@
 import { Section, Button, Text, Cell } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useContext, useCallback } from 'react';
+import { useContext } from 'react';
+import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { Page } from '@/components/Page.tsx';
 import { LanguageContext } from '../../components/App.tsx';
+
 import { TEXTS } from './texts.ts';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 export const SuccessPage: FC = () => {
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
 
   //@ts-ignore
-  const { successT, infoT, myOrderT } = TEXTS[language];
+    const { successT, infoT, myOrderT } = TEXTS[language];
 
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
+  if (settingsButton.mount.isAvailable()) {
+    settingsButton.mount();
+    settingsButton.isMounted();
+    settingsButton.show();
+  }
 
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
+  if (settingsButton.onClick.isAvailable()) {
+    function listener() {
+      console.log('Clicked!');
+      navigate('/setting-button-menu');
+    }
+    settingsButton.onClick(listener);
+  }
 
-  // Мемоизированный обработчик для кнопки
-  const goToCatalog = useCallback(() => {
+  const goToCatalog = () => {
     navigate('/myorders-page');
-  }, [navigate]);
+  };
 
   return (
     <Page back={false}>

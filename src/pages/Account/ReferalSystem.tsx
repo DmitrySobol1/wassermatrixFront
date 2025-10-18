@@ -10,12 +10,12 @@ import type { FC, CSSProperties } from 'react';
 import { useEffect, useState, useContext, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../../components/App.tsx';
-import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
+import { useSettingsButton } from '@/hooks/useSettingsButton';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
@@ -242,48 +242,14 @@ export const ReferalSystem: FC = () => {
   // ============================================================================
 
   /**
-   * Effect для инициализации Telegram Settings Button
-   *
-   * ВАЖНО: Включает cleanup для предотвращения утечки памяти
+   * Мемоизированный обработчик для settingsButton
    */
-  useEffect(() => {
-    if (!settingsButton.mount.isAvailable()) return;
-
-    // Монтируем и показываем кнопку
-    settingsButton.mount();
-    settingsButton.show();
-
-    // Добавляем обработчик клика
-    let unsubscribe: (() => void) | undefined;
-
-    if (settingsButton.onClick.isAvailable()) {
-      const listener = () => {
-        navigate('/setting-button-menu');
-      };
-
-      const result = settingsButton.onClick(listener);
-      // Сохраняем функцию отписки, если она возвращается
-      if (typeof result === 'function') {
-        unsubscribe = result;
-      }
-    }
-
-    // Cleanup: удаляем обработчик и размонтируем кнопку
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-      // Размонтируем кнопку при размонтировании компонента
-      try {
-        if (settingsButton.unmount) {
-          settingsButton.unmount();
-        }
-      } catch (error) {
-        // Игнорируем ошибки при размонтировании
-        console.debug('Settings button unmount error:', error);
-      }
-    };
+  const handleSettingsClick = useCallback(() => {
+    navigate('/setting-button-menu');
   }, [navigate]);
+
+  // Используем custom hook с автоматическим cleanup
+  useSettingsButton(handleSettingsClick);
 
   /**
    * Effect для загрузки данных о рефералах и промокодах

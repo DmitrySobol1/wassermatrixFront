@@ -29,12 +29,12 @@ import { useEffect, useState, useContext, useCallback, useMemo, memo } from 'rea
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
-import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import axios from '../../axios';
+import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 // ============================================================================
 // Типы
@@ -146,34 +146,13 @@ export const MyPromocodes: FC = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [hasError, setHasError] = useState(false);
 
-  // Настройка settingsButton с правильным cleanup
-  useEffect(() => {
-    if (settingsButton.mount.isAvailable()) {
-      settingsButton.mount();
-      settingsButton.show();
-    }
-
-    const listener = () => {
-      navigate('/setting-button-menu');
-    };
-
-    let cleanup: (() => void) | undefined;
-
-    if (settingsButton.onClick.isAvailable()) {
-      const unsubscribe = settingsButton.onClick(listener);
-
-      cleanup = () => {
-        if (typeof unsubscribe === 'function') {
-          unsubscribe();
-        }
-        if (settingsButton.unmount && typeof settingsButton.unmount === 'function') {
-          settingsButton.unmount();
-        }
-      };
-    }
-
-    return cleanup;
+  // Мемоизированный обработчик для settingsButton
+  const handleSettingsClick = useCallback(() => {
+    navigate('/setting-button-menu');
   }, [navigate]);
+
+  // Используем custom hook с автоматическим cleanup
+  useSettingsButton(handleSettingsClick);
 
   // Получаем промокоды пользователя
   useEffect(() => {

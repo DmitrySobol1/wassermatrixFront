@@ -16,6 +16,7 @@ import { useTexts } from '@/hooks/useTexts';
 import { ROUTES } from '@/constants/routes';
 import { ACCOUNT_STYLES } from '@/constants/styles';
 import { TEXTS } from './texts';
+import { useSettingsButton } from '@/hooks/useSettingsButton';
 
 export const MyAccount: FC = () => {
   const navigate = useNavigate();
@@ -27,6 +28,14 @@ export const MyAccount: FC = () => {
     myCashbackT,
     referalSystemT,
   } = useTexts(TEXTS);
+
+  // Мемоизированный обработчик для settingsButton
+  const handleSettingsClick = useCallback(() => {
+    navigate('/setting-button-menu');
+  }, [navigate]);
+
+  // Используем custom hook с автоматическим cleanup
+  useSettingsButton(handleSettingsClick);
 
   const handleNavigate = useCallback(
     (path: string) => {

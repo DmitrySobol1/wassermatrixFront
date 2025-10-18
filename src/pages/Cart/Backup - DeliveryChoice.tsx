@@ -3,7 +3,7 @@ import {
   Snackbar,
   Spinner,
   Button,
-  Select,
+  Select,  
   Tappable,
   Input,
   Cell,
@@ -12,15 +12,15 @@ import {
 import type { FC } from 'react';
 import axios from '../../axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
 // import { ValuteContext } from '../../components/App.tsx';
+import { settingsButton } from '@telegram-apps/sdk-react';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import { Icon24Close } from '@telegram-apps/telegram-ui/dist/icons/24/close';
-import { useSettingsButton } from '@/hooks/useSettingsButton';
 // import { count } from 'console';
 
 export const DeliveryChoice: FC = () => {
@@ -47,13 +47,19 @@ export const DeliveryChoice: FC = () => {
   //@ts-ignore
   const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn,headerT,selectCountryT, addressT, nameT, phoneT, adressInputT, nameInputT, phoneInputT} = TEXTS[language];
 
-  // Мемоизированный обработчик для settingsButton
-  const handleSettingsClick = useCallback(() => {
-    navigate('/setting-button-menu');
-  }, [navigate]);
-
-  // Используем custom hook с автоматическим cleanup
-  useSettingsButton(handleSettingsClick);
+  if (settingsButton.mount.isAvailable()) {
+    settingsButton.mount();
+    settingsButton.isMounted();
+    settingsButton.show();
+  }
+  
+  if (settingsButton.onClick.isAvailable()) {
+    function listener() {
+      console.log('Clicked!');
+      navigate('/setting-button-menu');
+    }
+    settingsButton.onClick(listener);
+  }
 
   // Загрузка данных пользователя
   const fetchUserProfile = async () => {

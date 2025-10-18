@@ -6,9 +6,8 @@ import {
   Button,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { settingsButton } from '@telegram-apps/sdk-react';
 
 import { TabbarMenu } from '@/components/TabbarMenu/TabbarMenu';
 import { useTlgid } from '@/components/Tlgid';
@@ -18,6 +17,7 @@ import { useCashbackData } from '@/hooks/useCashbackData';
 import { ACCOUNT_STYLES } from '@/constants/styles';
 import type { CashbackLevel } from '@/types/i18n.types';
 import { TEXTS } from './texts';
+import { useSettingsButton } from '@/hooks/useSettingsButton';
 import { AccordionSummary } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionSummary/AccordionSummary';
 import { AccordionContent } from '@telegram-apps/telegram-ui/dist/components/Blocks/Accordion/components/AccordionContent/AccordionContent';
 
@@ -58,27 +58,13 @@ export const MyCashbacksBalls: FC = () => {
     isFetching, // true when background refetch is happening
   } = useCashbackData(tlgid);
 
-  // Setup Telegram settings button in useEffect with cleanup
-  useEffect(() => {
-    if (!settingsButton.mount.isAvailable()) return;
-
-    settingsButton.mount();
-    settingsButton.show();
-
-    const listener = () => {
-      console.log('Settings button clicked!');
-      navigate('/setting-button-menu');
-    };
-
-    if (settingsButton.onClick.isAvailable()) {
-      settingsButton.onClick(listener);
-    }
-
-    // Cleanup on unmount
-    return () => {
-      settingsButton.unmount();
-    };
+  // Мемоизированный обработчик для settingsButton
+  const handleSettingsClick = useCallback(() => {
+    navigate('/setting-button-menu');
   }, [navigate]);
+
+  // Используем custom hook с автоматическим cleanup
+  useSettingsButton(handleSettingsClick);
 
   // Memoized handler
   const handleAccordionToggle = useCallback(() => {
