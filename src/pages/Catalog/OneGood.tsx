@@ -1,6 +1,5 @@
 import {
   Cell,
-  List,
   Button,
   Snackbar,
   Section,
@@ -73,6 +72,11 @@ const MARGIN_LEFT_20_STYLE: React.CSSProperties = {
 
 const MARGIN_RIGHT_10_STYLE: React.CSSProperties = {
   marginRight: 10,
+};
+
+const ERROR_MESSAGE_STYLE: React.CSSProperties = {
+  color: 'red',
+  marginBottom: '10px',
 };
 
 export const OneGood: FC = () => {
@@ -156,7 +160,7 @@ export const OneGood: FC = () => {
     };
 
     fetchGoodsTypesInfo();
-  }, [itemid, tlgid, language, domen, errorT]);
+  }, [itemid, tlgid, language, domen, texts]);
 
   // Мемоизированный обработчик добавления в корзину
   const addToCartHandler = useCallback(async (goodId: string | undefined) => {
@@ -192,6 +196,25 @@ export const OneGood: FC = () => {
     setSpinBtn(false);
   }, []);
 
+
+   // Early return для ошибки
+    if (error) {
+      return (
+        <Page back={false}>
+          <Section>
+            <Cell>
+              <div style={ERROR_MESSAGE_STYLE}>{errorT}</div>
+              <Button onClick={() => window.location.reload()} size="m">
+                {btnErrorT}
+              </Button>
+            </Cell>
+          </Section>
+          <TabbarMenu />
+        </Page>
+      );
+    }
+
+
   return (
     <Page back={true}>
       {isLoading && (
@@ -200,7 +223,7 @@ export const OneGood: FC = () => {
         </div>
       )}
 
-      {error && !isLoading && (
+      {/* {error && !isLoading && (
         <div style={SPINNER_CONTAINER_STYLE}>
           <Subheadline level="1" weight="3" style={{ marginBottom: 20 }}>
             {errorT}
@@ -209,11 +232,10 @@ export const OneGood: FC = () => {
             {btnErrorT}
           </Button>
         </div>
-      )}
+      )} */}
 
       {!isLoading && !error && (
         <>
-          <List>
             <Section style={SECTION_STYLE}>
               <img src={goodInfo?.img || ''} className={styles.img} />
 
@@ -282,7 +304,6 @@ export const OneGood: FC = () => {
 
               <Cell multiline>{goodInfo?.description_long}</Cell>
             </Section>
-          </List>
 
           {openSnakbar && (
             <Snackbar duration={1200} onClose={snakHandler}>
