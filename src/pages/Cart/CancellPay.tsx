@@ -32,7 +32,7 @@ import { TEXTS } from './texts.ts';
 
 const SECTION_STYLE: React.CSSProperties = {
   marginBottom: 100,
-  padding: 10,
+  padding: 0,
 };
 
 const BUTTON_STYLE: React.CSSProperties = {

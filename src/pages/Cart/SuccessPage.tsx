@@ -12,8 +12,9 @@ export const SuccessPage: FC = () => {
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
 
-  //@ts-ignore
-  const { successT, infoT, myOrderT } = TEXTS[language];
+  // Безопасная типизация для доступа к текстам
+  const currentLanguage = (language in TEXTS ? language : 'ru') as keyof typeof TEXTS;
+  const { successT, infoT, myOrderT } = TEXTS[currentLanguage];
 
   // Мемоизированный обработчик для settingsButton
   const handleSettingsClick = useCallback(() => {
