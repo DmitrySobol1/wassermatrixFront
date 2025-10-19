@@ -9,63 +9,91 @@ import {
   Subheadline,
 } from '@telegram-apps/telegram-ui';
 import type { FC } from 'react';
-// import React from 'react';
 import axios from '../../axios';
-
-import { useNavigate } from 'react-router-dom';
-
-import { useContext, useEffect, useState, useCallback } from 'react';
-// import { useContext, useEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
-// import { TotalBalanceContext } from '../../components/App.tsx';
-// import { ValuteContext } from '../../components/App.tsx';
-
-// import { useLocation } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-// import { useLocation, useNavigate } from 'react-router-dom';
-
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
-
 import { useTlgid } from '../../components/Tlgid';
-
-// import { Link } from '@/components/Link/Link.tsx';
 import { Page } from '@/components/Page.tsx';
 import { useSettingsButton } from '@/hooks/useSettingsButton';
-
 import { Icon28AddCircle } from '@telegram-apps/telegram-ui/dist/icons/28/add_circle';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-// import { Icon28CloseAmbient } from '@telegram-apps/telegram-ui/dist/icons/28/close_ambient';
-
 import styles from './catalog.module.css';
 import { TEXTS } from './texts.ts';
 
-// import payin from '../../img/payin.png';
-// import payout from '../../img/payout.png';
-// import changebetweenusers from '../../img/changebetweenusers.png';
+// TypeScript interfaces
+interface GoodInfo {
+  img: string;
+  name: string;
+  description_short: string;
+  description_long: string;
+  price: string;
+  id: string;
+  type: string;
+  valuteToShow: string;
+  basePrice: string;
+  isSaleNow: boolean;
+  infoForFront?: string;
+}
+
+interface TextsType {
+  addToCartT: string;
+  itemAdded: string;
+  goodWatchT: string;
+  peopleT: string;
+  errorT: string;
+  btnErrorT: string;
+}
+
+// Константы стилей (вне компонента для оптимизации)
+const SPINNER_CONTAINER_STYLE: React.CSSProperties = {
+  textAlign: 'center',
+  justifyContent: 'center',
+  padding: '100px',
+};
+
+const SECTION_STYLE: React.CSSProperties = {
+  marginBottom: 100,
+};
+
+const SALE_CHIP_STYLE: React.CSSProperties = {
+  backgroundColor: '#ed6c02',
+  padding: '5px 20px',
+  marginLeft: 20,
+};
+
+const SALE_TEXT_STYLE: React.CSSProperties = {
+  color: 'white',
+};
+
+const MARGIN_LEFT_20_STYLE: React.CSSProperties = {
+  marginLeft: 20,
+};
+
+const MARGIN_RIGHT_10_STYLE: React.CSSProperties = {
+  marginRight: 10,
+};
 
 export const OneGood: FC = () => {
-  //FIXME:
   const tlgid = useTlgid();
-  // const tlgid = 412697670;
-
   const { language } = useContext(LanguageContext);
-  // const { valute } = useContext(ValuteContext);
-
   const navigate = useNavigate();
   const location = useLocation();
   const { itemid } = location.state || {};
 
-  // const [goodInfo, setGoodInfo] = useState({});
   const [goodInfo, setGoodInfo] = useState<GoodInfo | null>(null);
   const [openSnakbar, setOpenSnakbar] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [spinBtn, setSpinBtn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [viewersCount] = useState(() => Math.floor(Math.random() * 11) + 5);
 
   const domen = import.meta.env.VITE_DOMEN;
 
-  //@ts-ignore
-  const { addToCartT, itemAdded, goodWatchT, peopleT} = TEXTS[language];
+  // Мемоизация текстов
+  const texts = useMemo(() => TEXTS[language as keyof typeof TEXTS] as TextsType, [language]);
+  const { addToCartT, itemAdded, goodWatchT, peopleT, errorT, btnErrorT } = texts;
 
   // Мемоизированный обработчик для settingsButton
   const handleSettingsClick = useCallback(() => {
@@ -75,34 +103,32 @@ export const OneGood: FC = () => {
   // Используем custom hook с автоматическим cleanup
   useSettingsButton(handleSettingsClick);
 
-  interface GoodInfo {
-    img: string;
-    name: string;
-    description_short: string;
-    description_long: string;
-    price: string;
-    id: string;
-    valuteToShow: string;
-    basePrice: string;
-    isSaleNow: boolean;
-    infoForFront?: string
-  }
-
   // получить товар по id
   useEffect(() => {
+    // Проверка наличия itemid
+    if (!itemid) {
+      setError(errorT);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchGoodsTypesInfo = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
+
         const good = await axios.get('/user_get_currentgood', {
-          //   @ts-ignore
           params: {
             id: itemid,
             tlgid: tlgid,
           },
         });
 
-        console.log('GOOD', good);
+        if (import.meta.env.DEV) {
+          console.log('GOOD', good);
+        }
 
-        const goodToRender = {
+        const goodToRender: GoodInfo = {
           name: good.data[`name_${language}`],
           description_short: good.data[`description_short_${language}`],
           description_long: good.data[`description_long_${language}`],
@@ -116,26 +142,26 @@ export const OneGood: FC = () => {
           infoForFront: good.data?.saleInfo?.[`infoForFront_${language}`]
         };
 
-        console.log('goodToRender=', goodToRender);
+        if (import.meta.env.DEV) {
+          console.log('goodToRender', goodToRender);
+        }
 
-        //   @ts-ignore
         setGoodInfo(goodToRender);
-        setIsLoading(false);
-
-        console.log('goodToRender', goodToRender);
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
+        setError(errorT);
       } finally {
-        // setShowLoader(false);
-        // setWolfButtonActive(true);
+        setIsLoading(false);
       }
     };
 
     fetchGoodsTypesInfo();
-  }, []);
+  }, [itemid, tlgid, language, domen, errorT]);
 
-  //@ts-ignore
-  async function addToCartHandler(goodId) {
+  // Мемоизированный обработчик добавления в корзину
+  const addToCartHandler = useCallback(async (goodId: string | undefined) => {
+    if (!goodId) return;
+
     setSpinBtn(true);
     try {
       const response = await axios.post('/user_add_good_tocart', {
@@ -149,43 +175,50 @@ export const OneGood: FC = () => {
         ],
       });
 
-      console.log(response.data);
+      if (import.meta.env.DEV) {
+        console.log(response.data);
+      }
       setOpenSnakbar(true);
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
     } finally {
-      // setShowLoader(false);
-      // setWolfButtonActive(true);
+      setSpinBtn(false);
     }
-  }
+  }, [tlgid]);
 
-  function snakHandler() {
+  // Мемоизированный обработчик закрытия Snackbar
+  const snakHandler = useCallback(() => {
     setOpenSnakbar(false);
     setSpinBtn(false);
-  }
+  }, []);
 
   return (
     <Page back={true}>
       {isLoading && (
-        <div
-          style={{
-            textAlign: 'center',
-            justifyContent: 'center',
-            padding: '100px',
-          }}
-        >
+        <div style={SPINNER_CONTAINER_STYLE}>
           <Spinner size="m" />
         </div>
       )}
 
-      {!isLoading && (
+      {error && !isLoading && (
+        <div style={SPINNER_CONTAINER_STYLE}>
+          <Subheadline level="1" weight="3" style={{ marginBottom: 20 }}>
+            {errorT}
+          </Subheadline>
+          <Button onClick={() => window.location.reload()}>
+            {btnErrorT}
+          </Button>
+        </div>
+      )}
+
+      {!isLoading && !error && (
         <>
           <List>
-            <Section style={{ marginBottom: 100 }}>
+            <Section style={SECTION_STYLE}>
               <img src={goodInfo?.img || ''} className={styles.img} />
 
               { !goodInfo?.isSaleNow &&
-              <div style={{ marginLeft: 20 }}>
+              <div style={MARGIN_LEFT_20_STYLE}>
                   <Subheadline
                     level="1"
                     weight="3"
@@ -197,12 +230,12 @@ export const OneGood: FC = () => {
               }
 
 
-            { goodInfo?.isSaleNow &&     
+            { goodInfo?.isSaleNow &&
               <div className={styles.nowWatchWrapper} >
-                <Chip 
-                mode='elevated' 
-                style={{backgroundColor:'#ed6c02', padding: '5px 20px', marginLeft:20}}>
-                  <span style={{color:'white'}}>{goodInfo?.infoForFront}</span>
+                <Chip
+                mode='elevated'
+                style={SALE_CHIP_STYLE}>
+                  <span style={SALE_TEXT_STYLE}>{goodInfo?.infoForFront}</span>
                 </Chip>
                 <div>
                   
@@ -219,24 +252,20 @@ export const OneGood: FC = () => {
 
               <Cell
                 subtitle={goodInfo?.description_short}
-                // after={`${goodInfo?.price}${goodInfo?.valuteToShow}`}
                 multiline
               >
-               
-               <span style={{marginRight:10}}> {goodInfo?.name}</span> { goodInfo?.isSaleNow ? (<><span style={{ textDecoration: 'line-through', marginRight:10 }}>{goodInfo?.basePrice} {goodInfo?.valuteToShow}</span><span style={{fontWeight:'bold'}}> {goodInfo?.price} {goodInfo?.valuteToShow}</span> </>)  : `${goodInfo?.price} ${goodInfo?.valuteToShow}` }
+               <span style={MARGIN_RIGHT_10_STYLE}> {goodInfo?.name}</span>
+               {goodInfo?.isSaleNow ? (
+                <>
+                  <span style={{ textDecoration: 'line-through', marginRight: 10 }}>
+                    {goodInfo?.basePrice} {goodInfo?.valuteToShow}
+                  </span>
+                  <span style={{ fontWeight: 'bold' }}>
+                    {goodInfo?.price} {goodInfo?.valuteToShow}
+                  </span>
+                </>
+               ) : `${goodInfo?.price} ${goodInfo?.valuteToShow}`}
               </Cell>
-
-              {/* <Cell>
-          <Button
-            before={<Icon28AddCircle />}
-            mode="filled"
-            size="m"
-            onClick={() => addToCartHandler(goodInfo.id)}
-            stretched
-          >
-            Добавить в корзину
-          </Button>
-        </Cell> */}
 
               <div className={styles.divAddBtn2}>
                 <Button
@@ -246,8 +275,6 @@ export const OneGood: FC = () => {
                   loading={spinBtn}
                   onClick={() => addToCartHandler(goodInfo?.id)}
                   stretched
-                  // style={{width:'90%',alignItems:'center', marginLeft:24}}
-                  // style={{width:'90%',alignItems:'center', marginLeft:24}}
                 >
                   {addToCartT}
                 </Button>
