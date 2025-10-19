@@ -7,7 +7,9 @@ export const TEXTS = {
    sortByT: 'сортировать по: ',
    saleCardT: 'Акция',
    goodWatchT: 'товар смотрят:',
-   peopleT: 'чел.'
+   peopleT: 'чел.',
+   errorT: 'Что-то пошло не так...',
+    btnErrorT: 'Перезагрузить',
     
   },
   en: {
@@ -18,7 +20,9 @@ export const TEXTS = {
     sortByT: 'sort by: ',
     saleCardT: 'Special offer',
     goodWatchT: 'now watching:',
-    peopleT: 'pers.'
+    peopleT: 'pers.',
+    errorT: 'Something went wrong...',
+    btnErrorT: 'Reload',
    
     
   },
@@ -30,7 +34,9 @@ export const TEXTS = {
     sortByT: 'sortieren nach: ',
     saleCardT: 'Sonderangebot',
     goodWatchT: 'produkt ansehen:',
-    peopleT: 'pers.'
+    peopleT: 'pers.',
+    errorT: 'Etwas ist schiefgelaufen...',
+       btnErrorT: 'Neu laden',
     
   },
 };

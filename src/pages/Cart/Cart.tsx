@@ -27,6 +27,9 @@ import { useSettingsButton } from '@/hooks/useSettingsButton';
 // Типы
 // ============================================================================
 
+type LanguageKey = 'ru' | 'en' | 'de';
+type LocalizedNameField = `name_${LanguageKey}`;
+
 interface CartItem {
   itemId: string;
   qty: number;
@@ -109,7 +112,7 @@ interface CartItemProps {
  */
 const CartItem = memo<CartItemProps>(({ item, language, loadingItem, onCartAction, texts }) => {
   const isItemLoading = loadingItem?.id === item.itemId;
-  const itemName = item[`name_${language}` as keyof CartItem] as string;
+  const itemName = item[`name_${language}` as LocalizedNameField];
   const { addedT, pcsT, plusT, minusT, deleteT } = texts;
 
   return (
@@ -175,7 +178,8 @@ export const Cart: FC = () => {
   const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
 
-  const [wentWrong, setWetWrong] = useState(false)
+  // Состояние критической ошибки (для Early Return)
+  const [criticalError, setCriticalError] = useState(false);
 
   // Состояния корзины
   const [cartState, setCartState] = useState<CartState>({
@@ -187,13 +191,12 @@ export const Cart: FC = () => {
   });
 
   // UI состояния
-  const [openSnakbar, setOpenSnakbar] = useState(false);
   const [loadingItem, setLoadingItem] = useState<LoadingItem | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Деструктуризация текстов
   const texts = TEXTS[language];
-  const { plusT, minusT, deleteT, totalT, pcsT, addedT, nextBtn, itemAdded, emptyCartT, toCatalogT, errorT, btnErrorT } = texts;
+  const { plusT, minusT, deleteT, totalT, pcsT, addedT, nextBtn, emptyCartT, toCatalogT, errorT, btnErrorT } = texts;
 
   // Мемоизированный объект текстов для CartItem
   const cartItemTexts = useMemo(() => ({
@@ -222,32 +225,32 @@ export const Cart: FC = () => {
   // Используем custom hook с автоматическим cleanup
   useSettingsButton(handleSettingsClick);
 
-  // Загрузка корзины
+  // Вынесенная функция загрузки корзины для переиспользования
+  const loadCart = useCallback(async () => {
+    try {
+      const response = await axios.get('/user_get_mycart', {
+        params: { tlgid },
+      });
+      console.log('cart', response);
+
+      setCartState({
+        cart: response.data.goods,
+        totalInfo: response.data,
+        valuteToShowOnFront: response.data.valuteToShow,
+        isLoading: false,
+        noCart: response.data.goods.length === 0,
+      });
+    } catch (error) {
+      console.error('Критическая ошибка при загрузке корзины:', error);
+      setCriticalError(true);
+      setCartState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [tlgid]);
+
+  // Загрузка корзины при монтировании
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const response = await axios.get('/user_get_mycart', {
-          params: { tlgid },
-        });
-        console.log('cart', response);
-
-        setCartState({
-          cart: response.data.goods,
-          totalInfo: response.data,
-          valuteToShowOnFront: response.data.valuteToShow,
-          isLoading: false,
-          noCart: response.data.goods.length === 0,
-        });
-      } catch (error) {
-        console.error('Ошибка при загрузке корзины:', error);
-        setError(errorT);
-        setWetWrong(true)
-        setCartState(prev => ({ ...prev, isLoading: false }));
-      }
-    };
-
-    fetchCart();
-  }, [tlgid, errorT]);
+    loadCart();
+  }, [loadCart]);
 
   // Мемоизированный обработчик действий с корзиной
   const cartButtonsHandler = useCallback(async (goodId: string, action: 'plus' | 'minus' | 'delete') => {
@@ -264,26 +267,15 @@ export const Cart: FC = () => {
         goodsarray: [{ itemId: goodId, qty: 1 }],
       });
 
-      // Получаем обновленную корзину
-      const response = await axios.get('/user_get_mycart', {
-        params: { tlgid },
-      });
-      console.log('cart updated', response);
-
-      setCartState({
-        cart: response.data.goods,
-        totalInfo: response.data,
-        valuteToShowOnFront: response.data.valuteToShow,
-        isLoading: false,
-        noCart: response.data.goods.length === 0,
-      });
+      // Переиспользуем функцию загрузки корзины
+      await loadCart();
     } catch (error) {
       console.error('Ошибка при обновлении корзины:', error);
       setError(errorT);
     } finally {
       setLoadingItem(null);
     }
-  }, [tlgid, loadingItem, errorT]);
+  }, [tlgid, loadingItem, errorT, loadCart]);
 
   // Early return для loading состояния
   if (cartState.isLoading) {
@@ -311,20 +303,18 @@ export const Cart: FC = () => {
     );
   }
 
-   // Early return для ошибки
-  if (wentWrong) {
+  // Early return для критической ошибки
+  if (criticalError) {
     return (
       <Page back={false}>
         <Section>
-                                  <Cell>
-                                    <div style={ERROR_MESSAGE_STYLE}>
-                                       {errorT}
-                                    </div>
-                                    <Button onClick={() => window.location.reload()} size="m">
-                                      {btnErrorT}
-                                    </Button>
-                                  </Cell>
-                                </Section>
+          <Cell>
+            <div style={ERROR_MESSAGE_STYLE}>{errorT}</div>
+            <Button onClick={() => window.location.reload()} size="m">
+              {btnErrorT}
+            </Button>
+          </Cell>
+        </Section>
         <TabbarMenu />
       </Page>
     );
@@ -359,12 +349,6 @@ export const Cart: FC = () => {
           <Button stretched>{nextBtn}</Button>
         </Section>
       </List>
-
-      {openSnakbar && (
-        <Snackbar duration={1500} onClose={() => setOpenSnakbar(false)}>
-          {itemAdded}
-        </Snackbar>
-      )}
 
       {error && (
         <Snackbar duration={3000} onClose={() => setError(null)}>
