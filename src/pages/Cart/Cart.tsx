@@ -80,6 +80,11 @@ const CELL_STYLE: React.CSSProperties = {
   paddingTop: 15,
 };
 
+const ERROR_MESSAGE_STYLE: React.CSSProperties = {
+  color: 'red',
+  marginBottom: '10px',
+};
+
 // ============================================================================
 // Вспомогательные компоненты
 // ============================================================================
@@ -170,6 +175,8 @@ export const Cart: FC = () => {
   const { language } = useContext(LanguageContext);
   const navigate = useNavigate();
 
+  const [wentWrong, setWetWrong] = useState(false)
+
   // Состояния корзины
   const [cartState, setCartState] = useState<CartState>({
     cart: [],
@@ -186,7 +193,7 @@ export const Cart: FC = () => {
 
   // Деструктуризация текстов
   const texts = TEXTS[language];
-  const { plusT, minusT, deleteT, totalT, pcsT, addedT, nextBtn, itemAdded, emptyCartT, toCatalogT, errorT } = texts;
+  const { plusT, minusT, deleteT, totalT, pcsT, addedT, nextBtn, itemAdded, emptyCartT, toCatalogT, errorT, btnErrorT } = texts;
 
   // Мемоизированный объект текстов для CartItem
   const cartItemTexts = useMemo(() => ({
@@ -234,6 +241,7 @@ export const Cart: FC = () => {
       } catch (error) {
         console.error('Ошибка при загрузке корзины:', error);
         setError(errorT);
+        setWetWrong(true)
         setCartState(prev => ({ ...prev, isLoading: false }));
       }
     };
@@ -298,6 +306,25 @@ export const Cart: FC = () => {
             <Button stretched>{toCatalogT}</Button>
           </Section>
         </Section>
+        <TabbarMenu />
+      </Page>
+    );
+  }
+
+   // Early return для ошибки
+  if (wentWrong) {
+    return (
+      <Page back={false}>
+        <Section>
+                                  <Cell>
+                                    <div style={ERROR_MESSAGE_STYLE}>
+                                       {errorT}
+                                    </div>
+                                    <Button onClick={() => window.location.reload()} size="m">
+                                      {btnErrorT}
+                                    </Button>
+                                  </Cell>
+                                </Section>
         <TabbarMenu />
       </Page>
     );
