@@ -12,339 +12,537 @@ import {
 import type { FC } from 'react';
 import axios from '../../axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState, useContext, useCallback, useMemo, useRef } from 'react';
 import { LanguageContext } from '../../components/App.tsx';
-// import { ValuteContext } from '../../components/App.tsx';
 import { TabbarMenu } from '../../components/TabbarMenu/TabbarMenu.tsx';
 import { useTlgid } from '../../components/Tlgid';
 import { Page } from '@/components/Page.tsx';
 import { TEXTS } from './texts.ts';
 import { Icon24Close } from '@telegram-apps/telegram-ui/dist/icons/24/close';
 import { useSettingsButton } from '@/hooks/useSettingsButton';
-// import { count } from 'console';
 
+// ============= ТИПЫ =============
+interface Country {
+  _id: string;
+  name_en: string;
+  name_ru?: string;
+  name_de?: string;
+  isEU: boolean;
+}
+
+interface CartItem {
+  id: string;
+  name_ru?: string;
+  name_en?: string;
+  name_de?: string;
+  deliveryPriceToShow_de?: string;
+  deliveryPriceToShow_inEu?: string;
+  deliveryPriceToShow_outEu?: string;
+  qty: number;
+  valuteToShow: string;
+}
+
+type DeliveryRegion = 'de' | 'inEu' | 'outEu';
+
+interface SnackbarState {
+  isOpen: boolean;
+  message: string;
+  type: 'error' | 'success';
+}
+
+interface DeliveryPriceItem {
+  id: string;
+  name: string;
+  price: string;
+  valute: string;
+}
+
+// ============= КОНСТАНТЫ =============
+const SPINNER_CONTAINER_STYLE: React.CSSProperties = {
+  textAlign: 'center',
+  justifyContent: 'center',
+  padding: '100px',
+};
+
+const ICON_CONTAINER_STYLE: React.CSSProperties = {
+  display: 'flex'
+};
+
+const DEBOUNCE_DELAY = 500;
+
+const ERROR_MESSAGE_STYLE: React.CSSProperties = {
+  color: 'red',
+  marginBottom: '10px',
+};
+
+// ============= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =============
+const isGermany = (name: string): boolean => {
+  const lowerName = name.toLowerCase();
+  return lowerName === 'germany' || lowerName === 'deutschland' || lowerName === 'германия';
+};
+
+const getCountryName = (country: Country, language: string): string => {
+  return country[`name_${language}` as keyof Country] as string || country.name_en || '';
+};
+
+const determineRegion = (country: Country): DeliveryRegion => {
+  if (country.name_en === 'Germany') {
+    return 'de';
+  }
+  return country.isEU ? 'inEu' : 'outEu';
+};
+
+// ============= КОМПОНЕНТ =============
 export const DeliveryChoice: FC = () => {
   const tlgid = useTlgid();
   const { language } = useContext(LanguageContext);
-  // const { valute } = useContext(ValuteContext);
   const navigate = useNavigate();
-
   const location = useLocation();
-  const { cart } = location.state || {}; 
-  
-  // const [deliveryTypes, setDeliveryTypes] = useState([]);
-  // const [selectedDelivery, setSelectedDelivery] = useState(null);
-  const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [adress, setAdress] = useState('')
-  const [userName, setUserName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [region, setRegion] = useState('de')
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false)
+  const { cart = [] } = location.state || {};
 
-  //@ts-ignore
-  const { typeDeliveryT, chooseTypeT, infoAboutDeliveryT, priceDeliveryT, nextBtn,headerT,selectCountryT, addressT, nameT, phoneT, adressInputT, nameInputT, phoneInputT} = TEXTS[language];
+  // Состояния
+  const [wentWrong, setWentWrong] = useState(false)
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [deliveryForm, setDeliveryForm] = useState({
+    selectedCountry: '',
+    address: '',
+    userName: '',
+    phone: '',
+    region: 'de' as DeliveryRegion
+  });
+  const [loadingState, setLoadingState] = useState({
+    countries: true,
+    profile: false
+  });
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    isOpen: false,
+    message: '',
+    type: 'error'
+  });
+
+  // Рефы для debounce
+  const debounceTimerRef = useRef<number | null>(null);
+
+  // Получение текстов из локализации
+  const {
+    priceDeliveryT,
+    nextBtn,
+    headerT,
+    selectCountryT,
+    addressT,
+    nameT,
+    phoneT,
+    adressInputT,
+    nameInputT,
+    phoneInputT,
+    errorSavingT,
+    errorT,
+    btnErrorT
+  } = TEXTS[language];
+
+  // ============= МЕМОИЗИРОВАННЫЕ ФУНКЦИИ =============
+
+  // Debounced функция для обновления профиля
+  const debouncedUpdateProfile = useCallback((field: string, value: string) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(async () => {
+      if (!tlgid || !value.trim()) return;
+
+      try {
+        const response = await axios.post('/user_update_profile', {
+          tlgid,
+          [field]: value
+        });
+
+        if (response.data.status === 'ok') {
+          console.error('сохранено');
+          // setSnackbar({
+          //   isOpen: true,
+          //   message: 'Данные сохранены',
+          //   type: 'success'
+          // });
+        } else {
+          throw new Error('Ошибка сохранения');
+        }
+      } catch (error) {
+        console.error('Ошибка при обновлении профиля:', error);
+        setSnackbar({
+          isOpen: true,
+          message: errorSavingT,
+          type: 'error'
+        });
+      }
+    }, DEBOUNCE_DELAY);
+  }, [tlgid]);
+
+  // Загрузка профиля пользователя
+  const fetchUserProfile = useCallback(async () => {
+    if (!tlgid) return;
+
+    try {
+      setLoadingState(prev => ({ ...prev, profile: true }));
+      const response = await axios.get(`/user_get_profile?tlgid=${tlgid}`);
+
+      if (response.data.status === 'ok') {
+        const user = response.data.user;
+        setDeliveryForm(prev => ({
+          ...prev,
+          userName: user.name || '',
+          phone: user.phone || '',
+          address: user.adress || ''
+        }));
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке профиля:', error);
+      setWentWrong(true)
+      // setSnackbar({
+      //   isOpen: true,
+      //   message: 'Ошибка загрузки профиля',
+      //   type: 'error'
+      // });
+    } finally {
+      setLoadingState(prev => ({ ...prev, profile: false }));
+    }
+  }, [tlgid]);
 
   // Мемоизированный обработчик для settingsButton
   const handleSettingsClick = useCallback(() => {
     navigate('/setting-button-menu');
   }, [navigate]);
 
+  // ============= ОБРАБОТЧИКИ СОБЫТИЙ =============
+
+  const handleFormChange = useCallback((field: keyof typeof deliveryForm, value: string) => {
+    setDeliveryForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleFieldBlur = useCallback((field: 'name' | 'phone' | 'adress', value: string) => {
+    debouncedUpdateProfile(field, value);
+  }, [debouncedUpdateProfile]);
+
+  const handleAddressChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFormChange('address', e.target.value);
+  }, [handleFormChange]);
+
+  const handleAddressBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    handleFieldBlur('adress', e.target.value);
+  }, [handleFieldBlur]);
+
+  const handleAddressClear = useCallback(() => {
+    handleFormChange('address', '');
+  }, [handleFormChange]);
+
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFormChange('userName', e.target.value);
+  }, [handleFormChange]);
+
+  const handleNameBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    handleFieldBlur('name', e.target.value);
+  }, [handleFieldBlur]);
+
+  const handleNameClear = useCallback(() => {
+    handleFormChange('userName', '');
+  }, [handleFormChange]);
+
+  const handlePhoneChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFormChange('phone', e.target.value);
+  }, [handleFormChange]);
+
+  const handlePhoneBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    handleFieldBlur('phone', e.target.value);
+  }, [handleFieldBlur]);
+
+  const handlePhoneClear = useCallback(() => {
+    handleFormChange('phone', '');
+  }, [handleFormChange]);
+
+  const handleCountrySelect = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const countryId = e.target.value;
+    const country = countries.find((item) => item._id === countryId);
+
+    if (country) {
+      const newRegion = determineRegion(country);
+      setDeliveryForm(prev => ({
+        ...prev,
+        selectedCountry: countryId,
+        region: newRegion
+      }));
+    }
+  }, [countries]);
+
+  const handleNextClick = useCallback(() => {
+    const { selectedCountry, address, userName, phone, region } = deliveryForm;
+
+    if (!selectedCountry || !address.trim() || !userName.trim() || !phone.trim()) {
+      setSnackbar({
+        isOpen: true,
+        message: 'Заполните все поля',
+        type: 'error'
+      });
+      return;
+    }
+
+    const selectedCountryData = countries.find((country) => country._id === selectedCountry);
+
+    if (!selectedCountryData) {
+      setSnackbar({
+        isOpen: true,
+        message: 'Выберите страну',
+        type: 'error'
+      });
+      return;
+    }
+
+    navigate('/payment-choice-page', {
+      state: {
+        cart,
+        deliveryRegion: region,
+        deliveryInfo: {
+          selectedCountry: selectedCountryData,
+          address,
+          userName,
+          phone
+        }
+      }
+    });
+  }, [deliveryForm, countries, cart, navigate]);
+
+  const handleSnackbarClose = useCallback(() => {
+    setSnackbar(prev => ({ ...prev, isOpen: false }));
+  }, []);
+
+  // ============= МЕМОИЗИРОВАННЫЕ ВЫЧИСЛЕНИЯ =============
+
+  // Сортировка стран
+  const sortedCountries = useMemo(() => {
+    return [...countries].sort((a, b) => {
+      const aName = getCountryName(a, language);
+      const bName = getCountryName(b, language);
+
+      if (isGermany(aName)) return -1;
+      if (isGermany(bName)) return 1;
+
+      return aName.localeCompare(bName);
+    });
+  }, [countries, language]);
+
+  // Опции селекта стран
+  const countryOptions = useMemo(() => {
+    return sortedCountries.map((country) => (
+      <option key={country._id} value={country._id}>
+        {getCountryName(country, language)}
+      </option>
+    ));
+  }, [sortedCountries, language]);
+
+  // Расчет цен доставки
+  const deliveryPrices = useMemo((): DeliveryPriceItem[] => {
+    if (!Array.isArray(cart)) return [];
+
+    return cart.map((item: CartItem) => ({
+      id: item.id,
+      name: String(item[`name_${language}` as keyof CartItem] || item.name_en || ''),
+      price: (Number(item[`deliveryPriceToShow_${deliveryForm.region}` as keyof CartItem]) * Number(item.qty)).toFixed(2),
+      valute: item.valuteToShow
+    }));
+  }, [cart, language, deliveryForm.region]);
+
+  // Валидация формы
+  const isFormValid = useMemo(() => {
+    const { selectedCountry, address, userName, phone } = deliveryForm;
+    return Boolean(
+      selectedCountry &&
+      address.trim() &&
+      userName.trim() &&
+      phone.trim()
+    );
+  }, [deliveryForm]);
+
+  // ============= ЭФФЕКТЫ =============
+
+  // Cleanup debounce таймера при размонтировании
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
   // Используем custom hook с автоматическим cleanup
   useSettingsButton(handleSettingsClick);
 
-  // Загрузка данных пользователя
-  const fetchUserProfile = async () => {
-    if (!tlgid) return;
-    
-    try {
-      setIsLoadingProfile(true);
-      const response = await axios.get(`/user_get_profile?tlgid=${tlgid}`);
-      
-      if (response.data.status === 'ok') {
-        const user = response.data.user;
-        setUserName(user.name || '');
-        setPhone(user.phone || '');
-        setAdress(user.adress || '');
-      }
-    } catch (error) {
-      console.error('Ошибка при загрузке профиля:', error);
-    } finally {
-      setIsLoadingProfile(false);
-    }
-  };
-
-  // Обновление данных пользователя
-  const updateUserProfile = async (field: string, value: string) => {
-    if (!tlgid) return;
-    
-    try {
-      const updateData = {
-        tlgid: tlgid,
-        [field]: value
-      };
-
-      const response = await axios.post('/user_update_profile', updateData);
-      
-      if (response.data.status === 'ok') {
-        console.log('Данные пользователя обновлены');
-      }
-    } catch (error) {
-      console.error('Ошибка при обновлении профиля:', error);
-    }
-  };
-
-  // Обработчики для автосохранения
-  const handleNameBlur = (value: string) => {
-    updateUserProfile('name', value);
-  };
-
-  const handlePhoneBlur = (value: string) => {
-    updateUserProfile('phone', value);
-  };
-
-  const handleAddressBlur = (value: string) => {
-    updateUserProfile('adress', value);
-  };
-
-  // Загружаем профиль пользователя при монтировании
+  // Загрузка профиля пользователя
   useEffect(() => {
     fetchUserProfile();
-  }, [tlgid]);
+  }, [fetchUserProfile]);
 
+  // Загрузка стран
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        
-        // Загружаем страны
-        const countriesResponse = await axios.get('/admin_get_countries');
-        console.log('countries', countriesResponse.data);
-        
-        const countriesData = countriesResponse.data || [];
-        
-        // Сортируем страны: Germany первым, остальные по алфавиту
-        const sortedCountries = [...countriesData].sort((a, b) => {
-          const aName = a[`name_${language}`] || a.name_en || '';
-          const bName = b[`name_${language}`] || b.name_en || '';
-          
-          // Germany всегда первый
-          if (aName.toLowerCase() === 'germany' || aName.toLowerCase() === 'deutschland' || aName.toLowerCase() === 'германия') {
-            return -1;
-          }
-          if (bName.toLowerCase() === 'germany' || bName.toLowerCase() === 'deutschland' || bName.toLowerCase() === 'германия') {
-            return 1;
-          }
-          
-          return aName.localeCompare(bName);
-        });
-        
-        console.log('sortedCountries', sortedCountries)
+        setLoadingState(prev => ({ ...prev, countries: true }));
 
-        //@ts-ignore
-        setCountries(sortedCountries);
-        
+        const countriesResponse = await axios.get('/admin_get_countries');
+        const countriesData: Country[] = countriesResponse.data || [];
+
+        setCountries(countriesData);
+
         // Устанавливаем Germany как выбранную страну по умолчанию
-        const germanyCountry = sortedCountries.find(country => {
-          const name = country[`name_${language}`] || country.name_en || '';
-          return name.toLowerCase() === 'germany' || 
-                 name.toLowerCase() === 'deutschland' || 
-                 name.toLowerCase() === 'германия';
+        const germanyCountry = countriesData.find(country => {
+          const name = getCountryName(country, language);
+          return isGermany(name);
         });
-        
+
         if (germanyCountry) {
-          setSelectedCountry(germanyCountry._id);
-          
-        } else if (sortedCountries.length > 0) {
-          setSelectedCountry(sortedCountries[0]._id);
-          
+          setDeliveryForm(prev => ({
+            ...prev,
+            selectedCountry: germanyCountry._id,
+            region: 'de'
+          }));
+        } else if (countriesData.length > 0) {
+          const firstCountry = countriesData[0];
+          setDeliveryForm(prev => ({
+            ...prev,
+            selectedCountry: firstCountry._id,
+            region: determineRegion(firstCountry)
+          }));
         }
 
-        
-        console.log('CAAAART', cart)
-
-
-        
-        setIsLoading(false);
+        setLoadingState(prev => ({ ...prev, countries: false }));
       } catch (error) {
         console.error('Ошибка при загрузке данных:', error);
-        setIsLoading(false);
+        setWentWrong(true)
+        setLoadingState(prev => ({ ...prev, countries: false }));
       }
     };
 
     fetchCountries();
   }, [language]);
 
+  // ============= РЕНДЕР =============
 
-// FIXME: при переходе на след страницу добавить инфо в БД об информации, которую ввел юзер
-// адрес, имя, телефон
+  const isLoading = loadingState.countries || loadingState.profile;
 
-  const nextBtnHandler = () => {
-    if (selectedCountry && adress && userName && phone) {
-      const selectedCountryData = countries.find((country: any) => country._id === selectedCountry);
-      
-      console.log('selectedCountryData',selectedCountry )
-      // return
 
-      navigate('/payment-choice-page', {
-        state: {
-          cart: cart,
-          deliveryRegion: region,
-          deliveryInfo: {
-            selectedCountry:selectedCountryData, 
-            address: adress,
-            userName: userName,
-            phone: phone
-          }
-        }
-      });
-    } else {
-      setOpenSnackbar(true);
-    }
-  };
+ 
 
-  async function setRegionForDeliveryPrice(country:any){
-      countries.map((item:any) =>{
-        if (item._id == country){
 
-            if (item.name_en == 'Germany'){
-                setRegion('de')
-             return
-            }
 
-            if(item.isEU){
-             setRegion('inEu')
-          } else {
-            setRegion('outEu')
-          }
-        }
-      })
-  }
-
-async function countrySelectHandler(e:any){
-
-    setSelectedCountry(e.target.value)
-    await setRegionForDeliveryPrice(e.target.value)
-}  
 
   return (
     <Page back={true}>
-      {isLoading && isLoadingProfile && (
-        <div
-          style={{
-            textAlign: 'center',
-            justifyContent: 'center',
-            padding: '100px',
-          }}
-        >
+      {isLoading && (
+        <div style={SPINNER_CONTAINER_STYLE}>
           <Spinner size="m" />
         </div>
       )}
 
-      {!isLoading && (
-        <>
-          {/* {console.log('Rendering deliveryTypes:', deliveryTypes, 'Length:', deliveryTypes.length)} */}
-            
-              <Section header={headerT}>
-                <Select 
-                  header={selectCountryT}
-                  //  status="focused" 
-                  value={selectedCountry}
-                  // onChange={(e) => setSelectedCountry(e.target.value)}
-                  onChange={(e) => countrySelectHandler(e)}
-                >
-                  {countries.map((country: any) => (
-                    <option key={country._id} value={country._id}>
-                      {country[`name_${language}`] || country.name_en}
-                    </option>
-                  ))}
-                </Select>
-              {/* </Section> */}
-            
+       {wentWrong &&  
+          <Section>
+                          <Cell>
+                            <div style={ERROR_MESSAGE_STYLE}>
+                               {errorT}
+                            </div>
+                            <Button onClick={() => window.location.reload()} size="m">
+                              {btnErrorT}
+                            </Button>
+                          </Cell>
+                        </Section>
+        
+      }
 
-            <Input 
-              // status="focused" 
+      {!loadingState.countries && !wentWrong && (
+        <>
+          <Section header={headerT}>
+            <Select
+              header={selectCountryT}
+              value={deliveryForm.selectedCountry}
+              onChange={handleCountrySelect}
+            >
+              {countryOptions}
+            </Select>
+
+            <Input
               header={addressT}
               placeholder={adressInputT}
-              value={adress} 
-              onChange={e => setAdress(e.target.value)}
-              onBlur={e => handleAddressBlur(e.target.value)}
+              value={deliveryForm.address}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
               after={
-            <Tappable 
-              Component="div" 
-              style={{
-                display: 'flex'
-              }} onClick={() => setAdress('')}>
-                      <Icon24Close />
-            </Tappable>
-          } />
+                <Tappable
+                  Component="div"
+                  style={ICON_CONTAINER_STYLE}
+                  onClick={handleAddressClear}
+                >
+                  <Icon24Close />
+                </Tappable>
+              }
+            />
 
-            <Input 
-              // status="focused" 
+            <Input
               header={nameT}
               placeholder={nameInputT}
-              value={userName} 
-              onChange={e => setUserName(e.target.value)}
-              onBlur={e => handleNameBlur(e.target.value)}
+              value={deliveryForm.userName}
+              onChange={handleNameChange}
+              onBlur={handleNameBlur}
               after={
-            <Tappable 
-              Component="div" 
-              style={{
-                display: 'flex'
-              }} onClick={() => setUserName('')}>
-                      <Icon24Close />
-            </Tappable>
-          } />
-           
-            <Input 
-              // status="focused" 
+                <Tappable
+                  Component="div"
+                  style={ICON_CONTAINER_STYLE}
+                  onClick={handleNameClear}
+                >
+                  <Icon24Close />
+                </Tappable>
+              }
+            />
+
+            <Input
               header={phoneT}
               placeholder={phoneInputT}
-              value={phone} 
-              onChange={e => setPhone(e.target.value)}
-              onBlur={e => handlePhoneBlur(e.target.value)}
+              value={deliveryForm.phone}
+              onChange={handlePhoneChange}
+              onBlur={handlePhoneBlur}
               after={
-            <Tappable 
-              Component="div" 
-              style={{
-                display: 'flex'
-              }} onClick={() => setPhone('')}>
-                      <Icon24Close />
-            </Tappable>
-          } />
+                <Tappable
+                  Component="div"
+                  style={ICON_CONTAINER_STYLE}
+                  onClick={handlePhoneClear}
+                >
+                  <Icon24Close />
+                </Tappable>
+              }
+            />
 
-
-           
-<Cell>
-  <>
-<Text weight="2" >{priceDeliveryT}</Text>
-            {cart.map((item: any) => (
-                <div key={item.id}>{item[`name_${language}`]} - {(Number(item[`deliveryPriceToShow_${region}`]) * Number(item.qty)).toFixed(2)} {item.valuteToShow} </div>
+            <Cell>
+              <Text weight="2">{priceDeliveryT}</Text>
+              {deliveryPrices.map((item) => (
+                <div key={item.id}>
+                  {item.name} - {item.price} {item.valute}
+                </div>
               ))}
-              </>
-              
-              
-              
-              </Cell>
+            </Cell>
+          </Section>
 
-            
+          <Section style={{ marginBottom: 100, padding: 10 }}>
+            <Button
+              stretched
+              onClick={handleNextClick}
+              disabled={!isFormValid}
+            >
+              {nextBtn}
+            </Button>
+          </Section>
 
-            </Section>
-
-            <Section style={{ marginBottom: 100, padding: 10 }}>
-              <Button 
-                stretched 
-                onClick={nextBtnHandler}
-                disabled={!selectedCountry || !adress || !userName || !phone}
-              >
-                {nextBtn}
-              </Button>
-            </Section>
-
-          {openSnackbar && (
-            <Snackbar duration={2000} onClose={() => setOpenSnackbar(false)}>
-              Заполните все поля
+          {snackbar.isOpen && (
+            <Snackbar
+              duration={2000}
+              onClose={handleSnackbarClose}
+            >
+              {snackbar.message}
             </Snackbar>
           )}
 

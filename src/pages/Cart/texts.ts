@@ -55,8 +55,10 @@ interface TextsType {
   LoyaltySystemT: string;
   setPromocodeT: string;
   errorT: string;
+  btnErrorT:string;
   goToT: string;
   goToBtnT: string;
+  errorSavingT: string;
 }
 
 // ============================================================================
@@ -112,8 +114,10 @@ export const TEXTS: Record<'ru' | 'en' | 'de', TextsType> = {
    LoyaltySystemT: 'Система лояльности',
    setPromocodeT: 'Введите промокод',
     errorT: 'Что-то пошло не так...',
+    btnErrorT: 'Перезагрузить',
     goToT: 'Перейдите в раздел Аккаунт - Заказы и оплатите заказ',
-    goToBtnT: 'Перейти в Аккаунт' 
+    goToBtnT: 'Перейти в Аккаунт',
+    errorSavingT: 'ошибка сохранения'
     
   },
   en: {
@@ -164,8 +168,10 @@ export const TEXTS: Record<'ru' | 'en' | 'de', TextsType> = {
    LoyaltySystemT: 'Loyalty programme',
    setPromocodeT: 'Fill in promocode',
    errorT: 'Something went wrong...',
+    btnErrorT: 'Reload',
    goToT: 'Go to Account - Orders and pay for your order',
-   goToBtnT: 'Go to Account' 
+   goToBtnT: 'Go to Account',
+   errorSavingT: 'saving error'
    
 
 
@@ -220,8 +226,10 @@ export const TEXTS: Record<'ru' | 'en' | 'de', TextsType> = {
        LoyaltySystemT: 'Treueprogramm',
        setPromocodeT: 'Promocode eingeben',
        errorT: 'Etwas ist schiefgelaufen...',
+       btnErrorT: 'Neu laden',
        goToT: 'Gehen Sie zum Abschnitt Konto – Bestellungen und bezahlen Sie Ihre Bestellung',
-       goToBtnT: 'Gehen Sie zu Konto' 
+       goToBtnT: 'Gehen Sie zu Konto',
+       errorSavingT: 'speicherfehler'
    
     
       
