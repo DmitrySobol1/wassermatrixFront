@@ -219,7 +219,7 @@ interface GoodCardProps {
 
 interface TypeFilterProps {
   types: Array<{ id: string | number; name: string }>;
-  activeTypeId: number | null;
+  activeTypeId: string | number | null;
   onTypeSelect: (id: string) => void;
 }
 
@@ -325,7 +325,7 @@ const TypeFilter = memo<TypeFilterProps>(
           <div
             key={type.id}
             className={`${styles.filterItem} ${
-              activeTypeId === type.id ? styles.active : ''
+              String(activeTypeId) === String(type.id) ? styles.active : ''
             }`}
             onClick={() => onTypeSelect(String(type.id))}
           >
@@ -401,7 +401,7 @@ export const CatalogPage: FC = () => {
   const [allGoods, setAllGoods] = useState<GoodItemType[]>([]);
   const [arrayGoodsForRender, setArrayGoodsForRender] = useState<GoodItemType[]>([]);
   const [openSnakbar, setOpenSnakbar] = useState(false);
-  const [activeTypeId, setActiveTypeId] = useState<number | null>(1);
+  const [activeTypeId, setActiveTypeId] = useState<string | number | null>(1);
   const [isLoading, setIsLoading] = useState(true);
   const [spinBtn, setSpinBtn] = useState(false);
   const [salesInfo, setSalesInfo] = useState<any[]>([]); // TODO: создать правильный тип Sale из BannersSwiper
@@ -546,7 +546,7 @@ export const CatalogPage: FC = () => {
   const applySortToGoods = useCallback(
     (sortKey: string) => {
       let filteredGoods: GoodItemType[] = [];
-      if (activeTypeId == 1) {
+      if (String(activeTypeId) === '1') {
         filteredGoods = allGoods;
       } else {
         filteredGoods = allGoods.filter(
@@ -566,7 +566,7 @@ export const CatalogPage: FC = () => {
       console.log('you choose type=', typeId);
 
       let filteredGoods: GoodItemType[] = [];
-      if (typeId == '1') {
+      if (typeId === '1') {
         filteredGoods = allGoods;
       } else {
         filteredGoods = allGoods.filter((item) => item.type === typeId);
@@ -581,7 +581,7 @@ export const CatalogPage: FC = () => {
       // Применяем сортировку к отфильтрованным товарам
       const sortedGoods = sortGoods(filteredGoods, currentSortKey);
       setArrayGoodsForRender(sortedGoods);
-      setActiveTypeId(Number(typeId));
+      setActiveTypeId(typeId === '1' ? 1 : typeId);
     },
     [allGoods, sortVariant, sortGoods]
   );
