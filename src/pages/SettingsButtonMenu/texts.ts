@@ -14,14 +14,9 @@ export const TEXTS = {
     setNameT: 'укажите имя',
     setPhoneT: 'укажите телефон',
     setAddressT: 'укажите адрес',
-    aboutT: 'О магазине'
+    aboutT: 'О магазине',
+    errorT: 'Что-то пошло не так...',
 
-
-    // yourid: 'Ваш ID в приложении:',
-    // purposeid: 'нужен для внутренних переводов',
-    // copiedtext: 'скопировано',
-    // noid: 'отсутствует',
-    // createid: 'создать id'
     
   },
   en: {
@@ -39,12 +34,9 @@ export const TEXTS = {
     setNameT: 'set name',
     setPhoneT: 'set phone',
     setAddressT: 'set address',
-    aboutT: 'About'
-    // yourid: 'Your ID in app:',
-    // purposeid: 'use for internal coin transfer',
-    // copiedtext: 'copied',
-    // noid: 'no id',
-    // createid: 'create id'
+    aboutT: 'About',
+    errorT: 'Something went wrong...',
+   
   },
   de: {
     title: 'Einstellungen',
@@ -61,13 +53,9 @@ export const TEXTS = {
     setNameT: 'Name festlegen',
     setPhoneT: 'Telefonnummer festlegen',
     setAddressT: 'Adresse festlegen',
-    aboutT: 'Über'
+    aboutT: 'Über',
+     errorT: 'Etwas ist schiefgelaufen...',
 
 
-    // yourid: 'Ihre ID in der App:',
-    // purposeid: 'verwendung für den internen Münztransfer',
-    // copiedtext: 'kopiert',
-    // noid: 'keine Identität',
-    // createid: 'id erstellen'
   },
 };

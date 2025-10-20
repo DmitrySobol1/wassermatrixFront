@@ -48,6 +48,7 @@ interface TextsType {
   setPhoneT: string;
   setAddressT: string;
   aboutT: string;
+  errorT: string
 }
 
 interface UserData {
@@ -113,7 +114,8 @@ export const SettingsButtonMenu: FC = () => {
     setNameT,
     setPhoneT,
     setAddressT,
-    aboutT
+    aboutT,
+    errorT
   } = texts;
 
   // ============================================================================
@@ -141,7 +143,7 @@ export const SettingsButtonMenu: FC = () => {
       }
     } catch (error) {
       console.error('Ошибка при загрузке профиля:', error);
-      setTextForSnack('Ошибка при загрузке данных');
+      setTextForSnack(errorT);
       setOpenSnackbar(true);
     } finally {
       setIsLoadingProfile(false);
@@ -166,7 +168,7 @@ export const SettingsButtonMenu: FC = () => {
       }
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
-      setTextForSnack('Ошибка при сохранении');
+      setTextForSnack(errorT);
       setOpenSnackbar(true);
     }
   }, [tlgid]);
@@ -195,7 +197,7 @@ export const SettingsButtonMenu: FC = () => {
     } catch (error) {
       console.error('Ошибка при изменении языка:', error);
       setSelectedLanguage(language);
-      setTextForSnack('Ошибка при изменении языка');
+      setTextForSnack(errorT);
       setOpenSnackbar(true);
     }
   }, [tlgid, setLanguage, language]);
@@ -219,7 +221,7 @@ export const SettingsButtonMenu: FC = () => {
     } catch (error) {
       console.error('Ошибка при изменении валюты:', error);
       setSelectedValute(valute);
-      setTextForSnack('Ошибка при изменении валюты');
+      setTextForSnack(errorT);
       setOpenSnackbar(true);
     }
   }, [tlgid, setValute, valute, valuteChangedT]);
