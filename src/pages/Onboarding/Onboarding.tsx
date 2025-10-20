@@ -1,106 +1,110 @@
-
 import { Section, List, Steps, Cell, Button } from '@telegram-apps/telegram-ui';
-
 import type { FC } from 'react';
-import { useState,useContext } from 'react';
+import { useState, useContext, useCallback, useMemo, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageContext } from '../../components/App.tsx';
-
-
-
 import { Page } from '@/components/Page.tsx';
-
 import pic1 from '../../components/img/img1_onb.jpg';
 import pic2 from '../../components/img/img2_onb.jpg';
 import pic3 from '../../components/img/img3_onb.jpg';
-
-
 import styles from './Onboarding.module.css';
-
 import { TEXTS } from './texts.ts';
 
-// export const Onboarding: FC = () => {
+// ============================================================================
+// Типы
+// ============================================================================
 
-// const location = useLocation();
+type Language = 'ru' | 'en' | 'de';
 
-//TODO: когда в конце онбординга человек перейдет на wallet page, прокинуть параметр nowpaymentid и он будет = 0
-// чтобы на wallet page  нормально данные отобразить! 
-// const { nowpaymentid } = location.state || {};
+interface OnboardingStepData {
+  image: string;
+  text: string;
+}
 
+interface OnboardingStepProps extends OnboardingStepData {
+  stepNumber: number;
+}
 
-//   return (
-//     <Page>
-//       <List>
-//         <Section header="This is onboarding">
-//           <Cell subtitle="User data, chat information, technical data">
-//             onboarding onboarding onboarding{' '}
-//           </Cell>
-//         </Section>
-//       </List>
-//     </Page>
-//   );
-// };
+// ============================================================================
+// Вспомогательные компоненты
+// ============================================================================
+
+/**
+ * Мемоизированный компонент одного шага онбординга
+ *
+ * React.memo предотвращает ре-рендеры при неизменных пропсах
+ */
+const OnboardingStep = memo<OnboardingStepProps>(({ image, text, stepNumber }) => (
+  <Cell multiline>
+    <div className={styles.divImg}>
+      <img
+        src={image}
+        className={styles.onboardingImg}
+        alt={`Онбординг шаг ${stepNumber}: ${text.slice(0, 50)}...`}
+      />
+    </div>
+    <p>{text}</p>
+  </Cell>
+));
+
+OnboardingStep.displayName = 'OnboardingStep';
+
+// ============================================================================
+// Основной компонент
+// ============================================================================
 
 export const Onboarding: FC = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { language } = useContext(LanguageContext);
 
+  // Мемоизация текстов с fallback на английский
+  const texts = useMemo(
+    () => TEXTS[language as Language] || TEXTS.en,
+    [language]
+  );
 
-  // const location = useLocation();
+  const { title, textPage1, textPage2, textPage3, nextBtn } = texts;
 
-//TODO: когда в конце онбординга человек перейдет на wallet page, прокинуть параметр nowpaymentid и он будет = 0
-// чтобы на wallet page  нормально данные отобразить! 
-// const { nowpaymentid } = location.state || {};
+  // Мемоизация данных шагов
+  const STEPS_DATA = useMemo<OnboardingStepData[]>(() => [
+    { image: pic1, text: textPage1 },
+    { image: pic2, text: textPage2 },
+    { image: pic3, text: textPage3 },
+  ], [textPage1, textPage2, textPage3]);
 
- //FIXME:
-  // @ts-ignore
-const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
+  const currentStep = STEPS_DATA[step - 1];
 
-
-
-  function mainBtnListener() {
-    setStep(step + 1);
-    if (step == 3) {
-      navigate('/catalog-page');
+  // Preloading следующего изображения для мгновенных переходов
+  useEffect(() => {
+    if (step < 3) {
+      const nextImage = new Image();
+      nextImage.src = STEPS_DATA[step].image;
     }
-  }
+  }, [step, STEPS_DATA]);
+
+  // Обработчик кнопки "Далее"
+  const handleNext = useCallback(() => {
+    if (step === 3) {
+      navigate('/catalog-page');
+    } else {
+      setStep(prev => prev + 1);
+    }
+  }, [step, navigate]);
+
+
 
   return (
     <Page back={true}>
       <List>
         <Section header={title}>
           <Steps count={3} progress={step} />
-          {step == 1 && (
-            <Cell multiline>
-              <div className={styles.divImg}>
-                <img src={pic1} className={styles.onboardingImg} />
-              </div>
-              <p>
-                {textPage1}
-              </p>
-            </Cell>
-          )}
-          {step == 2 && (
-            <Cell multiline>
-              <div className={styles.divImg}>
-                <img src={pic2} className={styles.onboardingImg} />
-              </div>
-              <p>
-                {textPage2}
-              </p>
-            </Cell>
-          )}
-          {step == 3 && (
-            <Cell multiline>
-              <div className={styles.divImg}>
-                <img src={pic3} className={styles.onboardingImg} />
-              </div>
-              <p>
-                {textPage3}
-              </p>
-            </Cell>
-          )}
+
+          <OnboardingStep
+            image={currentStep.image}
+            text={currentStep.text}
+            stepNumber={step}
+          />
 
           <div className={styles.btnDiv}>
             <div className={styles.nextBtn}>
@@ -108,7 +112,7 @@ const { title,textPage1,textPage2,textPage3,nextBtn } = TEXTS[language];
                 mode="filled"
                 size="m"
                 stretched
-                onClick={mainBtnListener}
+                onClick={handleNext}
               >
                 {nextBtn}
               </Button>
